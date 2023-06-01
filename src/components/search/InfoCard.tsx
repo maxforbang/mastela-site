@@ -2,6 +2,7 @@ import Image from "next/image";
 import { HeartIcon } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/24/solid";
 import type { UnitDetails } from "~/pages/our-villas";
+import Link from "next/link";
 
 export function InfoCard({
   img,
@@ -13,14 +14,14 @@ export function InfoCard({
   total,
 }: UnitDetails) {
   return (
-    <div className="transform transition duration-300 ease-out hover:scale-105 flex transform cursor-pointer flex-col border-b px-2 py-7 pr-4 transition duration-200 ease-out first:border-t hover:rounded-lg hover:opacity-80 hover:shadow-lg sm:flex-row">
+    <div className="flex transform cursor-pointer flex-col border-b px-2 py-7 pr-4 transition duration-200 ease-out first:border-t hover:scale-105 hover:opacity-80 hover:shadow-lg sm:flex-row">
       <div className="relative aspect-[5/3] w-full flex-shrink-0 sm:h-48 sm:w-80">
         <Image
           src={img}
           fill
           objectFit="cover"
           className="rounded-2xl"
-          alt='Cape Coral Villa Property'
+          alt="Cape Coral Villa Property"
         />
       </div>
       <div className="flex flex-grow flex-col pt-6 sm:pl-5 sm:pt-0">
@@ -28,8 +29,9 @@ export function InfoCard({
           <p>{location}</p>
           <HeartIcon className="h-7 cursor-pointer" />
         </div>
-
-        <h4 className="text-xl">{title}</h4>
+        <Link href="/villas/[property]" as={`/villas/villa-encore`}>
+          <h4 className="text-xl">{title}</h4>
+        </Link>
 
         <div className="w-10 border-b pt-2" />
 

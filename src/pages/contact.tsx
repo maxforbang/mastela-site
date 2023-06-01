@@ -6,7 +6,7 @@ import Image from "next/image";
 const ContactPage: NextPageWithLayout = () => {
   return (
     <div className="relative bg-white">
-      <div className="lg:absolute lg:inset-0 lg:left-1/2">
+      <div className="lg:absolute hidden lg:block lg:inset-0 lg:left-1/2">
         <Image
           fill
           className="h-64 w-full bg-gray-50 object-cover sm:h-80 lg:absolute lg:h-full"

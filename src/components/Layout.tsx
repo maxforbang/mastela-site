@@ -1,7 +1,7 @@
 import type { JSX, ReactNode, SVGProps } from "react";
 import { Disclosure } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import { classNames } from "~/utils/shared/functions";
+import { classNames } from "~/utils/functions/functions";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -131,10 +131,10 @@ function Header() {
   const router = useRouter();
   const currentRoute = router.pathname;
   return (
-    <Disclosure as="nav" className="border-b border-gray-200 bg-white">
+    <Disclosure as="nav" className="border-b sticky top-0 z-50 border-gray-200 bg-white">
       {({ open }) => (
         <>
-          <div className="mx-auto h-20 max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto sm:h-20 max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex h-16 justify-between ">
               <div className="flex w-full justify-between py-4">
                 <Link href="/" className="flex flex-shrink-0 items-center ">
@@ -217,7 +217,7 @@ function Footer() {
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <img
             className="m-auto h-28"
-            src="images/Mastela-Logo.png"
+            src="/images/Mastela-Logo.png"
             alt="Company name"
           />
           <div className="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">

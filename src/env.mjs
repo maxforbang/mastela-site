@@ -8,6 +8,8 @@ export const env = createEnv({
    */
   server: {
     DATABASE_URL: z.string().url(),
+    NEXT_PUBLIC_SANITY_PROJECT_ID: z.string(),
+    NEXT_PUBLIC_SANITY_DATASET: z.string(),
     NODE_ENV: z.enum(["development", "test", "production"]),
   },
 
@@ -17,8 +19,9 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
-    NEXT_PUBLIC_MAPBOX_KEY: z.string()
+    NEXT_PUBLIC_MAPBOX_KEY: z.string(),
+    NEXT_PUBLIC_SANITY_PROJECT_ID: z.string(),
+    NEXT_PUBLIC_SANITY_DATASET: z.string(),
   },
 
   /**
@@ -28,8 +31,10 @@ export const env = createEnv({
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
-    // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
+
     NEXT_PUBLIC_MAPBOX_KEY: process.env.NEXT_PUBLIC_MAPBOX_KEY,
+    NEXT_PUBLIC_SANITY_PROJECT_ID: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+    NEXT_PUBLIC_SANITY_DATASET: process.env.NEXT_PUBLIC_SANITY_DATASET,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.

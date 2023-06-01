@@ -7,3 +7,19 @@
     @apply hidden lg:inline-flex px-4 py-2 border rounded-full cursor-pointer hover:shadow-lg active:scale-95 active:bg-gray-100 transition transform duration-100 ease-out;
   }
 }
+
+
+  .mapboxgl-control-container {
+    display: none !important;
+}
+
+.rdrDateDisplayWrapper {
+  display: none;
+}
+
+
+
+.rdrDateRangeWrapper,
+.rdrMonth {
+  width: 100% !important;
+}
