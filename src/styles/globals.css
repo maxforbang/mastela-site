@@ -8,8 +8,7 @@
   }
 }
 
-
-  .mapboxgl-control-container {
+.mapboxgl-control-container {
     display: none !important;
 }
 
@@ -17,7 +16,9 @@
   display: none;
 }
 
-
+.mapboxgl-canvas-container {
+  overflow: hidden;
+}
 
 .rdrDateRangeWrapper,
 .rdrMonth {

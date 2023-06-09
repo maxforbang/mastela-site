@@ -10,7 +10,8 @@ const config = {
   images: {
     domains: [
       'links.papareact.com',
-      'images.unsplash.com'
+      'images.unsplash.com',
+      'cdn.sanity.io'
     ]
   },
   /**

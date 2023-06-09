@@ -13,7 +13,6 @@ export const Map = ({ searchResults }: {searchResults: UnitDetails[]}) => {
     longitude: result.long,
   }));
 
-  console.log(coordinates)
 
   // The latitude and longitude of the center of locations coordinates
   const centerResult = getCenter(coordinates);
@@ -42,7 +41,7 @@ export const Map = ({ searchResults }: {searchResults: UnitDetails[]}) => {
                 >
                     <p 
                     onClick={() => setSelectedLocation(result)}
-                    aria-lable="push-pin"
+                    aria-label="push-pin"
                     role="img"
                     className="cursor-pointer text-2xl animate-pulse">📌</p>
                 </Marker>

@@ -46,11 +46,11 @@ export default defineType({
       type: 'array',
       of: [{type: 'reference', to: {type: 'category'}}],
     }),
-    {
+    defineField({
       name: 'publishedAt',
       title: 'Published at',
       type: 'datetime',
-    },
+    }),
     defineField({
       name: 'body',
       title: 'Body',
