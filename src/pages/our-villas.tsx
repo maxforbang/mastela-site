@@ -9,7 +9,7 @@ import type { ReactElement } from "react";
 import { SearchBar } from "~/components/home/HeroSection";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
-import { formatDate } from "~/utils/functions/functions";
+import { formatDateUrl } from "~/utils/functions/functions";
 import { addDays } from "date-fns";
 import { ListingsLayout } from "./search";
 import SkeletonInfoCard from "~/components/search/SkeletonInfoCard";

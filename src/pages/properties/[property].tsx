@@ -12,18 +12,17 @@ import Map from "~/components/search/Map";
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
 import { DateRange } from "react-date-range";
-import { addDays, addYears, differenceInDays } from "date-fns";
 import {
-  GetStaticProps,
-  GetStaticPropsContext,
-  InferGetStaticPropsType,
-} from "next";
+  addDays,
+  addYears,
+  differenceInDays,
+  format,
+  parseISO,
+} from "date-fns";
+import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
 import { PortableText } from "@portabletext/react";
 import { createServerSideHelpers } from "@trpc/react-query/server";
-import {
-  PropertiesRouter,
-  propertiesRouter,
-} from "../../server/api/routers/properties";
+import { propertiesRouter } from "../../server/api/routers/properties";
 import { prisma } from "~/server/db";
 import { api } from "~/utils/api";
 import sanityClient from "../../../sanity/lib/sanityClient";
@@ -31,8 +30,7 @@ import { groq } from "next-sanity";
 import { urlFor } from "~/utils/functions/urlFor";
 import { useRouter } from "next/router";
 import { formatCurrency } from "~/utils/functions/formatCurrency";
-import SkeletonInfoCard from "~/components/search/SkeletonInfoCard";
-import LoadingPropertyPage, {
+import {
   SkeletonBookNowDesktop,
   SkeletonPropertyDescription,
   SkeletonPropertyHeader,
@@ -40,8 +38,9 @@ import LoadingPropertyPage, {
 } from "~/components/property/LoadingPropertyPage";
 import { RouterOutputs } from "~/utils/api";
 import { InvoiceItem } from "types";
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { classNames } from "~/utils/functions/functions";
+import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
+import { classNames, formatDateUrl } from "~/utils/functions/functions";
+import { getUrlParams } from "~/utils/functions/getUrlParams";
 
 const PropertyPage: NextPageWithLayout = (
   props: InferGetStaticPropsType<typeof getStaticProps>
@@ -51,16 +50,26 @@ const PropertyPage: NextPageWithLayout = (
   // TODO: MAKE SHALLOW ROUTE https://nextjs.org/docs/pages/building-your-application/routing/linking-and-navigating#shallow-routing
   //    /[properties]    for the default page without specific prices
   //    /[properties]/?arrival=[x]&depature=[y]    for specific prices which calls getQuote api
+  let arrival;
+  let departure;
+  if (!router.isReady) {
+    return null;
+  } else {
+    ({ arrival, departure } = getUrlParams(router.asPath));
+    console.log("arrival asPath", arrival);
+  }
 
   const { slug } = props;
-  const { arrival, departure, noOfGuests } = router.query;
+  // const { arrival, departure, noOfGuests } = router.query;
 
-  useEffect(() => {
-    if (router.isReady && (!arrival || !departure || arrival >= departure))
-      router.push(`/properties/${slug}`);
+  console.log("arrival post console", arrival);
 
-    // codes using router.query
-  }, [router.isReady]);
+  // useEffect(() => {
+  //   if (router.isReady && (!arrival || !departure || arrival >= departure)) {
+  //     router.push(`/properties/${slug}`);
+  //   }
+  //   // code using router.query
+  // }, [router.isReady]);
 
   const {
     data: {
@@ -149,16 +158,19 @@ function PropertyFeatures() {
 }
 
 function BookNowDesktop({ slug, arrival, departure, propertyIsLoading }) {
-  let priceText;
-
   type ImportedType = RouterOutputs["properties"]["getQuote"];
+  const utils = api.useContext();
 
   if (!arrival || !departure) {
-    if (propertyIsLoading) {
-      return <SkeletonBookNowDesktop />;
-    } else {
-    }
+    // if (propertyIsLoading) {
+    //TODO: Conditional render of default card causes server hydration error
+    return <SkeletonBookNowDesktop />;
   }
+
+  const [dates, setDates] = useState({
+    startDate: arrival,
+    endDate: departure,
+  });
 
   const {
     data: bookingPrice,
@@ -166,11 +178,12 @@ function BookNowDesktop({ slug, arrival, departure, propertyIsLoading }) {
     isError,
     error,
     isLoadingError,
+    isSuccess,
   } = api.properties.getQuote.useQuery(
     {
       slug,
-      startDate: arrival,
-      endDate: departure,
+      startDate: dates.startDate,
+      endDate: dates.endDate,
     },
     {
       retry: 0,
@@ -193,20 +206,25 @@ function BookNowDesktop({ slug, arrival, departure, propertyIsLoading }) {
 
   if (isError && !errorMsg.length) {
     setErrorMsg(error.message);
+  } else if (isSuccess && errorMsg.length) {
+    setErrorMsg("");
   }
 
-  // if (!isLoading && isError && !isDefaultCard) {
-  //   setIsDefaultCard(true)
-  // } else {
-
-  // }
+  
 
   return (
     <div className="sticky top-32 mx-auto mt-12 hidden h-max w-1/3 rounded-xl border p-8 shadow-xl md:block">
-      <div className="flex items-center gap-1">
+      <div
+        /* Create better way to invalidate query besides clicking dates div */
+        onClick={() => utils.properties.getQuote.invalidate()}
+        className="flex items-center gap-1"
+      >
         <p className="text-xl font-semibold">{pricePerNight}</p>/<p> night</p>
       </div>
-      <div className="mt-5 rounded-lg border">Check-in</div>
+      <StackedSearchBar
+        dates={{ startDate: dates.startDate, endDate: dates.endDate }}
+        setDates={setDates}
+      />
       <div className="py-5">
         <Link
           href="/checkout"
@@ -219,20 +237,107 @@ function BookNowDesktop({ slug, arrival, departure, propertyIsLoading }) {
 
       {totalPrice > 0 && (
         <>
-          <div className="mt-4 flex flex-col gap-3 border-b pb-4">
+          <div className="mt-4 flex flex-col gap-4 border-b pb-4">
             {invoiceItems.map((invoiceItem: InvoiceItem, index) => {
               return <InvoiceItemDisplay invoiceItem={invoiceItem} />;
             })}
           </div>
           <div className="text flex justify-between pt-4">
-            <p className="font-bold text-lg">Total</p>
-            <p className="font-bold text-lg">{formatCurrency(totalPrice)}</p>
+            <p className="text-lg font-bold">Total</p>
+            <p className="text-lg font-bold">{formatCurrency(totalPrice)}</p>
           </div>
         </>
       )}
     </div>
   );
 }
+
+function StackedSearchBar({
+  dates,
+  setDates,
+}: {
+  dates?: { startDate: string; endDate: string };
+}) {
+  const currentDate = new Date();
+  const intialCalendarDates = [
+    {
+      startDate: dates?.startDate ? parseISO(dates.startDate) : currentDate,
+      endDate: dates?.endDate ? parseISO(dates.endDate) : currentDate,
+      key: "selection",
+    },
+  ];
+  const [calendarDates, setCalendarDates] = useState(intialCalendarDates);
+  const [calendarShowing, setCalendarShowing] = useState(false);
+
+  const startDate = formatDateUrl(calendarDates[0]?.startDate);
+  const endDate = formatDateUrl(calendarDates[0]?.endDate);
+
+  return (
+    <>
+      <div className="mt-5 rounded-lg border border-slate-400">
+        <div className="flex flex-col">
+          <div
+            onClick={() => {
+              setCalendarShowing(!calendarShowing);
+              setDates({
+                startDate: startDate,
+                endDate: endDate,
+              });
+            }}
+            className="flex items-center"
+          >
+            <div className="flex flex-1 flex-col gap-1 border-r p-3 ">
+              <p className="thin text-xs font-bold uppercase tracking-tight">
+                Check-in
+              </p>
+              <p className="text-ellipsis">
+                {startDate
+                  ? format(parseISO(startDate), "MM/dd/yyyy")
+                  : "Add date"}
+              </p>
+            </div>
+            <div className="flex flex-1 flex-col gap-1 truncate p-3">
+              <p className="thin text-xs font-bold uppercase tracking-tight">
+                Checkout
+              </p>
+              <p>
+                {endDate ? format(parseISO(endDate), "MM/dd/yyyy") : "Add date"}
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-1 flex-col gap-1 border-t p-3">
+            <p className="thin text-xs font-bold uppercase tracking-tight">
+              Guests
+            </p>
+            <p>4 guests</p>
+          </div>
+        </div>
+      </div>
+      <div
+        className={classNames(
+          "absolute top-40 z-10 w-full -translate-x-8",
+          !calendarShowing ? "hidden" : ""
+        )}
+      >
+        <DateRange
+          className={classNames("my-1 rounded-2xl")}
+          onChange={(item) => setCalendarDates([item.selection])}
+          months={1}
+          ranges={calendarDates}
+          direction="vertical"
+          minDate={new Date()}
+          maxDate={addYears(new Date(), 2)}
+          disabledDates={[]}
+          // disabledDay={(date) => date.getDay() === 4}
+          preventSnapRefocus={true}
+          fixedHeight
+          // scroll={{ enabled: true }}
+        />
+      </div>
+    </>
+  );
+}
+
 function BookNowMobile({ slug, arrival, departure }) {
   if (!arrival || !departure) {
     return <p>hi</p>;
@@ -457,7 +562,13 @@ function PropertyImages(props) {
   );
 }
 
-function PropertyHeader({ name, occupancy }) {
+function PropertyHeader({
+  name,
+  occupancy,
+}: {
+  name: string;
+  occupancy: number;
+}) {
   if (!name || !occupancy) {
     return <SkeletonPropertyHeader />;
   }
@@ -547,12 +658,18 @@ function InvoiceItemDisplay({ invoiceItem }: { invoiceItem: InvoiceItem }) {
             <div
               onClick={() => setShowSubItems(!showSubItems)}
               className={classNames(
-                "flex gap-1",
+                "flex gap-3",
                 hasBreakdown ? "cursor-pointer" : ""
               )}
             >
               {description}
-              {hasBreakdown ? <ChevronDownIcon className="h-6" /> : null}
+              {hasBreakdown ? (
+                showSubItems ? (
+                  <ChevronUpIcon className="h-6 rounded-md border" />
+                ) : (
+                  <ChevronDownIcon className="h-6 rounded-md border" />
+                )
+              ) : null}
             </div>
             <p className="font-semibold">{formatCurrency(subtotal)}</p>
           </>
@@ -560,7 +677,7 @@ function InvoiceItemDisplay({ invoiceItem }: { invoiceItem: InvoiceItem }) {
       </div>
 
       {hasBreakdown && showSubItems ? (
-        <div className="border-l-2 pl-4 mb-3 flex flex-col gap-1">
+        <div className="-mt-2 mb-3 flex flex-col gap-1 border-l-2 pl-4">
           {prices.map((price) => {
             return (
               <div

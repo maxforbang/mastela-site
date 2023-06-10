@@ -9,7 +9,7 @@ import { ReactElement, ReactNode, useEffect } from "react";
 import { SearchBar } from "~/components/home/HeroSection";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
-import { formatDate } from "~/utils/functions/functions";
+import { formatDateUrl } from "~/utils/functions/functions";
 import { addDays } from "date-fns";
 import SkeletonInfoCard from "~/components/search/SkeletonInfoCard";
 
@@ -118,6 +118,10 @@ export const searchResults = [
 const SearchPage: NextPageWithLayout = () => {
   const router = useRouter();
 
+  if (!router.isReady) {
+    return null
+  }
+
   const { arrival, departure, noOfGuests } = router.query;
   // const formattedStartDate = format(new Date(2023, 4, 28), "dd MMMM yy");
   // const formattedEndDate = format(new Date(2023, 4, 28), "dd MMMM yy");
@@ -139,7 +143,7 @@ const SearchPage: NextPageWithLayout = () => {
   }
 
   return (
-    <ListingsLayout arrival={new Date()} departure={new Date()}>
+    <ListingsLayout arrival={arrival} departure={departure}>
       {isLoading
         ? Array.from(Array(3)).map(() => <SkeletonInfoCard />)
         : properties.map((property) => (
@@ -181,7 +185,7 @@ export function ListingsLayout({
             Our Luxury Villas
           </h2>
           <div className="mx-auto my-8 w-full md:w-2/3 lg:mb-12">
-            <SearchBar dates={[{ startDate: arrival, endDate: departure }]} />
+            <SearchBar dates={{ startDate: arrival, endDate: departure }} />
           </div>
           <>
             {children?.length ? (
