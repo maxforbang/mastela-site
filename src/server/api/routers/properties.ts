@@ -4,9 +4,11 @@ import sanityClient from "../../../../sanity/lib/sanityClient";
 import { env } from "~/env.mjs";
 import { groq } from "next-sanity";
 import { differenceInDays } from "date-fns";
-import { formatCurrency } from "~/utils/functions/formatCurrency";
+import { formatCurrencyRounded } from "~/utils/functions/formatCurrency";
 import { TRPCError } from "@trpc/server";
-import { BookingPrice, InvoiceItem } from "types";
+import { BookingPricingInfo as BookingPricingInfo, InvoiceItem } from "types";
+import Stripe from "stripe";
+import { stripe } from "../stripe";
 
 const lodgifyHeaders = {
   accept: "application/json",
@@ -30,74 +32,6 @@ export const propertiesRouter = createTRPCRouter({
         slug: input.slug,
       });
       return property;
-    }),
-  getQuote: publicProcedure
-    .input(
-      z.object({
-        slug: z.string(),
-        startDate: z.optional(z.string()),
-        endDate: z.optional(z.string()),
-      })
-    )
-    .query(async ({ ctx, input }) => {
-      if (
-        !input.startDate ||
-        !input.endDate ||
-        input.startDate >= input.endDate
-      ) {
-        return null;
-      }
-
-      const property = await ctx.prisma.property.findFirst({
-        where: {
-          slug: input.slug,
-        },
-      });
-
-      const { lodgifyPropertyId, lodgifyRoomId } = property;
-
-      const quote = await fetch(
-        // Gets a quote - https://docs.lodgify.com/reference/get_v2-quote-propertyid
-        `https://api.lodgify.com/v2/quote/${lodgifyPropertyId}?arrival=${input.startDate}&departure=${input.endDate}&roomTypes[0].Id=${lodgifyRoomId}&roomTypes[0].People=4`,
-        {
-          method: "GET",
-          headers: lodgifyHeaders,
-        }
-      ).then((response) => response.json());
-      
-      
-      if (quote.code === 666) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: quote.message + `, please change your selection.`//${property.name} from ${input.startDate} to ${input.endDate}`,
-        });
-      }
-
-      let { total_including_vat: totalPrice, room_types } = quote[0];
-      const invoiceItems: InvoiceItem[] = room_types[0].price_types.filter(invoiceItem => invoiceItem.subtotal > 0);
-
-      const numNights = differenceInDays(
-        new Date(input.endDate),
-        new Date(input.startDate)
-      );
-
-      let pricePerNight = "";
-      findRoomRate: for (let invoiceItem of invoiceItems) {
-        for (let subItem of invoiceItem.prices) {
-          if (subItem.room_rate_type === 0) {
-            pricePerNight = formatCurrency(subItem.amount / numNights);
-            break findRoomRate;
-          }
-        }
-      }
-
-      const bookingPrice: BookingPrice = {
-        invoiceItems,
-        pricePerNight,
-        totalPrice,
-      };
-
-      return bookingPrice;
     }),
   getAllProperties: publicProcedure.query(async ({ ctx }) => {
     const allPropertiesQuery = groq`
@@ -183,6 +117,109 @@ export const propertiesRouter = createTRPCRouter({
         );
       }
     }),
+  getQuote: publicProcedure
+    .input(
+      z.object({
+        slug: z.string(),
+        startDate: z.string(),
+        endDate: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      if (
+        !input.startDate ||
+        !input.endDate ||
+        input.startDate >= input.endDate
+      ) {
+        return null;
+      }
+
+      const property = await getPropertyBySlug(ctx.prisma, input.slug)
+      const quote = await getLodgifyQuote(property, input.startDate, input.endDate);
+
+      if (quote.code === 666) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: quote.message + `, please change your selection.`, //${property.name} from ${input.startDate} to ${input.endDate}`,
+        });
+      }
+
+      let { total_including_vat: totalPrice, room_types } = quote[0];
+      const invoiceItems: InvoiceItem[] = room_types[0].price_types.filter(
+        (invoiceItem) => invoiceItem.subtotal > 0
+      ); // TODO: Add discount items (remove filter)
+
+      const numNights = differenceInDays(
+        new Date(input.endDate),
+        new Date(input.startDate)
+      );
+
+      let pricePerNight = "";
+      findRoomRate: for (let invoiceItem of invoiceItems) {
+        for (let subItem of invoiceItem.prices) {
+          if (subItem.room_rate_type === 0) {
+            pricePerNight = formatCurrencyRounded(subItem.amount / numNights);
+            invoiceItem.description = `${numNights} nights (${pricePerNight}/night)`;
+            break findRoomRate;
+          }
+        }
+      }
+
+      const pricingInfo: BookingPricingInfo = {
+        propertyName: property ? property.name : "",
+        invoiceItems,
+        pricePerNight,
+        totalPrice,
+      };
+
+      return pricingInfo;
+    }),
+  getClientSecret: publicProcedure
+    .input(
+      z.object({
+        slug: z.string(),
+        startDate: z.string(),
+        endDate: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const property = await getPropertyBySlug(ctx.prisma, input.slug)
+      const quote = await getLodgifyQuote(property, input.startDate, input.endDate);
+      
+      const {total_including_vat} = quote[0];
+      const totalPriceInCents = total_including_vat * 100
+
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: totalPriceInCents,
+        currency: 'usd',
+        automatic_payment_methods: {
+          enabled: true,
+        },
+      });
+      
+      return paymentIntent.client_secret
+    }),
 });
 
+const getPropertyBySlug = async (prisma, slug: string) => {
+  return await prisma.property.findFirst({
+    where: {
+      slug: slug,
+    },
+  });
+}
 
+const getLodgifyQuote = async (property, startDate: string, endDate: string) => {
+  const { lodgifyPropertyId, lodgifyRoomId } = property;
+
+  const quote = await fetch(
+    // Gets a quote - https://docs.lodgify.com/reference/get_v2-quote-propertyid
+    `https://api.lodgify.com/v2/quote/${lodgifyPropertyId}?arrival=${startDate}&departure=${endDate}&roomTypes[0].Id=${lodgifyRoomId}&roomTypes[0].People=4`,
+    {
+      method: "GET",
+      headers: lodgifyHeaders,
+    }
+  ).then((response) => response.json());
+
+  return quote;
+}

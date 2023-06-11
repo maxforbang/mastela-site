@@ -1,16 +1,13 @@
 import Image from "next/image";
 import { ArrowUpOnSquareIcon } from "@heroicons/react/24/outline";
-import { StarIcon } from "@heroicons/react/24/solid";
-import type { UnitDetails } from "~/pages/our-villas";
 import Link from "next/link";
 import { urlFor } from "~/utils/functions/urlFor";
 import { PortableText } from "@portabletext/react";
-import { formatCurrency } from "~/utils/functions/formatCurrency";
+import { formatCurrencyRounded } from "~/utils/functions/formatCurrency";
 
 export function ListingCard({ listing, arrival, departure }) {
   const { name, slug, mainImage, occupancy, preview } = listing;
   
-
   const imageSrc = urlFor(mainImage).height(1000).url();
   const blurImageSrc = urlFor(mainImage).width(24).height(24).blur(10).url();
 
@@ -21,6 +18,7 @@ export function ListingCard({ listing, arrival, departure }) {
     beds > 1 ? "s" : ""
   } · ${bathrooms} bathroom${bathrooms > 1 ? "s" : ""}`;
 
+  // TODO: Get actual price quote from API
   const price = 426;
   const total = 1690;
 
@@ -64,10 +62,10 @@ export function ListingCard({ listing, arrival, departure }) {
 
           <div>
             <p className="lg:pb-1 text-lg font-semibold lg:text-2xl">
-              {formatCurrency(price)} / night
+              {formatCurrencyRounded(price)} / night
             </p>
             <p className="text-right font-extralight">
-              {formatCurrency(total)} total
+              {formatCurrencyRounded(total)} total
             </p>
           </div>
         </div>

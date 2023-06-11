@@ -10,7 +10,8 @@ export type SubItem = {
   room_rate_type: 0 | null;
 };
 
-export type BookingPrice = {
+export type BookingPricingInfo = {
+  propertyName: string;
   invoiceItems: InvoiceItem[];
   pricePerNight: string;
   totalPrice: number;

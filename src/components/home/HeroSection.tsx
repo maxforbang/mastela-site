@@ -6,6 +6,7 @@ import { DateRange } from "react-date-range";
 // import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
+import { formatDateEnglish } from "~/utils/functions/dates/formatDateEnglish";
 import { classNames, formatDateUrl } from "~/utils/functions/functions";
 
 function HeroSection() {
@@ -71,7 +72,7 @@ export function SearchBar({
               placeholder="Check-in"
               value={
                 startDate !== endDate
-                  ? formatDateDisplayString(startDate)
+                  ? formatDateEnglish(startDate)
                   : "Check-in"
               }
               readOnly
@@ -83,7 +84,7 @@ export function SearchBar({
               placeholder="Check-out"
               value={
                 startDate !== endDate
-                  ? formatDateDisplayString(endDate)
+                  ? formatDateEnglish(endDate)
                   : "Check-out"
               }
               readOnly
@@ -177,12 +178,4 @@ export function SearchBar({
       </div>
     </div>
   );
-}
-
-function formatDateDisplayString(date: Date) {
-  const currentDate = new Date();
-  console.log("format date:", date);
-  return currentDate.getFullYear() === date.getFullYear()
-    ? format(date, "MMMM do")
-    : format(date, "MMM do, yyyy");
 }

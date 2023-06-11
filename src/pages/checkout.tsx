@@ -1,8 +1,32 @@
 import Layout from "~/components/Layout";
 import type { NextPageWithLayout } from "./_app";
-import type { ReactElement } from "react";
+import { useState, type ReactElement } from "react";
 import { Disclosure } from "@headlessui/react";
-import { LockClosedIcon } from "@heroicons/react/20/solid";
+import {
+  ChevronDownIcon,
+  ChevronRightIcon,
+  LockClosedIcon,
+} from "@heroicons/react/20/solid";
+import { useRouter } from "next/router";
+import { parseISO } from "date-fns";
+import { prisma } from "~/server/db";
+import { dateToStringNumerical } from "./properties/[property]";
+import { api } from "~/utils/api";
+import Link from "next/link";
+import { InvoiceItem } from "types";
+import { classNames } from "~/utils/functions/functions";
+import {
+  formatCurrencyRounded,
+  formatCurrencyExact,
+} from "~/utils/functions/formatCurrency";
+import { env } from "~/env.mjs";
+import { loadStripe } from "@stripe/stripe-js";
+import {
+  AddressElement,
+  Elements,
+  LinkAuthenticationElement,
+  PaymentElement,
+} from "@stripe/react-stripe-js";
 
 const subtotal = "$19,483.00";
 const discount = { code: "CHEAPSKATE", amount: "$24.00" };
@@ -17,20 +41,24 @@ const products = [
     price: "$426.00",
     dates: "4/1/2023 - 6/30/2023",
     size: "",
-    imageSrc:
-      "images/Encore.jpg",
+    imageSrc: "images/Encore.jpg",
     imageAlt:
       "Moss green canvas compact backpack with double top zipper, zipper front pouch, and matching carry handle and backpack straps.",
   },
   // More products...
 ];
 
+const stripe = loadStripe(env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+
+// const appearance = {
+//   theme: 'stripe'
+// };
+
+// loader = 'auto'
+
+// TODO: Add getServerSideProps
 const CheckoutPage: NextPageWithLayout = () => {
-  return (
-    <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-      <Checkout />
-    </div>
-  );
+  return <Checkout />;
 };
 
 export default CheckoutPage;
@@ -39,14 +67,77 @@ CheckoutPage.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
 };
 
-
-
-
-
 function Checkout() {
-  return (
-      <main className="lg:flex lg:min-h-full lg:flex-row-reverse lg:overflow-hidden">
+  const router = useRouter();
 
+  if (!router.isReady) {
+    return null;
+  }
+
+  const { property: slug, arrival, departure } = router.query;
+
+  if (!slug || !arrival || !departure) {
+    let message = "";
+    if (!slug) {
+      message = "Please pick a property before proceeding to checkout.";
+    }
+
+    if (!arrival) {
+      message = "Please select an arrival date before proceeding to checkout.";
+    }
+
+    if (!departure) {
+      message = "Please select a departure date before proceeding to checkout.";
+    }
+
+    return (
+      <div className="mt-12 flex flex-col justify-center">
+        <p className="mx-auto text-xl">{message}</p>
+        <div className="mx-auto mt-4">
+          <Link href="/our-villas" className="text-l font-semibold leading-7 ">
+            <span aria-hidden="true">&larr;</span> Back to Our Villas
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const [dates, setDates] = useState({
+    startDate: arrival,
+    endDate: departure,
+  });
+
+  const { data: clientSecret } = api.properties.getClientSecret.useQuery({
+    slug: slug as string,
+    startDate: dates.startDate as string,
+    endDate: dates.endDate as string,
+  });
+
+  const {
+    data: pricingInfo,
+    isLoading,
+    isError,
+    error,
+    isLoadingError,
+    isSuccess,
+  } = api.properties.getQuote.useQuery({
+    slug: slug as string,
+    startDate: dates.startDate as string,
+    endDate: dates.endDate as string,
+  });
+
+  let propertyName = "";
+  let totalPrice = 0;
+  let pricePerNight = "";
+  let invoiceItems = [];
+
+  if (isSuccess && pricingInfo !== null) {
+    ({ propertyName, totalPrice, pricePerNight, invoiceItems } = pricingInfo);
+  }
+
+  return (
+    <div className="mx-auto h-full max-w-7xl">
+      <main className="lg:flex lg:min-h-full lg:flex-row-reverse lg:overflow-hidden">
         <h1 className="sr-only">Checkout</h1>
 
         {/* Mobile order summary */}
@@ -88,7 +179,10 @@ function Checkout() {
                         <div className="flex flex-col justify-between space-y-4">
                           <div className="space-y-1 text-sm font-medium">
                             <h3 className="text-gray-900">{product.name}</h3>
-                            <p className="text-gray-900">{product.price} per night</p><br/>
+                            <p className="text-gray-900">
+                              {product.price} per night
+                            </p>
+                            <br />
                             <p className="text-gray-500">{product.dates}</p>
                             <button
                               type="button"
@@ -125,20 +219,12 @@ function Checkout() {
                     </div>
                   </form>
 
-                  <dl className="mt-10 space-y-6 text-sm font-medium text-gray-500">
+                  <div className="mt-10 space-y-6 text-sm font-medium text-gray-500">
                     <div className="flex justify-between">
                       <dt>Subtotal</dt>
                       <dd className="text-gray-900">{subtotal}</dd>
                     </div>
-                    <div className="flex justify-between">
-                      <dt className="flex">
-                        Discount
-                        <span className="ml-2 rounded-full bg-gray-200 px-2 py-0.5 text-xs tracking-wide text-gray-600">
-                          {discount.code}
-                        </span>
-                      </dt>
-                      <dd className="text-gray-900">-{discount.amount}</dd>
-                    </div>
+
                     <div className="flex justify-between">
                       <dt>Taxes</dt>
                       <dd className="text-gray-900">{taxes}</dd>
@@ -147,7 +233,7 @@ function Checkout() {
                       <dt>Fees</dt>
                       <dd className="text-gray-900">{fees}</dd>
                     </div>
-                  </dl>
+                  </div>
                 </Disclosure.Panel>
 
                 <p className="mt-6 flex items-center justify-between border-t border-gray-200 pt-6 text-sm font-medium text-gray-900">
@@ -181,9 +267,13 @@ function Checkout() {
                 />
                 <div className="flex flex-col justify-between space-y-4">
                   <div className="space-y-1 text-sm font-medium">
-                    <h3 className="text-gray-900">{product.name}</h3>
-                    <p className="text-gray-900">{product.price} per night</p><br/>
-                    <p className="text-gray-500">{product.dates}</p>
+                    {/* TODO: Enter info from router */}
+                    <h3 className="text-gray-900">{propertyName}</h3>
+                    <p className="text-gray-900">{pricePerNight} per night</p>
+                    <br />
+                    <p className="text-gray-500">{`${dateToStringNumerical(
+                      dates.startDate
+                    )} - ${dateToStringNumerical(dates.endDate)}`}</p>
                     <button
                       type="button"
                       className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
@@ -213,40 +303,22 @@ function Checkout() {
                 />
                 <button
                   type="submit"
-                  className="rounded-md bg-gray-200 px-4 text-sm font-medium text-gray-600 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+                  className="rounded-md bg-gray-200 px-4 py-1 text-sm font-medium text-gray-600 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
                 >
                   Apply
                 </button>
               </div>
             </form>
 
-            <dl className="mt-10 space-y-6 text-sm font-medium text-gray-500">
-              <div className="flex justify-between">
-                <dt>Subtotal</dt>
-                <dd className="text-gray-900">{subtotal}</dd>
-              </div>
-              <div className="flex justify-between">
-                <dt className="flex">
-                  Discount
-                  <span className="ml-2 rounded-full bg-gray-200 px-2 py-0.5 text-xs tracking-wide text-gray-600">
-                    {discount.code}
-                  </span>
-                </dt>
-                <dd className="text-gray-900">-{discount.amount}</dd>
-              </div>
-              <div className="flex justify-between">
-                <dt>Taxes</dt>
-                <dd className="text-gray-900">{taxes}</dd>
-              </div>
-              <div className="flex justify-between">
-                <dt>Fees</dt>
-                <dd className="text-gray-900">{fees}</dd>
-              </div>
+            <div className="mt-10 flex flex-col space-y-6 text-sm font-medium text-gray-500">
+              {invoiceItems.map((invoiceItem: InvoiceItem, index) => {
+                return <CheckoutInvoiceItemDisplay invoiceItem={invoiceItem} />;
+              })}
               <div className="flex items-center justify-between border-t border-gray-200 pt-6 text-gray-900">
                 <dt className="text-base">Total</dt>
-                <dd className="text-base">{total}</dd>
+                <dd className="text-base">{formatCurrencyExact(totalPrice)}</dd>
               </div>
-            </dl>
+            </div>
           </div>
         </section>
 
@@ -256,9 +328,7 @@ function Checkout() {
           className="flex-auto overflow-y-auto px-4 pb-16 pt-12 sm:px-6 sm:pt-16 lg:px-8 lg:pb-24 lg:pt-0"
         >
           <div className="mx-auto max-w-lg">
-            <div className="hidden py-8 lg:flex">
-
-            </div>
+            <div className="hidden py-8 lg:flex"></div>
 
             <button
               type="button"
@@ -288,7 +358,7 @@ function Checkout() {
               </div>
             </div>
 
-            <form className="mt-6">
+            {/* <form className="mt-6">
               <div className="grid grid-cols-12 gap-x-4 gap-y-6">
                 <div className="col-span-full">
                   <label
@@ -467,9 +537,92 @@ function Checkout() {
                 />
                 Payment details are secured through end-to-end encryption
               </p>
-            </form>
+            </form> */}
+            {clientSecret && (
+              <Elements stripe={stripe} options={{ clientSecret }}>
+                <form>
+                  <LinkAuthenticationElement />
+                  {/*TODO: Collect first and last name in AddressElement or create own */}
+                  {/* <AddressElement className="mt-3" options={{ mode: 'shipping' }}/>  */}
+                  <PaymentElement className="mt-3" />
+
+                  <button
+                    type="button"
+                    className="mx-auto mt-10 flex w-1/2 items-center justify-center rounded-md border border-transparent bg-sky-500 py-2 text-white hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
+                  >
+                    <p>Submit</p>
+                  </button>
+                </form>
+              </Elements>
+            )}
           </div>
         </section>
       </main>
+    </div>
   );
+}
+
+function CheckoutInvoiceItemDisplay({
+  invoiceItem,
+}: {
+  invoiceItem: InvoiceItem;
+}) {
+  const { description, prices, subtotal } = invoiceItem;
+  const hasBreakdown = prices.length > 1;
+
+  const [showSubItems, setShowSubItems] = useState(false);
+
+  return (
+    <div className="flex flex-col">
+      <div
+        key={`checkout-item-${description}-invoice-item`}
+        className="flex justify-between"
+      >
+        <div
+          onClick={() => setShowSubItems(!showSubItems)}
+          className={classNames(
+            "flex gap-3",
+            hasBreakdown ? "cursor-pointer" : ""
+          )}
+        >
+          {description}
+          {hasBreakdown ? (
+            showSubItems ? (
+              <ChevronRightIcon className="h-6 rounded-md border" />
+            ) : (
+              <ChevronDownIcon className="h-6 rounded-md border" />
+            )
+          ) : null}
+        </div>
+        <div className="text-gray-900">{formatCurrencyExact(subtotal)}</div>
+      </div>
+
+      {hasBreakdown && showSubItems ? (
+        <div className="mt-2 flex flex-col gap-2 border-l-2 pl-4">
+          {prices.map((price) => {
+            return (
+              <div
+                key={`checkout-subitem-${price.description}-${price.uid}`}
+                className="flex justify-between gap-2"
+              >
+                <p>{price.description}</p>
+                <p className="">{formatCurrencyExact(price.amount)}</p>
+              </div>
+            );
+          })}
+        </div>
+      ) : null}
+    </div>
+  );
+
+  // TODO: Add discount item displays:
+  //   <div className="flex justify-between">
+  //   <dt className="flex">
+  //     Discount
+  //     <span className="ml-2 rounded-full bg-gray-200 px-2 py-0.5 text-xs tracking-wide text-gray-600">
+  //       {discount.code}
+  //     </span>
+  //   </dt>
+  //   <dd className="text-gray-900">-{discount.amount}</dd>
+  // </div>
 }

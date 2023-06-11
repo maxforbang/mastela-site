@@ -29,7 +29,7 @@ import sanityClient from "../../../sanity/lib/sanityClient";
 import { groq } from "next-sanity";
 import { urlFor } from "~/utils/functions/urlFor";
 import { useRouter } from "next/router";
-import { formatCurrency } from "~/utils/functions/formatCurrency";
+import { formatCurrencyRounded } from "~/utils/functions/formatCurrency";
 import {
   SkeletonBookNowDesktop,
   SkeletonPropertyDescription,
@@ -38,9 +38,10 @@ import {
 } from "~/components/property/LoadingPropertyPage";
 import { RouterOutputs } from "~/utils/api";
 import { InvoiceItem } from "types";
-import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
+import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { classNames, formatDateUrl } from "~/utils/functions/functions";
 import { getUrlParams } from "~/utils/functions/getUrlParams";
+
 
 const PropertyPage: NextPageWithLayout = (
   props: InferGetStaticPropsType<typeof getStaticProps>
@@ -50,19 +51,23 @@ const PropertyPage: NextPageWithLayout = (
   // TODO: MAKE SHALLOW ROUTE https://nextjs.org/docs/pages/building-your-application/routing/linking-and-navigating#shallow-routing
   //    /[properties]    for the default page without specific prices
   //    /[properties]/?arrival=[x]&depature=[y]    for specific prices which calls getQuote api
-  let arrival;
-  let departure;
+
+  let { slug, arrival, departure } = props;
+
+  // let arrival
+  // let departure
+
   if (!router.isReady) {
     return null;
   } else {
     ({ arrival, departure } = getUrlParams(router.asPath));
-    console.log("arrival asPath", arrival);
+    
   }
 
-  const { slug } = props;
+
   // const { arrival, departure, noOfGuests } = router.query;
 
-  console.log("arrival post console", arrival);
+  
 
   // useEffect(() => {
   //   if (router.isReady && (!arrival || !departure || arrival >= departure)) {
@@ -161,19 +166,24 @@ function BookNowDesktop({ slug, arrival, departure, propertyIsLoading }) {
   type ImportedType = RouterOutputs["properties"]["getQuote"];
   const utils = api.useContext();
 
-  if (!arrival || !departure) {
-    // if (propertyIsLoading) {
-    //TODO: Conditional render of default card causes server hydration error
-    return <SkeletonBookNowDesktop />;
-  }
+  
+
 
   const [dates, setDates] = useState({
     startDate: arrival,
     endDate: departure,
   });
 
+  const [enableQuoteQuery, setEnableQuoteQuery] = useState(false);
+
+  useEffect(() => {
+    if (arrival && departure) {
+      setEnableQuoteQuery(true);
+    }
+  }, [arrival, departure]);
+
   const {
-    data: bookingPrice,
+    data: pricingInfo,
     isLoading,
     isError,
     error,
@@ -187,6 +197,7 @@ function BookNowDesktop({ slug, arrival, departure, propertyIsLoading }) {
     },
     {
       retry: 0,
+      // enabled: enableQuoteQuery
     }
   );
 
@@ -200,8 +211,8 @@ function BookNowDesktop({ slug, arrival, departure, propertyIsLoading }) {
   let pricePerNight = "Starting at $250";
   let invoiceItems = [];
 
-  if (bookingPrice !== null && !isError) {
-    ({ totalPrice, pricePerNight, invoiceItems } = bookingPrice);
+  if (pricingInfo !== null && !isError) {
+    ({ totalPrice, pricePerNight, invoiceItems } = pricingInfo);
   }
 
   if (isError && !errorMsg.length) {
@@ -209,8 +220,6 @@ function BookNowDesktop({ slug, arrival, departure, propertyIsLoading }) {
   } else if (isSuccess && errorMsg.length) {
     setErrorMsg("");
   }
-
-  
 
   return (
     <div className="sticky top-32 mx-auto mt-12 hidden h-max w-1/3 rounded-xl border p-8 shadow-xl md:block">
@@ -227,13 +236,13 @@ function BookNowDesktop({ slug, arrival, departure, propertyIsLoading }) {
       />
       <div className="py-5">
         <Link
-          href="/checkout"
+          href={`/checkout?property=${slug}&arrival=${dates.startDate}&departure=${dates.endDate}`}
           className="text-md flex w-full rounded-lg bg-sky-500 px-6 py-3 text-center font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
           <p className="mx-auto">Reserve</p>
         </Link>
       </div>
-      <p>{errorMsg}</p>
+      <p className="text-rose-700">{errorMsg}</p>
 
       {totalPrice > 0 && (
         <>
@@ -244,7 +253,7 @@ function BookNowDesktop({ slug, arrival, departure, propertyIsLoading }) {
           </div>
           <div className="text flex justify-between pt-4">
             <p className="text-lg font-bold">Total</p>
-            <p className="text-lg font-bold">{formatCurrency(totalPrice)}</p>
+            <p className="text-lg font-bold">{formatCurrencyRounded(totalPrice)}</p>
           </div>
         </>
       )}
@@ -274,7 +283,7 @@ function StackedSearchBar({
 
   return (
     <>
-      <div className="mt-5 rounded-lg border border-slate-400">
+      <div className="mt-5 rounded-lg border border-gray-300">
         <div className="flex flex-col">
           <div
             onClick={() => {
@@ -292,7 +301,7 @@ function StackedSearchBar({
               </p>
               <p className="text-ellipsis">
                 {startDate
-                  ? format(parseISO(startDate), "MM/dd/yyyy")
+                  ? dateToStringNumerical(startDate)
                   : "Add date"}
               </p>
             </div>
@@ -301,7 +310,7 @@ function StackedSearchBar({
                 Checkout
               </p>
               <p>
-                {endDate ? format(parseISO(endDate), "MM/dd/yyyy") : "Add date"}
+                {endDate ? dateToStringNumerical(endDate) : "Add date"}
               </p>
             </div>
           </div>
@@ -362,7 +371,7 @@ function BookNowMobile({ slug, arrival, departure }) {
 
   // TODO: Include subitems (price_types[].prices) from API
   let invoiceItems = [];
-  let pricePerNight = 0;
+  let pricePerNight = "";
 
   if (room_types && room_types[0]) {
     invoiceItems = room_types[0].price_types
@@ -373,11 +382,11 @@ function BookNowMobile({ slug, arrival, departure }) {
             new Date(departure),
             new Date(arrival)
           );
-          pricePerNight = formatCurrency(item.subtotal / nights);
+          pricePerNight = formatCurrencyRounded(item.subtotal / nights);
           description = `${pricePerNight} x ${nights} nights`;
         }
         return {
-          description,
+          description: description,
           price: item.subtotal,
         };
       })
@@ -627,7 +636,10 @@ export async function getStaticProps(
     ctx: { prisma },
   });
 
-  const slug = context.params?.property as string;
+  const slug = context.params?.property 
+
+  const arrival = context.params?.arrival as string || null;
+  const departure = context.params?.departure as string || null;
 
   await helpers.getProperty.prefetch({ slug: slug });
 
@@ -635,12 +647,13 @@ export async function getStaticProps(
     props: {
       trpcState: helpers.dehydrate(),
       slug,
+      arrival,
+      departure
     },
   };
 }
 
 function InvoiceItemDisplay({ invoiceItem }: { invoiceItem: InvoiceItem }) {
-  console.log(invoiceItem);
   const { description, prices, subtotal } = invoiceItem;
   const hasBreakdown = prices.length > 1;
 
@@ -649,11 +662,10 @@ function InvoiceItemDisplay({ invoiceItem }: { invoiceItem: InvoiceItem }) {
   return (
     <>
       <div
-        key={`bn-desktop-price-item-${invoiceItem.description} Invoice Item`}
+        key={`bn-desktop-price-item-${description}-invoice-item`}
         className="text flex justify-between gap-2"
       >
         {
-          //
           <>
             <div
               onClick={() => setShowSubItems(!showSubItems)}
@@ -665,13 +677,13 @@ function InvoiceItemDisplay({ invoiceItem }: { invoiceItem: InvoiceItem }) {
               {description}
               {hasBreakdown ? (
                 showSubItems ? (
-                  <ChevronUpIcon className="h-6 rounded-md border" />
+                  <ChevronRightIcon className="h-6 rounded-md border" />
                 ) : (
                   <ChevronDownIcon className="h-6 rounded-md border" />
                 )
               ) : null}
             </div>
-            <p className="font-semibold">{formatCurrency(subtotal)}</p>
+            <p className="font-semibold">{formatCurrencyRounded(subtotal)}</p>
           </>
         }
       </div>
@@ -681,11 +693,11 @@ function InvoiceItemDisplay({ invoiceItem }: { invoiceItem: InvoiceItem }) {
           {prices.map((price) => {
             return (
               <div
-                key={`bn-desktop-price-item-${price.uid}`}
+                key={`bn-desktop-subitem-${price.uid}`}
                 className="flex justify-between gap-2"
               >
                 <p>{price.description}</p>
-                <p>{formatCurrency(price.amount)}</p>
+                <p>{formatCurrencyRounded(price.amount)}</p>
               </div>
             );
           })}
@@ -693,4 +705,18 @@ function InvoiceItemDisplay({ invoiceItem }: { invoiceItem: InvoiceItem }) {
       ) : null}
     </>
   );
+}
+
+
+export function dateToStringNumerical(date: string | Date): string {
+  
+  if (typeof date === 'string') {
+    date = parseISO(date)
+  }
+  
+  if (date.getFullYear() !== new Date().getFullYear()) {
+    return format(date, "M/dd/yyyy");
+  }
+
+  return format(date, "M/dd/yy");
 }

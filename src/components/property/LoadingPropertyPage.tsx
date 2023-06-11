@@ -1,35 +1,3 @@
-import Layout from "~/components/Layout";
-import type { NextPageWithLayout } from "../_app";
-import { ReactElement, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import {
-  DevicePhoneMobileIcon,
-  WifiIcon,
-  CalendarDaysIcon,
-} from "@heroicons/react/24/outline";
-import Map from "~/components/search/Map";
-import "react-date-range/dist/styles.css"; // main style file
-import "react-date-range/dist/theme/default.css"; // theme css file
-import { DateRange } from "react-date-range";
-import { addDays, addYears, differenceInDays } from "date-fns";
-import {
-  GetStaticProps,
-  GetStaticPropsContext,
-  InferGetStaticPropsType,
-} from "next";
-import { PortableText } from "@portabletext/react";
-import { createServerSideHelpers } from "@trpc/react-query/server";
-import { propertiesRouter } from "../../server/api/routers/properties";
-import { prisma } from "~/server/db";
-import { api } from "~/utils/api";
-import sanityClient from "../../../sanity/lib/sanityClient";
-import { groq } from "next-sanity";
-import { urlFor } from "~/utils/functions/urlFor";
-import { useRouter } from "next/router";
-import { formatCurrency } from "~/utils/functions/formatCurrency";
-import SkeletonInfoCard from "~/components/search/SkeletonInfoCard";
-
 const LoadingPropertyPage = () => {
   return (
     <>

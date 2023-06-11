@@ -16,6 +16,8 @@
     "@prisma/client": "^4.14.0",
     "@sanity/image-url": "^1.0.2",
     "@sanity/vision": "^3.11.3",
+    "@stripe/react-stripe-js": "^2.1.0",
+    "@stripe/stripe-js": "^1.54.0",
     "@t3-oss/env-nextjs": "^0.3.1",
     "@tanstack/react-query": "^4.29.7",
     "@trpc/client": "^10.26.0",
@@ -31,6 +33,7 @@
     "react-dom": "18.2.0",
     "react-map-gl": "^7.0.25",
     "sanity": "^3.11.3",
+    "stripe": "^12.9.0",
     "styled-components": "^5.3.11",
     "superjson": "1.12.2",
     "zod": "^3.21.4"
