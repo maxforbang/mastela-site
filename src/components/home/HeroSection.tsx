@@ -178,7 +178,7 @@ export function SearchBar({
           ranges={calendarDates}
           direction="vertical"
           minDate={new Date()}
-          maxDate={addYears(new Date(), 2)}
+          maxDate={addYears(new Date(), 1)}
           disabledDates={[]}
           // disabledDay={(date) => date.getDay() === 4}
           preventSnapRefocus={true}

@@ -8,13 +8,13 @@ import {
   LockClosedIcon,
 } from "@heroicons/react/20/solid";
 import { useRouter } from "next/router";
-import { parseISO } from "date-fns";
+import { addYears, parseISO } from "date-fns";
 import { prisma } from "~/server/db";
 import { dateToStringNumerical } from "./properties/[property]";
 import { api } from "~/utils/api";
 import Link from "next/link";
 import { InvoiceItem } from "types";
-import { classNames } from "~/utils/functions/functions";
+import { classNames, formatDateUrl } from "~/utils/functions/functions";
 import {
   formatCurrencyRounded,
   formatCurrencyExact,
@@ -30,6 +30,7 @@ import {
   useStripe,
 } from "@stripe/react-stripe-js";
 import { getBaseUrl } from "~/utils/functions/getBaseUrl";
+import { DateRange } from "react-date-range";
 
 const subtotal = "$19,483.00";
 const discount = { code: "CHEAPSKATE", amount: "$24.00" };
@@ -105,6 +106,7 @@ function Checkout() {
     );
   }
 
+  const utils = api.useContext();
   const [dates, setDates] = useState({
     startDate: arrival,
     endDate: departure,
@@ -141,6 +143,15 @@ function Checkout() {
     }
   }, [clientSecret]);
 
+  useEffect(() => {
+    if (arrival !== dates.startDate || departure !== dates.endDate) {
+      setPaymentIntentQueryEnabled(true);
+      router.push(
+        `/checkout?property=${slug}&arrival=${dates.startDate}&departure=${dates.endDate}`
+      );
+    }
+  }, [dates]);
+
   // const {data : bookingId} = api.properties.createBooking.useQuery()
 
   // console.log(bookingId)
@@ -150,7 +161,7 @@ function Checkout() {
       <main className="lg:flex lg:min-h-full lg:flex-row-reverse lg:overflow-hidden">
         <h1 className="sr-only">Checkout</h1>
 
-        <OrderSummary slug={slug} dates={dates} />
+        <OrderSummary slug={slug} dates={dates} setDates={setDates} />
 
         {/* Checkout form */}
         <section
@@ -160,7 +171,7 @@ function Checkout() {
           <div className="mx-auto max-w-lg">
             <div className="flex gap-4">
               <p className="pb-6 text-2xl">Checkout</p>
-              {!clientSecret && <LoadingSpinner />}
+              {/* {!clientSecret && <LoadingSpinner />} */}
             </div>
 
             {clientSecret ? (
@@ -242,7 +253,7 @@ function CheckoutInvoiceItemDisplay({
   // </div>
 }
 
-function OrderSummary({ slug, dates }) {
+function OrderSummary({ slug, dates, setDates }) {
   const {
     data: pricingInfo,
     isLoading,
@@ -250,11 +261,24 @@ function OrderSummary({ slug, dates }) {
     error,
     isLoadingError,
     isSuccess,
-  } = api.properties.getQuote.useQuery({
-    slug: slug as string,
-    startDate: dates.startDate as string,
-    endDate: dates.endDate as string,
-  });
+  } = api.properties.getQuote.useQuery(
+    {
+      slug: slug as string,
+      startDate: dates.startDate as string,
+      endDate: dates.endDate as string,
+    },
+    {
+      retry: 0,
+    }
+  );
+
+  const [errorMsg, setErrorMsg] = useState("");
+
+  if (isError && errorMsg !== error.message) {
+    setErrorMsg(error.message);
+  } else if (isSuccess && errorMsg.length) {
+    setErrorMsg("");
+  }
 
   let propertyName = "";
   let totalPrice = 0;
@@ -372,19 +396,17 @@ function OrderSummary({ slug, dates }) {
         </Disclosure>
       </section>
 
-      {/* Order summary */}
+      {/* Desktop Order summary */}
       <section
         aria-labelledby="summary-heading"
-        className="hidden w-full max-w-md flex-col bg-gray-50 lg:flex"
+        className="relative hidden w-full max-w-md flex-col bg-gray-50 lg:flex"
       >
         <h2 id="summary-heading" className="sr-only">
           Order summary
         </h2>
 
-        <ul
-          role="list"
-          className="flex-auto divide-y divide-gray-200 overflow-y-auto px-6"
-        >
+        <ul role="list" className="flex-auto  overflow-y-auto px-6">
+          {/* TODO: Don't map over products */}
           {products.map((product) => (
             <li key={product.id} className="flex space-x-6 py-6">
               <img
@@ -394,25 +416,24 @@ function OrderSummary({ slug, dates }) {
               />
               <div className="flex flex-col justify-between space-y-4">
                 <div className="space-y-1 text-sm font-medium">
-                  {/* TODO: Enter info from router */}
                   <h3 className="text-gray-900">{propertyName}</h3>
-                  <p className="text-gray-900">{pricePerNight} per night</p>
+                  {pricePerNight > 0 && (
+                    <p className="text-gray-900">{pricePerNight} per night</p>
+                  )}
                   <br />
                   <p className="text-gray-500">{`${dateToStringNumerical(
                     dates.startDate
                   )} - ${dateToStringNumerical(dates.endDate)}`}</p>
-                  <button
-                    type="button"
-                    className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
-                  >
-                    Edit Dates
-                  </button>
+
+                  <CalendarPopUp dates={dates} setDates={setDates} />
                 </div>
               </div>
             </li>
           ))}
+          <p className="mt-6 w-full animate-bounce px-8 text-rose-600">
+            {errorMsg}
+          </p>
         </ul>
-
         <div className="sticky bottom-0 flex-none border-t border-gray-200 bg-gray-50 p-6">
           <form>
             <label
@@ -524,7 +545,10 @@ function CheckoutForm() {
             onChange={(event) => setName(event.target.value)}
           />
         </label>
-        <label htmlFor="phone" className="mb-2 flex w-full transform-gpu flex-col text-sm text-gray-600 transition-opacity duration-500">
+        <label
+          htmlFor="phone"
+          className="mb-2 flex w-full transform-gpu flex-col text-sm text-gray-600 transition-opacity duration-500"
+        >
           Phone
           <input
             type="tel"
@@ -604,6 +628,74 @@ function LoadingSpinner() {
         />
       </svg>
       <span className="sr-only">Loading...</span>
+    </div>
+  );
+}
+
+function CalendarPopUp({
+  dates,
+  setDates,
+}: {
+  dates?: { startDate: string; endDate: string };
+}) {
+  const currentDate = new Date();
+  const intialCalendarDates = [
+    {
+      startDate: dates?.startDate ? parseISO(dates.startDate) : currentDate,
+      endDate: dates?.endDate ? parseISO(dates.endDate) : currentDate,
+      key: "selection",
+    },
+  ];
+  const [calendarDates, setCalendarDates] = useState(intialCalendarDates);
+  const [calendarShowing, setCalendarShowing] = useState(false);
+
+  return (
+    <div className="">
+      <button
+        type="button"
+        className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+        onClick={() => setCalendarShowing(!calendarShowing)}
+      >
+        {calendarShowing ? 'Cancel' : 'Edit Dates'}
+      </button>
+      <div
+        className={classNames(
+          "absolute left-1/2 top-36 z-10 w-11/12 -translate-x-1/2",
+          !calendarShowing ? "hidden" : ""
+        )}
+      >
+        <div className="relative">
+          <DateRange
+            className={classNames(
+              "relative my-1 rounded-2xl border border-slate-300 shadow-xl"
+            )}
+            onChange={(item) => setCalendarDates([item.selection])}
+            months={1}
+            ranges={calendarDates}
+            rangeColors={["rgb(14 165 233"]}
+            direction="vertical"
+            minDate={new Date()}
+            maxDate={addYears(new Date(), 2)}
+            disabledDates={[]}
+            // disabledDay={(date) => date.getDay() === 4}
+            preventSnapRefocus={true}
+            fixedHeight
+            // scroll={{ enabled: true }}
+          />
+          <div
+            onClick={() => {
+              setDates({
+                startDate: formatDateUrl(calendarDates[0].startDate),
+                endDate: formatDateUrl(calendarDates[0].endDate),
+              });
+              setCalendarShowing(false);
+            }}
+            className="absolute bottom-5 right-6 flex h-8 w-min cursor-pointer items-center justify-center whitespace-nowrap rounded-lg border-b border-r border-slate-300 bg-sky-500 px-5 text-white shadow "
+          >
+            Change Dates
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

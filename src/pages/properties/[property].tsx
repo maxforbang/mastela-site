@@ -39,8 +39,13 @@ import {
 import { RouterOutputs } from "~/utils/api";
 import { InvoiceItem } from "types";
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
-import { classNames, formatDateUrl } from "~/utils/functions/functions";
+import {
+  classNames,
+  formatDateRangeUrl,
+  formatDateUrl,
+} from "~/utils/functions/functions";
 import { getUrlParams } from "~/utils/functions/getUrlParams";
+import { datesEqual } from "~/utils/functions/dates/datesEqual";
 
 const PropertyPage: NextPageWithLayout = (
   props: InferGetStaticPropsType<typeof getStaticProps>
@@ -166,7 +171,11 @@ function BookNowDesktop({ slug, arrival, departure, propertyIsLoading }) {
     endDate: departure,
   });
 
-  console.log("startDate: ", dates.startDate, "endDate: ", dates.endDate);
+  // useEffect(() => {
+  //   if (dates.startDate !== dates.endDate) {
+  //     utils.properties.getQuote.invalidate()
+  //   }
+  // }, [dates])
 
   const [enableQuoteQuery, setEnableQuoteQuery] = useState(false);
 
@@ -219,7 +228,7 @@ function BookNowDesktop({ slug, arrival, departure, propertyIsLoading }) {
     <div className="sticky top-32 mx-auto mt-12 hidden h-max w-1/3 rounded-xl border p-8 shadow-xl md:block">
       <div
         /* Create better way to invalidate query besides clicking dates div */
-        onClick={() => utils.properties.getQuote.invalidate()}
+        // onClick={() => utils.properties.getQuote.invalidate()}
         className="flex items-center gap-1"
       >
         <p className="text-xl font-semibold">{pricePerNight}</p>/<p> night</p>
@@ -227,6 +236,7 @@ function BookNowDesktop({ slug, arrival, departure, propertyIsLoading }) {
       <StackedSearchBar
         dates={{ startDate: dates.startDate, endDate: dates.endDate }}
         setDates={setDates}
+        invalidate={utils.properties.getQuote.invalidate}
       />
       <div className="py-5">
         <Link
@@ -260,6 +270,7 @@ function BookNowDesktop({ slug, arrival, departure, propertyIsLoading }) {
 function StackedSearchBar({
   dates,
   setDates,
+  invalidate,
 }: {
   dates?: { startDate: string; endDate: string };
 }) {
@@ -284,6 +295,7 @@ function StackedSearchBar({
           <div
             onClick={() => {
               setCalendarShowing(!calendarShowing);
+              //TODO: Better way to set dates
               setDates({
                 startDate: startDate,
                 endDate: endDate,
@@ -322,7 +334,16 @@ function StackedSearchBar({
       >
         <DateRange
           className={classNames("my-1 rounded-2xl")}
-          onChange={(item) => setCalendarDates([item.selection])}
+          onChange={(item) => {
+            console.log(item.selection);
+            setCalendarDates([item.selection]);
+            if (
+              !datesEqual(item.selection?.startDate, item.selection?.endDate)
+            ) {
+              setDates(formatDateRangeUrl(item.selection));
+              setCalendarShowing(false)
+            }
+          }}
           months={1}
           ranges={calendarDates}
           direction="vertical"
@@ -403,7 +424,7 @@ function BookNowMobile({ slug, arrival, departure }) {
 }
 
 function AvailabilityCalendar() {
-  const [state, setState] = useState([
+  const [calendarDates, setCalendarDates] = useState([
     {
       startDate: new Date(),
       endDate: addDays(new Date(), 7),
@@ -416,9 +437,25 @@ function AvailabilityCalendar() {
       <div className="flex sm:hidden">
         <DateRange
           className=""
-          onChange={(item) => setState([item.selection])}
+          onChange={(item) => setCalendarDates([item.selection])}
           months={1}
-          ranges={state}
+          ranges={calendarDates}
+          direction="horizontal"
+          // editableDateInputs={true}
+          minDate={new Date()}
+          maxDate={addYears(new Date(), 2)}
+          disabledDates={[]}
+          // disabledDay={(date) => date.getDay() === 4}
+          preventSnapRefocus={true}
+        />
+      </div>
+
+      <div className="hidden sm:block lg:hidden">
+        <DateRange
+          className=""
+          onChange={(item) => setCalendarDates([item.selection])}
+          months={2}
+          ranges={calendarDates}
           direction="horizontal"
           // editableDateInputs={true}
           minDate={new Date()}
@@ -433,26 +470,10 @@ function AvailabilityCalendar() {
         <DateRange
           className=""
           onChange={(item) => {
-            setState([item.selection]);
+            setCalendarDates([item.selection]);
           }}
           months={3}
-          ranges={state}
-          direction="horizontal"
-          // editableDateInputs={true}
-          minDate={new Date()}
-          maxDate={addYears(new Date(), 2)}
-          disabledDates={[]}
-          // disabledDay={(date) => date.getDay() === 4}
-          preventSnapRefocus={true}
-        />
-      </div>
-
-      <div className="hidden sm:block lg:hidden">
-        <DateRange
-          className=""
-          onChange={(item) => setState([item.selection])}
-          months={2}
-          ranges={state}
+          ranges={calendarDates}
           direction="horizontal"
           // editableDateInputs={true}
           minDate={new Date()}
@@ -704,7 +725,6 @@ export function dateToStringNumerical(date: string | Date): string {
     if (!date.length) {
       return "";
     }
-    
     date = parseISO(date);
   }
 
