@@ -1,0 +1,32 @@
+Date : 2023-06-12 01:49:08
+Directory : /Users/max/Documents/Code/mastela-site/src/components/home
+Total : 8 files,  678 codes, 8 comments, 35 blanks, all 721 lines
+
+Languages
++----------------+------------+------------+------------+------------+------------+
+| language       | files      | code       | comment    | blank      | total      |
++----------------+------------+------------+------------+------------+------------+
+| TypeScript JSX |          8 |        678 |          8 |         35 |        721 |
++----------------+------------+------------+------------+------------+------------+
+
+Directories
++------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                               | files      | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                  |          8 |        678 |          8 |         35 |        721 |
++------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| filename                                                                           | language       | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| /Users/max/Documents/Code/mastela-site/src/components/home/AboutUsSection.tsx      | TypeScript JSX |        132 |          0 |          3 |        135 |
+| /Users/max/Documents/Code/mastela-site/src/components/home/AmenitiesSections.tsx   | TypeScript JSX |         38 |          0 |          3 |         41 |
+| /Users/max/Documents/Code/mastela-site/src/components/home/BlogSection.tsx         | TypeScript JSX |        113 |          1 |          6 |        120 |
+| /Users/max/Documents/Code/mastela-site/src/components/home/FAQSection.tsx          | TypeScript JSX |         65 |          1 |          3 |         69 |
+| /Users/max/Documents/Code/mastela-site/src/components/home/HeroSection.tsx         | TypeScript JSX |        173 |          5 |         11 |        189 |
+| /Users/max/Documents/Code/mastela-site/src/components/home/PropertiesSection.tsx   | TypeScript JSX |         52 |          1 |          2 |         55 |
+| /Users/max/Documents/Code/mastela-site/src/components/home/SupportSection.tsx      | TypeScript JSX |         48 |          0 |          4 |         52 |
+| /Users/max/Documents/Code/mastela-site/src/components/home/TestimonialsSection.tsx | TypeScript JSX |         57 |          0 |          3 |         60 |
+| Total                                                                              |                |        678 |          8 |         35 |        721 |
++------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+

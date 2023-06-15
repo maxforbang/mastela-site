@@ -8,8 +8,14 @@ export function formatCurrencyRounded(number: Number) {
   return formattedNumber;
 }
 
-export function formatCurrencyExact(number: Number) {
-  const formattedNumber = number.toLocaleString("en-US", {
+export function formatCurrencyExact(number: number | string) {
+  let parsedNumber: number | string = number;
+  
+  if (typeof number === 'string') {
+    parsedNumber = parseFloat(number);
+  }
+  
+  const formattedNumber = parsedNumber.toLocaleString("en-US", {
     style: "currency",
     currency: "USD",
     minimumFractionDigits: 2

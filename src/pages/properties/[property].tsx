@@ -42,7 +42,6 @@ import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { classNames, formatDateUrl } from "~/utils/functions/functions";
 import { getUrlParams } from "~/utils/functions/getUrlParams";
 
-
 const PropertyPage: NextPageWithLayout = (
   props: InferGetStaticPropsType<typeof getStaticProps>
 ) => {
@@ -61,13 +60,9 @@ const PropertyPage: NextPageWithLayout = (
     return null;
   } else {
     ({ arrival, departure } = getUrlParams(router.asPath));
-    
   }
 
-
   // const { arrival, departure, noOfGuests } = router.query;
-
-  
 
   // useEffect(() => {
   //   if (router.isReady && (!arrival || !departure || arrival >= departure)) {
@@ -166,13 +161,12 @@ function BookNowDesktop({ slug, arrival, departure, propertyIsLoading }) {
   type ImportedType = RouterOutputs["properties"]["getQuote"];
   const utils = api.useContext();
 
-  
-
-
   const [dates, setDates] = useState({
     startDate: arrival,
     endDate: departure,
   });
+
+  console.log("startDate: ", dates.startDate, "endDate: ", dates.endDate);
 
   const [enableQuoteQuery, setEnableQuoteQuery] = useState(false);
 
@@ -215,7 +209,7 @@ function BookNowDesktop({ slug, arrival, departure, propertyIsLoading }) {
     ({ totalPrice, pricePerNight, invoiceItems } = pricingInfo);
   }
 
-  if (isError && !errorMsg.length) {
+  if (isError && errorMsg !== error.message) {
     setErrorMsg(error.message);
   } else if (isSuccess && errorMsg.length) {
     setErrorMsg("");
@@ -242,7 +236,7 @@ function BookNowDesktop({ slug, arrival, departure, propertyIsLoading }) {
           <p className="mx-auto">Reserve</p>
         </Link>
       </div>
-      <p className="text-rose-700">{errorMsg}</p>
+      <p className="text-rose-600">{errorMsg}</p>
 
       {totalPrice > 0 && (
         <>
@@ -253,7 +247,9 @@ function BookNowDesktop({ slug, arrival, departure, propertyIsLoading }) {
           </div>
           <div className="text flex justify-between pt-4">
             <p className="text-lg font-bold">Total</p>
-            <p className="text-lg font-bold">{formatCurrencyRounded(totalPrice)}</p>
+            <p className="text-lg font-bold">
+              {formatCurrencyRounded(totalPrice)}
+            </p>
           </div>
         </>
       )}
@@ -300,18 +296,14 @@ function StackedSearchBar({
                 Check-in
               </p>
               <p className="text-ellipsis">
-                {startDate
-                  ? dateToStringNumerical(startDate)
-                  : "Add date"}
+                {startDate ? dateToStringNumerical(startDate) : "Add date"}
               </p>
             </div>
             <div className="flex flex-1 flex-col gap-1 truncate p-3">
               <p className="thin text-xs font-bold uppercase tracking-tight">
                 Checkout
               </p>
-              <p>
-                {endDate ? dateToStringNumerical(endDate) : "Add date"}
-              </p>
+              <p>{endDate ? dateToStringNumerical(endDate) : "Add date"}</p>
             </div>
           </div>
           <div className="flex flex-1 flex-col gap-1 border-t p-3">
@@ -636,10 +628,10 @@ export async function getStaticProps(
     ctx: { prisma },
   });
 
-  const slug = context.params?.property 
+  const slug = context.params?.property;
 
-  const arrival = context.params?.arrival as string || null;
-  const departure = context.params?.departure as string || null;
+  const arrival = (context.params?.arrival as string) || null;
+  const departure = (context.params?.departure as string) || null;
 
   await helpers.getProperty.prefetch({ slug: slug });
 
@@ -648,7 +640,7 @@ export async function getStaticProps(
       trpcState: helpers.dehydrate(),
       slug,
       arrival,
-      departure
+      departure,
     },
   };
 }
@@ -707,13 +699,15 @@ function InvoiceItemDisplay({ invoiceItem }: { invoiceItem: InvoiceItem }) {
   );
 }
 
-
 export function dateToStringNumerical(date: string | Date): string {
-  
-  if (typeof date === 'string') {
-    date = parseISO(date)
+  if (typeof date === "string") {
+    if (!date.length) {
+      return "";
+    }
+    
+    date = parseISO(date);
   }
-  
+
   if (date.getFullYear() !== new Date().getFullYear()) {
     return format(date, "M/dd/yyyy");
   }

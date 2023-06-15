@@ -53,6 +53,14 @@ export function SearchBar({
 
   const { startDate, endDate } = calendarDates[0];
 
+  const isInitialCalendar =
+    startDate.getTime() === endDate.getTime() &&
+    startDate.getTime() === currentDate.getTime();
+
+  console.log("current", currentDate);
+  console.log("start", startDate);
+  const isValidEntry = startDate.getTime() !== endDate.getTime();
+
   // const arrival = formatDate(startDate);
   // const departure = formatDate(endDate);
 
@@ -67,32 +75,30 @@ export function SearchBar({
         <div className="flex flex-grow pl-6">
           <div className="flex">
             <input
-              className="mx-2 w-1/3 cursor-pointer bg-transparent outline-none"
+              className={classNames(
+                "mx-2 w-1/3 cursor-pointer bg-transparent text-gray-500 outline-none",
+                isValidEntry ? "text-inherit" : ""
+              )}
               type="text"
               placeholder="Check-in"
-              value={
-                startDate !== endDate
-                  ? formatDateEnglish(startDate)
-                  : "Check-in"
-              }
+              value={isValidEntry ? formatDateEnglish(startDate) : "Check-in"}
               readOnly
               onClick={() => setCalendarShowing(true)}
             />
             <input
-              className="mx-2 w-1/3 cursor-pointer bg-transparent outline-none"
+              className={classNames(
+                "mx-2 w-1/3 cursor-pointer bg-transparent text-gray-500 outline-none",
+                isValidEntry ? "text-inherit" : ""
+              )}
               type="text"
               placeholder="Check-out"
-              value={
-                startDate !== endDate
-                  ? formatDateEnglish(endDate)
-                  : "Check-out"
-              }
+              value={isValidEntry ? formatDateEnglish(endDate) : "Check-out"}
               readOnly
               onClick={() => setCalendarShowing(true)}
             />
 
             <input
-              className="mx-2 mr-0 w-1/3 bg-transparent outline-none"
+              className="mx-2 mr-0 w-1/3 bg-transparent placeholder-gray-500 outline-none"
               type="text"
               placeholder="Guests"
               onClick={() => setCalendarShowing(false)}
@@ -100,10 +106,14 @@ export function SearchBar({
           </div>
         </div>
         <Link
-        onClick={() => setCalendarShowing(false)}
-          href={`/search?arrival=${formatDateUrl(
-            startDate
-          )}&departure=${formatDateUrl(endDate)}`}
+          onClick={() => setCalendarShowing(false)}
+          href={
+            !(startDate.getTime() == endDate.getTime())
+              ? `/search?arrival=${formatDateUrl(
+                  startDate
+                )}&departure=${formatDateUrl(endDate)}`
+              : `/our-villas`
+          }
         >
           <svg
             className="mr-2 h-10 drop-shadow"

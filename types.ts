@@ -1,3 +1,10 @@
+export type BookingQuoteInfo = {
+  propertyName: string;
+  invoiceItems: InvoiceItem[];
+  pricePerNight: string;
+  totalPrice: number;
+};
+
 export type InvoiceItem = {
   description: string;
   prices: SubItem[];
@@ -10,9 +17,5 @@ export type SubItem = {
   room_rate_type: 0 | null;
 };
 
-export type BookingPricingInfo = {
-  propertyName: string;
-  invoiceItems: InvoiceItem[];
-  pricePerNight: string;
-  totalPrice: number;
-};
+export type 
+
