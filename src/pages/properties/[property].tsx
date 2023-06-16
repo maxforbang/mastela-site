@@ -46,26 +46,26 @@ import {
 } from "~/utils/functions/functions";
 import { getUrlParams } from "~/utils/functions/getUrlParams";
 import { datesEqual } from "~/utils/functions/dates/datesEqual";
+import { DateRangePicker } from "~/components/DateRangePicker";
 
 const PropertyPage: NextPageWithLayout = (
   props: InferGetStaticPropsType<typeof getStaticProps>
 ) => {
   const router = useRouter();
-
-  // TODO: MAKE SHALLOW ROUTE https://nextjs.org/docs/pages/building-your-application/routing/linking-and-navigating#shallow-routing
-  //    /[properties]    for the default page without specific prices
-  //    /[properties]/?arrival=[x]&depature=[y]    for specific prices which calls getQuote api
-
   let { slug, arrival, departure } = props;
-
-  // let arrival
-  // let departure
 
   if (!router.isReady) {
     return null;
-  } else {
-    ({ arrival, departure } = getUrlParams(router.asPath));
-  }
+  } 
+
+  ({ arrival, departure } = getUrlParams(router.asPath));
+  
+
+  const [dates, setDates] = useState({
+    startDate: arrival,
+    endDate: departure,
+  });
+
 
   // const { arrival, departure, noOfGuests } = router.query;
 
@@ -88,18 +88,18 @@ const PropertyPage: NextPageWithLayout = (
     isLoading: propertyIsLoading,
   } = api.properties.getProperty.useQuery({ slug });
 
+
   return (
     <>
       <div className="mx-auto max-w-7xl text-gray-800 sm:px-6 lg:px-8">
         <PropertyImages mainImage={mainImage} />
-
         <div className="max-w-7xl sm:flex lg:gap-8">
           <div className="flex flex-col justify-center px-6 md:w-2/3">
             <PropertyHeader name={name} occupancy={occupancy} />
             <PropertyFeatures />
             <PropertyDescription preview={preview} />
             <PropertyMap coords={coords} />
-            <AvailabilityCalendar />
+            <AvailabilityCalendar dates={dates} setDates={setDates} property={slug}/>
             {/* Reviews */}
             {/* Contact Host */}
             {/* FAQ's / Refund */}
@@ -110,12 +110,15 @@ const PropertyPage: NextPageWithLayout = (
             arrival={arrival}
             departure={departure}
             propertyIsLoading={propertyIsLoading}
+            dates={dates}
+            setDates={setDates}
           />
         </div>
       </div>
-      {/* Sticky Book Now Desktop */}
 
-      <BookNowMobile slug={slug} arrival={arrival} departure={departure} />
+
+      {/* Possibly set to scroll=enabled for mobile */}
+      <BookNowMobile slug={slug} arrival={arrival} departure={departure} /> 
     </>
   );
 };
@@ -162,28 +165,21 @@ function PropertyFeatures() {
   );
 }
 
-function BookNowDesktop({ slug, arrival, departure, propertyIsLoading }) {
-  type ImportedType = RouterOutputs["properties"]["getQuote"];
-  const utils = api.useContext();
-
-  const [dates, setDates] = useState({
-    startDate: arrival,
-    endDate: departure,
-  });
+function BookNowDesktop({
+  slug,
+  arrival,
+  departure,
+  propertyIsLoading,
+  dates,
+  setDates,
+}) {
+  // const [enableQuoteQuery, setEnableQuoteQuery] = useState(false);
 
   // useEffect(() => {
-  //   if (dates.startDate !== dates.endDate) {
-  //     utils.properties.getQuote.invalidate()
+  //   if (arrival && departure) {
+  //     setEnableQuoteQuery(true);
   //   }
-  // }, [dates])
-
-  const [enableQuoteQuery, setEnableQuoteQuery] = useState(false);
-
-  useEffect(() => {
-    if (arrival && departure) {
-      setEnableQuoteQuery(true);
-    }
-  }, [arrival, departure]);
+  // }, [arrival, departure]);
 
   const {
     data: pricingInfo,
@@ -236,7 +232,7 @@ function BookNowDesktop({ slug, arrival, departure, propertyIsLoading }) {
       <StackedSearchBar
         dates={{ startDate: dates.startDate, endDate: dates.endDate }}
         setDates={setDates}
-        invalidate={utils.properties.getQuote.invalidate}
+        property={slug}
       />
       <div className="py-5">
         <Link
@@ -271,22 +267,11 @@ function StackedSearchBar({
   dates,
   setDates,
   invalidate,
+  property
 }: {
   dates?: { startDate: string; endDate: string };
 }) {
-  const currentDate = new Date();
-  const intialCalendarDates = [
-    {
-      startDate: dates?.startDate ? parseISO(dates.startDate) : currentDate,
-      endDate: dates?.endDate ? parseISO(dates.endDate) : currentDate,
-      key: "selection",
-    },
-  ];
-  const [calendarDates, setCalendarDates] = useState(intialCalendarDates);
   const [calendarShowing, setCalendarShowing] = useState(false);
-
-  const startDate = formatDateUrl(calendarDates[0]?.startDate);
-  const endDate = formatDateUrl(calendarDates[0]?.endDate);
 
   return (
     <>
@@ -295,11 +280,6 @@ function StackedSearchBar({
           <div
             onClick={() => {
               setCalendarShowing(!calendarShowing);
-              //TODO: Better way to set dates
-              setDates({
-                startDate: startDate,
-                endDate: endDate,
-              });
             }}
             className="flex items-center"
           >
@@ -308,21 +288,27 @@ function StackedSearchBar({
                 Check-in
               </p>
               <p className="text-ellipsis">
-                {startDate ? dateToStringNumerical(startDate) : "Add date"}
+                {dates?.startDate
+                  ? dateToStringNumerical(dates?.startDate)
+                  : "Add date"}
               </p>
             </div>
             <div className="flex flex-1 flex-col gap-1 truncate p-3">
               <p className="thin text-xs font-bold uppercase tracking-tight">
                 Checkout
               </p>
-              <p>{endDate ? dateToStringNumerical(endDate) : "Add date"}</p>
+              <p>
+                {dates?.endDate
+                  ? dateToStringNumerical(dates?.endDate)
+                  : "Add date"}
+              </p>
             </div>
           </div>
           <div className="flex flex-1 flex-col gap-1 border-t p-3">
             <p className="thin text-xs font-bold uppercase tracking-tight">
               Guests
             </p>
-            <p>4 guests</p>
+            <p>{property === 'the-twins-villa' || property === 'villa-encore' ? 'Up to 10 guests': 'Up to 8 guests'}</p>
           </div>
         </div>
       </div>
@@ -332,28 +318,11 @@ function StackedSearchBar({
           !calendarShowing ? "hidden" : ""
         )}
       >
-        <DateRange
-          className={classNames("my-1 rounded-2xl")}
-          onChange={(item) => {
-            console.log(item.selection);
-            setCalendarDates([item.selection]);
-            if (
-              !datesEqual(item.selection?.startDate, item.selection?.endDate)
-            ) {
-              setDates(formatDateRangeUrl(item.selection));
-              setCalendarShowing(false)
-            }
-          }}
-          months={1}
-          ranges={calendarDates}
-          direction="vertical"
-          minDate={new Date()}
-          maxDate={addYears(new Date(), 2)}
-          disabledDates={[]}
-          // disabledDay={(date) => date.getDay() === 4}
-          preventSnapRefocus={true}
-          fixedHeight
-          // scroll={{ enabled: true }}
+        <DateRangePicker
+          dates={dates}
+          setDates={setDates}
+          setCalendarShowing={setCalendarShowing}
+          property={property}
         />
       </div>
     </>
@@ -372,7 +341,7 @@ function BookNowMobile({ slug, arrival, departure }) {
   });
 
   if (isLoading) {
-    return <p>Loading</p>;
+    return <p>Loading</p>; //BookNowMobile Skeleton
   }
 
   let totalPrice = 0;
@@ -423,64 +392,37 @@ function BookNowMobile({ slug, arrival, departure }) {
   );
 }
 
-function AvailabilityCalendar() {
-  const [calendarDates, setCalendarDates] = useState([
-    {
-      startDate: new Date(),
-      endDate: addDays(new Date(), 7),
-      key: "selection",
-    },
-  ]);
+function AvailabilityCalendar({ dates, setDates, property }) {
   return (
     <div className="border-t py-8">
       <p className="text-center text-xl font-semibold">Availability</p>
       <div className="flex sm:hidden">
-        <DateRange
-          className=""
-          onChange={(item) => setCalendarDates([item.selection])}
+        <DateRangePicker
+          dates={dates}
+          setDates={setDates}
           months={1}
-          ranges={calendarDates}
           direction="horizontal"
-          // editableDateInputs={true}
-          minDate={new Date()}
-          maxDate={addYears(new Date(), 2)}
-          disabledDates={[]}
-          // disabledDay={(date) => date.getDay() === 4}
-          preventSnapRefocus={true}
+          property={property}
         />
       </div>
 
       <div className="hidden sm:block lg:hidden">
-        <DateRange
-          className=""
-          onChange={(item) => setCalendarDates([item.selection])}
+        <DateRangePicker
+          dates={dates}
+          setDates={setDates}
           months={2}
-          ranges={calendarDates}
           direction="horizontal"
-          // editableDateInputs={true}
-          minDate={new Date()}
-          maxDate={addYears(new Date(), 2)}
-          disabledDates={[]}
-          // disabledDay={(date) => date.getDay() === 4}
-          preventSnapRefocus={true}
+          property={property}
         />
       </div>
 
       <div className="hidden lg:block">
-        <DateRange
-          className=""
-          onChange={(item) => {
-            setCalendarDates([item.selection]);
-          }}
+        <DateRangePicker
+          dates={dates}
+          setDates={setDates}
           months={3}
-          ranges={calendarDates}
           direction="horizontal"
-          // editableDateInputs={true}
-          minDate={new Date()}
-          maxDate={addYears(new Date(), 2)}
-          disabledDates={[]}
-          // disabledDay={(date) => date.getDay() === 4}
-          preventSnapRefocus={true}
+          property={property}
         />
       </div>
     </div>

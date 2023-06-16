@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { classNames } from "~/utils/functions/functions";
 
 export default function AmenitiesSection() {
   return (
@@ -15,7 +16,7 @@ export default function AmenitiesSection() {
         </div>
         <div className="mt-10 grid w-full grid-cols-1 gap-4 pt-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 [&>*:nth-child(1)]:xl:col-span-2 [&>*:nth-child(2)]:xl:col-span-2 [&>*:nth-child(5)]:hidden [&>*:nth-child(5)]:lg:block [&>*:nth-child(6)]:hidden [&>*:nth-child(6)]:lg:block">
           {[0, 0, 0, 0, 0, 0].map((item, index) => (
-            <AmenitiesCard key={`amenities-${index}`}/>
+            <AmenitiesCard key={`amenities-${index}`} large={index <= 1}/>
           ))}
         </div>
       </div>
@@ -23,10 +24,10 @@ export default function AmenitiesSection() {
   );
 }
 
-function AmenitiesCard() {
+function AmenitiesCard({large=false}) {
   return (
     <section className="bg-white">
-      <div className="cursor-pointer relative mx-auto h-64 rounded-2xl  shadow-md md:h-96 hover:scale-105 transform transition duration-300 ease-out first-of-type:hover:z-10">
+      <div className={classNames("cursor-pointer relative mx-auto h-64 rounded-2xl  shadow-md md:h-96 transform transition duration-300 ease-out first-of-type:hover:z-10", large ? "hover:scale-102" : "hover:scale-105")}>
         <Image
           className="rounded-2xl"
           fill

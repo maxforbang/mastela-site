@@ -31,6 +31,7 @@ import {
 } from "@stripe/react-stripe-js";
 import { getBaseUrl } from "~/utils/functions/getBaseUrl";
 import { DateRange } from "react-date-range";
+import { DateRangePicker } from "~/components/DateRangePicker";
 
 const subtotal = "$19,483.00";
 const discount = { code: "CHEAPSKATE", amount: "$24.00" };
@@ -126,17 +127,6 @@ function Checkout() {
     }
   );
 
-  // const {data: testBooking} = api.properties.createBooking.useQuery({
-  //   propertyId: 449809,
-  //   roomId: 515960,
-  //   guestName: 'Max Forbang',
-  //   arrival: '2023-09-17',
-  //   departure: '2023-09-22',
-  //   totalPrice: '1902.5',
-  // });
-
-  // console.log(testBooking)
-
   useEffect(() => {
     if (clientSecret) {
       setPaymentIntentQueryEnabled(false);
@@ -151,10 +141,6 @@ function Checkout() {
       );
     }
   }, [dates]);
-
-  // const {data : bookingId} = api.properties.createBooking.useQuery()
-
-  // console.log(bookingId)
 
   return (
     <div className="mx-auto h-full max-w-7xl">
@@ -337,7 +323,7 @@ function OrderSummary({ slug, dates, setDates }) {
                           <p className="text-gray-500">{product.dates}</p>
                           <button
                             type="button"
-                            className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                            className="text-sm font-medium text-sky-600 hover:text-sky-500"
                           >
                             Edit Dates
                           </button>
@@ -425,7 +411,7 @@ function OrderSummary({ slug, dates, setDates }) {
                     dates.startDate
                   )} - ${dateToStringNumerical(dates.endDate)}`}</p>
 
-                  <CalendarPopUp dates={dates} setDates={setDates} />
+                  <CalendarPopUp dates={dates} setDates={setDates} property={slug}/>
                 </div>
               </div>
             </li>
@@ -635,6 +621,7 @@ function LoadingSpinner() {
 function CalendarPopUp({
   dates,
   setDates,
+  property
 }: {
   dates?: { startDate: string; endDate: string };
 }) {
@@ -653,10 +640,10 @@ function CalendarPopUp({
     <div className="">
       <button
         type="button"
-        className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+        className="text-sm font-medium text-sky-600 hover:text-sky-500"
         onClick={() => setCalendarShowing(!calendarShowing)}
       >
-        {calendarShowing ? 'Cancel' : 'Edit Dates'}
+        {calendarShowing ? "Cancel" : "Edit Dates"}
       </button>
       <div
         className={classNames(
@@ -665,7 +652,7 @@ function CalendarPopUp({
         )}
       >
         <div className="relative">
-          <DateRange
+          {/* <DateRange
             className={classNames(
               "relative my-1 rounded-2xl border border-slate-300 shadow-xl"
             )}
@@ -680,20 +667,14 @@ function CalendarPopUp({
             // disabledDay={(date) => date.getDay() === 4}
             preventSnapRefocus={true}
             fixedHeight
-            // scroll={{ enabled: true }}
+          /> */}
+          <DateRangePicker
+            dates={dates}
+            setDates={setDates}
+            setCalendarShowing={setCalendarShowing}
+            property={property}
+            
           />
-          <div
-            onClick={() => {
-              setDates({
-                startDate: formatDateUrl(calendarDates[0].startDate),
-                endDate: formatDateUrl(calendarDates[0].endDate),
-              });
-              setCalendarShowing(false);
-            }}
-            className="absolute bottom-5 right-6 flex h-8 w-min cursor-pointer items-center justify-center whitespace-nowrap rounded-lg border-b border-r border-slate-300 bg-sky-500 px-5 text-white shadow "
-          >
-            Change Dates
-          </div>
         </div>
       </div>
     </div>

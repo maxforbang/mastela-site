@@ -3,14 +3,9 @@
 // import { useRouter } from "next/router";
 import type { NextPageWithLayout } from "./_app";
 import ListingCard from "~/components/search/ListingCard";
-import Map from "~/components/search/Map";
 import Layout from "~/components/Layout";
 import type { ReactElement } from "react";
-import { SearchBar } from "~/components/home/HeroSection";
 import { api } from "~/utils/api";
-import { useRouter } from "next/router";
-import { formatDateUrl } from "~/utils/functions/functions";
-import { addDays } from "date-fns";
 import { ListingsLayout } from "./search";
 import SkeletonInfoCard from "~/components/search/SkeletonInfoCard";
 

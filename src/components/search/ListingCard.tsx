@@ -48,9 +48,9 @@ export function ListingCard({ listing, arrival, departure }) {
 
         <div className="w-32 border-b pt-4" />
 
-        <p className="flex-grow pt-4 text-sm text-gray-500">
+        <div className="flex-grow pt-4 text-sm text-gray-500">
           <PortableText value={preview} />
-        </p>
+        </div>
         <div className="items-end flex justify-between pt-5">
           <div>
             {/* REVIEWS */}

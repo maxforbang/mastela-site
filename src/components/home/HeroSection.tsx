@@ -1,13 +1,16 @@
 import { addDays, addYears, format, parseISO } from "date-fns";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DateRange } from "react-date-range";
 // import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
+import { datesEqual } from "~/utils/functions/dates/datesEqual";
 import { formatDateEnglish } from "~/utils/functions/dates/formatDateEnglish";
 import { classNames, formatDateUrl } from "~/utils/functions/functions";
+import { DateRangePicker } from "../DateRangePicker";
+import { useRouter } from "next/router";
 
 function HeroSection() {
   return (
@@ -30,39 +33,31 @@ function HeroSection() {
 
 export default HeroSection;
 
+//TODO: Clean up styling. Disable auto-search on Homepage unless Guests field is also filled in.
 export function SearchBar({
   displayTop = false,
   overLay = false,
-  dates,
+  dates: initialDates = {
+    startDate: formatDateUrl(new Date()),
+    endDate: formatDateUrl(new Date()),
+  },
 }: {
   displayTop?: boolean;
   overLay?: boolean;
   dates?: { startDate: string; endDate: string };
 }) {
-  const currentDate = new Date();
-
-  const intialCalendarDates = [
-    {
-      startDate: dates?.startDate ? parseISO(dates.startDate) : currentDate,
-      endDate: dates?.endDate ? parseISO(dates.endDate) : currentDate,
-      key: "selection",
-    },
-  ];
-  const [calendarDates, setCalendarDates] = useState(intialCalendarDates);
+  const router = useRouter();
+  const [dates, setDates] = useState(initialDates);
   const [calendarShowing, setCalendarShowing] = useState(false);
+  const isValidEntry = dates?.startDate !== dates?.endDate;
 
-  const { startDate, endDate } = calendarDates[0];
-
-  const isInitialCalendar =
-    startDate.getTime() === endDate.getTime() &&
-    startDate.getTime() === currentDate.getTime();
-
-  console.log("current", currentDate);
-  console.log("start", startDate);
-  const isValidEntry = startDate.getTime() !== endDate.getTime();
-
-  // const arrival = formatDate(startDate);
-  // const departure = formatDate(endDate);
+  useEffect(() => {
+    if (router.isReady && isValidEntry) {
+      router.push(
+        `/search?arrival=${dates?.startDate}&departure=${dates?.endDate}`
+      );
+    }
+  }, [dates]);
 
   return (
     <div
@@ -81,7 +76,9 @@ export function SearchBar({
               )}
               type="text"
               placeholder="Check-in"
-              value={isValidEntry ? formatDateEnglish(startDate) : "Check-in"}
+              value={
+                isValidEntry ? formatDateEnglish(dates?.startDate) : "Check-in"
+              }
               readOnly
               onClick={() => setCalendarShowing(true)}
             />
@@ -92,7 +89,9 @@ export function SearchBar({
               )}
               type="text"
               placeholder="Check-out"
-              value={isValidEntry ? formatDateEnglish(endDate) : "Check-out"}
+              value={
+                isValidEntry ? formatDateEnglish(dates?.endDate) : "Check-out"
+              }
               readOnly
               onClick={() => setCalendarShowing(true)}
             />
@@ -108,10 +107,8 @@ export function SearchBar({
         <Link
           onClick={() => setCalendarShowing(false)}
           href={
-            !(startDate.getTime() == endDate.getTime())
-              ? `/search?arrival=${formatDateUrl(
-                  startDate
-                )}&departure=${formatDateUrl(endDate)}`
+            isValidEntry
+              ? `/search?arrival=${dates?.startDate}&departure=${dates?.endDate}`
               : `/our-villas`
           }
         >
@@ -171,19 +168,10 @@ export function SearchBar({
             : ""
         )}
       >
-        <DateRange
-          className={classNames("my-1 rounded-2xl")}
-          onChange={(item) => setCalendarDates([item.selection])}
-          months={1}
-          ranges={calendarDates}
-          direction="vertical"
-          minDate={new Date()}
-          maxDate={addYears(new Date(), 1)}
-          disabledDates={[]}
-          // disabledDay={(date) => date.getDay() === 4}
-          preventSnapRefocus={true}
-          fixedHeight
-          // scroll={{ enabled: true }}
+        <DateRangePicker
+          dates={dates}
+          setDates={setDates}
+          setCalendarShowing={setCalendarShowing}
         />
       </div>
     </div>

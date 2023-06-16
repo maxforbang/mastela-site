@@ -4,6 +4,9 @@ export default {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      scale: {
+        "102": "1.02",
+      },
       height: {
         "10vh": "10vh",
         "15vh": "15vh",
@@ -23,10 +26,9 @@ export default {
         "85vh": "85vh",
         "90vh": "90vh",
         "95vh": "95vh",
-        "100vh": "100vh"
+        "100vh": "100vh",
       },
     },
   },
   plugins: [],
 } satisfies Config;
-

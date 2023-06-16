@@ -36,7 +36,7 @@ const BlogPage: NextPageWithLayout = () => {
           <p className="mt-2 text-lg leading-8 text-gray-600">
             Learn how to grow your business with our expert advice.
           </p>
-          <SearchBar />
+          <BlogSearchBar />
           <TopPagination />
           <div className="mt-16 space-y-20 lg:mt-20 lg:space-y-20">
             {[posts[0], posts[0], posts[0], posts[0], posts[0]].map((post) => (
@@ -132,7 +132,7 @@ import {
   MagnifyingGlassIcon,
 } from "@heroicons/react/20/solid";
 
-function SearchBar() {
+function BlogSearchBar() {
   return (
     <div className="lg:-mt-8 border-b border-gray-200 pb-5 sm:flex sm:items-center sm:justify-between">
       <h3 className="text-base font-semibold leading-6 text-gray-900"></h3>

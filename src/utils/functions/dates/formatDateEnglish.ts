@@ -1,9 +1,17 @@
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 
-export function formatDateEnglish(date: Date) {
+export function formatDateEnglish(date: Date | string) {
+  let parsedDate: Date | string = date;
+
+  if (typeof date === 'string') {
+    parsedDate = parseISO(date);
+  } else {
+    parsedDate = date;
+  }
+
   const currentDate = new Date();
-  return currentDate.getFullYear() === date.getFullYear()
-    ? format(date, "MMMM do")
-    : format(date, "MMM do, yyyy");
+  return currentDate.getFullYear() === parsedDate.getFullYear()
+    ? format(parsedDate, "MMMM do")
+    : format(parsedDate, "MMM do, yyyy");
 }
 

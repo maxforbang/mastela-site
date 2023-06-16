@@ -3,7 +3,7 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import sanityClient from "../../../../sanity/lib/sanityClient";
 import { env } from "~/env.mjs";
 import { groq } from "next-sanity";
-import { differenceInDays } from "date-fns";
+import { differenceInDays, parseISO } from "date-fns";
 import { formatCurrencyRounded } from "~/utils/functions/formatCurrency";
 import { TRPCError } from "@trpc/server";
 import {
@@ -12,9 +12,7 @@ import {
   InvoiceItem,
   PaymentMethod,
 } from "types";
-import Stripe from "stripe";
 import { stripe } from "../stripe";
-import { Input } from "postcss";
 
 export const lodgifyHeaders = {
   accept: "application/json",
@@ -66,7 +64,7 @@ export const propertiesRouter = createTRPCRouter({
 
       try {
         const lodgifyPropertyAvailabilities = await fetch(
-          // Get all availabilities - https://docs.lodgify.com/reference/getcalendarbyuserF
+          // Get all availabilities - https://docs.lodgify.com/reference/getcalendarbyuser
           `https://api.lodgify.com/v2/availability?start=${input.startDate}&end=${input.endDate}&includeDetails=false`,
           {
             method: "GET",
@@ -122,6 +120,31 @@ export const propertiesRouter = createTRPCRouter({
           `Failed to fetch available properties. Error: ${error}`
         );
       }
+    }),
+  getBlockedDatesForProperty: publicProcedure
+    .input(
+      z.object({
+        slug: z.string(),
+        startDate: z.string(),
+        endDate: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const property = await getPropertyBySlug(ctx.prisma, input.slug);
+      const {lodgifyPropertyId, lodgifyRoomId} = property
+
+      const availabilityPeriods = await fetch(
+        // Get all availabilities - https://docs.lodgify.com/reference/getcalendarbyuser
+        `https://api.lodgify.com/v2/availability/${lodgifyPropertyId}?start=${input.startDate}&end=${input.endDate}&includeDetails=false`,
+        {
+          method: "GET",
+          headers: lodgifyHeaders,
+        }
+      ).then((response) => response.json());
+
+      const unavailablePeriodStrings = availabilityPeriods[0].periods.filter(period => period.available === 0);
+      const unavailableDateRanges = unavailablePeriodStrings.map(period => {return {startDate: parseISO(period.start), endDate: parseISO(period.end)}})
+      return getDatesInRanges(unavailableDateRanges)
     }),
   getQuote: publicProcedure
     .input(
@@ -304,11 +327,6 @@ export const propertiesRouter = createTRPCRouter({
       const { propertyId, roomId, guestName, arrival, departure, totalPrice } =
         input;
 
-      
-      console.log(`{"rooms":[{"room_type_id":${parseInt(roomId)}}],"guest":{"name":"${guestName}"},"source":"Manual","source_text":"mastelavacations.com","arrival":"${arrival}","departure":"${departure}","property_id":${parseInt(propertyId)},"status":"Booked","total":${parseFloat(
-        totalPrice
-      )},"currency_code":"usd","origin":"Mastela Vacations Site"}`)
-
       const bookingId = await fetch(
         // Get all availabilities - https://docs.lodgify.com/reference/getcalendarbyuserF
         `https://api.lodgify.com/v1/reservation/booking`,
@@ -387,4 +405,20 @@ function calculateLodgifyPricingInfo(
   };
 
   return pricingInfo;
+}
+
+function getDatesInRanges(dateRanges) {
+  const dates = [];
+  console.log('in the function', dateRanges)
+
+  for (const dateRange of dateRanges) {
+    const startDate = dateRange.startDate.getTime();
+    const endDate = dateRange.endDate.getTime();
+
+    for (let date = startDate + (24 * 60 * 60 * 1000); date <= endDate; date += 24 * 60 * 60 * 1000) {
+      dates.push(new Date(date));
+    }
+  }
+
+  return dates;
 }
