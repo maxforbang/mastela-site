@@ -136,7 +136,7 @@ const ContactPage: NextPageWithLayout = () => {
                         type="radio"
                         className="mt-1 h-4 w-4 border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-600"
                       />
-                      <label htmlFor="budget-under-25k">Question</label>
+                      <label htmlFor="budget-under-25k">General Question</label>
                     </div>
                     <div className="flex gap-x-2.5">
                       <input

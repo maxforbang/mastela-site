@@ -1,10 +1,8 @@
 import { prisma } from "./../../../server/db";
-import type { Stripe } from "stripe";
 import getRawBody from "raw-body";
 import { NextApiRequest, NextApiResponse } from "next";
 import { env } from "~/env.mjs";
 import { stripe } from "~/server/api/stripe";
-import { api } from "~/utils/api";
 import {
   lodgifyHeaders,
   propertiesRouter,
@@ -67,15 +65,6 @@ export default async function checkoutsWebhooksHandler(
             const value: number = item[key];
             amountDetails[key] = value;
           }
-        );
-
-        console.log(
-          lodgifyPropertyId,
-          lodgifyRoomId,
-          name,
-          arrival,
-          departure,
-          totalPrice
         );
 
         const bookingId = await caller.createBooking({

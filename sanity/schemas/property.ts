@@ -100,7 +100,7 @@ export default defineType({
     }),
     defineField({
       name: "description",
-      title: "Description",
+      title: "Full Description",
       type: "blockContent",
     }),
     defineField({
@@ -120,6 +120,32 @@ export default defineType({
           type: "number",
         },
       ],
+    }),
+    defineField({
+      name: "images",
+      type: "array",
+      title: "Images",
+      of: [
+        {
+          name: "image",
+          type: "image",
+          title: "Image",
+          options: {
+            hotspot: true,
+          },
+          fields: [
+            {
+              name: "alt",
+              type: "string",
+              title: "Alternative text (optional)",
+              description: 'Description for the image that helps with SEO and sight-impaired users'
+            },
+          ],
+        },
+      ],
+      options: {
+        layout: "grid",
+      },
     }),
   ],
 

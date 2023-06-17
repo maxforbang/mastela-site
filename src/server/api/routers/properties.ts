@@ -29,7 +29,7 @@ export const propertiesRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const propertyQuery = groq`
     *[_type == 'property' && slug.current == $slug][0] {
-      name, slug, occupancy, mainImage, coords, preview, description
+      name, slug, occupancy, mainImage, coords, preview, description, images
     }`;
 
       const property = await sanityClient.fetch(propertyQuery, {
@@ -409,7 +409,6 @@ function calculateLodgifyPricingInfo(
 
 function getDatesInRanges(dateRanges) {
   const dates = [];
-  console.log('in the function', dateRanges)
 
   for (const dateRange of dateRanges) {
     const startDate = dateRange.startDate.getTime();

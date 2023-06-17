@@ -27,7 +27,6 @@ import { prisma } from "~/server/db";
 import { api } from "~/utils/api";
 import sanityClient from "../../../sanity/lib/sanityClient";
 import { groq } from "next-sanity";
-import { urlFor } from "~/utils/functions/urlFor";
 import { useRouter } from "next/router";
 import { formatCurrencyRounded } from "~/utils/functions/formatCurrency";
 import {
@@ -47,34 +46,33 @@ import {
 import { getUrlParams } from "~/utils/functions/getUrlParams";
 import { datesEqual } from "~/utils/functions/dates/datesEqual";
 import { DateRangePicker } from "~/components/DateRangePicker";
+import { imageUrl as urlFor } from "../../../sanity/lib/imageUrl";
 
 const PropertyPage: NextPageWithLayout = (
   props: InferGetStaticPropsType<typeof getStaticProps>
 ) => {
   const router = useRouter();
-  let { slug, arrival, departure } = props;
+  let { slug } = props;
 
-  if (!router.isReady) {
-    return null;
-  } 
+  let arrival;
+  let departure;
 
-  ({ arrival, departure } = getUrlParams(router.asPath));
-  
+  useEffect(() => {
+    if (router.isReady) {
+      ({ arrival, departure } = getUrlParams(router.asPath));
+      setDates({
+        startDate: arrival,
+        endDate: departure,
+      });
+    }
+  }, [router.isReady, slug]);
+
+  console.log(arrival, departure);
 
   const [dates, setDates] = useState({
     startDate: arrival,
     endDate: departure,
   });
-
-
-  // const { arrival, departure, noOfGuests } = router.query;
-
-  // useEffect(() => {
-  //   if (router.isReady && (!arrival || !departure || arrival >= departure)) {
-  //     router.push(`/properties/${slug}`);
-  //   }
-  //   // code using router.query
-  // }, [router.isReady]);
 
   const {
     data: {
@@ -84,31 +82,34 @@ const PropertyPage: NextPageWithLayout = (
       coords,
       preview,
       description,
+      images = [],
     } = {},
     isLoading: propertyIsLoading,
   } = api.properties.getProperty.useQuery({ slug });
 
+  const imageSources = images
+    ? images.slice(0, 5).map((image) => urlFor(image).url())
+    : [];
+  console.log(images);
 
   return (
     <>
       <div className="mx-auto max-w-7xl text-gray-800 sm:px-6 lg:px-8">
-        <PropertyImages mainImage={mainImage} />
+        <PropertyImages imageSources={imageSources} />
         <div className="max-w-7xl sm:flex lg:gap-8">
           <div className="flex flex-col justify-center px-6 md:w-2/3">
             <PropertyHeader name={name} occupancy={occupancy} />
             <PropertyFeatures />
             <PropertyDescription preview={preview} />
             <PropertyMap coords={coords} />
-            <AvailabilityCalendar dates={dates} setDates={setDates} property={slug}/>
-            {/* Reviews */}
-            {/* Contact Host */}
-            {/* FAQ's / Refund */}
+            <AvailabilityCalendar
+              dates={dates}
+              setDates={setDates}
+              property={slug}
+            />
           </div>
-
           <BookNowDesktop
             slug={slug}
-            arrival={arrival}
-            departure={departure}
             propertyIsLoading={propertyIsLoading}
             dates={dates}
             setDates={setDates}
@@ -116,9 +117,13 @@ const PropertyPage: NextPageWithLayout = (
         </div>
       </div>
 
-
       {/* Possibly set to scroll=enabled for mobile */}
-      <BookNowMobile slug={slug} arrival={arrival} departure={departure} /> 
+      {/* <BookNowMobile slug={slug} arrival={arrival} departure={departure} /> */}
+
+      {/* Possibly add: */}
+      {/* Reviews */}
+      {/* Contact Host */}
+      {/* FAQ's / Refund */}
     </>
   );
 };
@@ -165,21 +170,9 @@ function PropertyFeatures() {
   );
 }
 
-function BookNowDesktop({
-  slug,
-  arrival,
-  departure,
-  propertyIsLoading,
-  dates,
-  setDates,
-}) {
-  // const [enableQuoteQuery, setEnableQuoteQuery] = useState(false);
-
-  // useEffect(() => {
-  //   if (arrival && departure) {
-  //     setEnableQuoteQuery(true);
-  //   }
-  // }, [arrival, departure]);
+function BookNowDesktop({ slug, propertyIsLoading, dates, setDates }) {
+  const enabled = !!dates.startDate && !!dates.endDate;
+  const [calendarShowing, setCalendarShowing] = useState(false);
 
   const {
     data: pricingInfo,
@@ -196,13 +189,13 @@ function BookNowDesktop({
     },
     {
       retry: 0,
-      // enabled: enableQuoteQuery
+      enabled: enabled,
     }
   );
 
   const [errorMsg, setErrorMsg] = useState("");
 
-  if (isLoading && !isError && !isLoadingError) {
+  if (enabled && isLoading && !isError && !isLoadingError) {
     return <SkeletonBookNowDesktop />;
   }
 
@@ -210,7 +203,7 @@ function BookNowDesktop({
   let pricePerNight = "Starting at $250";
   let invoiceItems = [];
 
-  if (pricingInfo !== null && !isError) {
+  if (pricingInfo && !isError) {
     ({ totalPrice, pricePerNight, invoiceItems } = pricingInfo);
   }
 
@@ -233,14 +226,25 @@ function BookNowDesktop({
         dates={{ startDate: dates.startDate, endDate: dates.endDate }}
         setDates={setDates}
         property={slug}
+        calendarShowing={calendarShowing}
+        setCalendarShowing={setCalendarShowing}
       />
       <div className="py-5">
-        <Link
-          href={`/checkout?property=${slug}&arrival=${dates.startDate}&departure=${dates.endDate}`}
-          className="text-md flex w-full rounded-lg bg-sky-500 px-6 py-3 text-center font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-        >
-          <p className="mx-auto">Reserve</p>
-        </Link>
+        {enabled ? (
+          <Link
+            href={`/checkout?property=${slug}&arrival=${dates.startDate}&departure=${dates.endDate}`}
+          >
+            <div className="text-md flex w-full rounded-lg bg-sky-500 px-6 py-3 text-center font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+              <p className="mx-auto">Reserve</p>
+            </div>
+          </Link>
+        ) : (
+          <div 
+          onClick={() => setCalendarShowing(true)}
+          className="cursor-pointer text-md flex w-full rounded-lg bg-sky-500 px-6 py-3 text-center font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+            <p className="mx-auto">Add dates</p>
+          </div>
+        )}
       </div>
       <p className="text-rose-600">{errorMsg}</p>
 
@@ -267,12 +271,12 @@ function StackedSearchBar({
   dates,
   setDates,
   invalidate,
-  property
+  property,
+  calendarShowing,
+  setCalendarShowing,
 }: {
   dates?: { startDate: string; endDate: string };
 }) {
-  const [calendarShowing, setCalendarShowing] = useState(false);
-
   return (
     <>
       <div className="mt-5 rounded-lg border border-gray-300">
@@ -308,7 +312,11 @@ function StackedSearchBar({
             <p className="thin text-xs font-bold uppercase tracking-tight">
               Guests
             </p>
-            <p>{property === 'the-twins-villa' || property === 'villa-encore' ? 'Up to 10 guests': 'Up to 8 guests'}</p>
+            <p>
+              {property === "the-twins-villa" || property === "villa-encore"
+                ? "Up to 10 guests"
+                : "Up to 8 guests"}
+            </p>
           </div>
         </div>
       </div>
@@ -458,25 +466,29 @@ function PropertyMap({ coords }) {
   );
 }
 
-function PropertyImages(props) {
-  if (!props.mainImage) {
+function PropertyImages({ imageSources: images }) {
+  if (!images.length) {
     return <SkeletonPropertyImages />;
   }
 
-  const { mainImage = "" } = props;
-  const imageSrc = mainImage ? urlFor(mainImage).height(1000).url() : "";
-  const blurImageSrc = mainImage
-    ? urlFor(mainImage).width(24).height(24).blur(10).url()
-    : "";
+  // const { mainImage = "" } = props;
+
+  // const imageSrc = mainImage ? urlFor(mainImage).height(1000).url() : "";
+  // const blurImageSrc = mainImage
+  //   ? urlFor(mainImage).width(24).height(24).blur(10).url()
+  //   : "";
+
   return (
     <div className="relative flex aspect-[3/2] w-full gap-2 sm:mt-6 sm:aspect-[2]">
       <div className="relative w-full sm:w-1/2">
         <Image
+          priority
           className="sm:rounded-l-xl"
           fill
           style={{ objectFit: "cover" }}
-          src={imageSrc}
-          blurDataURL={blurImageSrc}
+          src={images[0]}
+          sizes="(min-width: 640px) 50vw, (min-width: 1536px) 40vw, 100vw"
+          // blurDataURL={blurImageSrc}
           alt=""
         />
       </div>
@@ -486,8 +498,9 @@ function PropertyImages(props) {
             className=""
             fill
             style={{ objectFit: "cover" }}
-            src={imageSrc}
-            blurDataURL={blurImageSrc}
+            src={images[1]}
+            sizes="(min-width: 640px) 25vw, (min-width: 1536px) 20vw, 100vw"
+            // blurDataURL={blurImageSrc}
             alt=""
           />
         </div>
@@ -496,8 +509,9 @@ function PropertyImages(props) {
             className="rounded-tr-xl"
             fill
             style={{ objectFit: "cover" }}
-            src={imageSrc}
-            blurDataURL={blurImageSrc}
+            src={images[2]}
+            sizes="(min-width: 640px) 25vw, (min-width: 1536px) 20vw, 100vw"
+            // blurDataURL={blurImageSrc}
             alt=""
           />
         </div>
@@ -506,8 +520,9 @@ function PropertyImages(props) {
             className=" "
             fill
             style={{ objectFit: "cover" }}
-            src={imageSrc}
-            blurDataURL={blurImageSrc}
+            src={images[3]}
+            sizes="(min-width: 640px) 25vw, (min-width: 1536px) 20vw, 100vw"
+            // blurDataURL={blurImageSrc}
             alt=""
           />
         </div>
@@ -516,8 +531,9 @@ function PropertyImages(props) {
             className="rounded-br-xl"
             fill
             style={{ objectFit: "cover" }}
-            src={imageSrc}
-            blurDataURL={blurImageSrc}
+            src={images[4]}
+            sizes="(min-width: 640px) 25vw, (min-width: 1536px) 20vw, 100vw"
+            // blurDataURL={blurImageSrc}
             alt=""
           />
         </div>
@@ -593,17 +609,12 @@ export async function getStaticProps(
 
   const slug = context.params?.property;
 
-  const arrival = (context.params?.arrival as string) || null;
-  const departure = (context.params?.departure as string) || null;
-
   await helpers.getProperty.prefetch({ slug: slug });
 
   return {
     props: {
       trpcState: helpers.dehydrate(),
       slug,
-      arrival,
-      departure,
     },
   };
 }

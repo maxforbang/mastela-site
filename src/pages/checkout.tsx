@@ -4,33 +4,28 @@ import { useState, type ReactElement, useEffect } from "react";
 import { Disclosure } from "@headlessui/react";
 import {
   ChevronDownIcon,
-  ChevronRightIcon,
-  LockClosedIcon,
+  ChevronRightIcon
 } from "@heroicons/react/20/solid";
 import { useRouter } from "next/router";
-import { addYears, parseISO } from "date-fns";
-import { prisma } from "~/server/db";
+import { parseISO } from "date-fns";
 import { dateToStringNumerical } from "./properties/[property]";
 import { api } from "~/utils/api";
 import Link from "next/link";
 import { InvoiceItem } from "types";
-import { classNames, formatDateUrl } from "~/utils/functions/functions";
+import { classNames } from "~/utils/functions/functions";
 import {
-  formatCurrencyRounded,
-  formatCurrencyExact,
+  formatCurrencyExact
 } from "~/utils/functions/formatCurrency";
 import { env } from "~/env.mjs";
 import { loadStripe } from "@stripe/stripe-js";
 import {
-  AddressElement,
   Elements,
   LinkAuthenticationElement,
   PaymentElement,
   useElements,
-  useStripe,
+  useStripe
 } from "@stripe/react-stripe-js";
 import { getBaseUrl } from "~/utils/functions/getBaseUrl";
-import { DateRange } from "react-date-range";
 import { DateRangePicker } from "~/components/DateRangePicker";
 
 const subtotal = "$19,483.00";
@@ -652,28 +647,11 @@ function CalendarPopUp({
         )}
       >
         <div className="relative">
-          {/* <DateRange
-            className={classNames(
-              "relative my-1 rounded-2xl border border-slate-300 shadow-xl"
-            )}
-            onChange={(item) => setCalendarDates([item.selection])}
-            months={1}
-            ranges={calendarDates}
-            rangeColors={["rgb(14 165 233"]}
-            direction="vertical"
-            minDate={new Date()}
-            maxDate={addYears(new Date(), 2)}
-            disabledDates={[]}
-            // disabledDay={(date) => date.getDay() === 4}
-            preventSnapRefocus={true}
-            fixedHeight
-          /> */}
           <DateRangePicker
             dates={dates}
             setDates={setDates}
             setCalendarShowing={setCalendarShowing}
-            property={property}
-            
+            property={property}      
           />
         </div>
       </div>

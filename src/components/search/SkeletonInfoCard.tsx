@@ -1,8 +1,3 @@
-import Image from "next/image";
-import { HeartIcon } from "@heroicons/react/24/outline";
-import { StarIcon } from "@heroicons/react/24/solid";
-import type { UnitDetails } from "~/pages/our-villas";
-import Link from "next/link";
 
 export function SkeletonInfoCard() {
   return (

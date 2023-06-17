@@ -1,12 +1,9 @@
-import { addDays, addYears, format, parseISO } from "date-fns";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
-import { DateRange } from "react-date-range";
+import { useEffect, useState } from "react";
 // import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
-import { datesEqual } from "~/utils/functions/dates/datesEqual";
 import { formatDateEnglish } from "~/utils/functions/dates/formatDateEnglish";
 import { classNames, formatDateUrl } from "~/utils/functions/functions";
 import { DateRangePicker } from "../DateRangePicker";

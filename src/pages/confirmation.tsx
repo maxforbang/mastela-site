@@ -1,12 +1,10 @@
 import Layout from "~/components/Layout";
 import type { NextPageWithLayout } from "./_app";
-import { useState, type ReactElement } from "react";
+import { type ReactElement } from "react";
 import { useRouter } from "next/router";
 import { api } from "~/utils/api";
 import Link from "next/link";
-import { formatDateEnglish } from "~/utils/functions/dates/formatDateEnglish";
 import { format } from "date-fns";
-import { create } from "domain";
 import { dateToStringNumerical } from "./properties/[property]";
 import { formatCurrencyExact } from "~/utils/functions/formatCurrency";
 import { PaymentMethod } from "types";

@@ -3,9 +3,9 @@ import { classNames } from "~/utils/functions/functions";
 
 export default function AmenitiesSection() {
   return (
-    <div className="min-h-screen bg-white py-8 sm:py-32 sm:pb-16 sm:pt-10">
+    <div className="min-h-screen bg-white py-8 sm:py-32 mx-auto 2xl:w-5/6 sm:pb-16 sm:pt-10">
       <div className="mx-auto lg:px-4">
-        <div className="mx-auto sm:text-center">
+        <div className="mx-auto sm:text-center ">
           <h2 className="text-3xl text-gray-900 sm:text-5xl">
             Luxury Waterfront Smart Homes
           </h2>

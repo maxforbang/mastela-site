@@ -123,10 +123,6 @@ const SearchPage: NextPageWithLayout = () => {
   }
 
   const { arrival, departure, noOfGuests } = router.query;
-  // const formattedStartDate = format(new Date(2023, 4, 28), "dd MMMM yy");
-  // const formattedEndDate = format(new Date(2023, 4, 28), "dd MMMM yy");
-
-  console.log(`arrival: ${arrival}`);
 
   const {
     data: properties,
