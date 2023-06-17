@@ -2,10 +2,7 @@ import Layout from "~/components/Layout";
 import type { NextPageWithLayout } from "./_app";
 import { useState, type ReactElement, useEffect } from "react";
 import { Disclosure } from "@headlessui/react";
-import {
-  ChevronDownIcon,
-  ChevronRightIcon
-} from "@heroicons/react/20/solid";
+import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { useRouter } from "next/router";
 import { parseISO } from "date-fns";
 import { dateToStringNumerical } from "./properties/[property]";
@@ -13,9 +10,7 @@ import { api } from "~/utils/api";
 import Link from "next/link";
 import { InvoiceItem } from "types";
 import { classNames } from "~/utils/functions/functions";
-import {
-  formatCurrencyExact
-} from "~/utils/functions/formatCurrency";
+import { formatCurrencyExact } from "~/utils/functions/formatCurrency";
 import { env } from "~/env.mjs";
 import { loadStripe } from "@stripe/stripe-js";
 import {
@@ -23,10 +18,12 @@ import {
   LinkAuthenticationElement,
   PaymentElement,
   useElements,
-  useStripe
+  useStripe,
 } from "@stripe/react-stripe-js";
 import { getBaseUrl } from "~/utils/functions/getBaseUrl";
 import { DateRangePicker } from "~/components/DateRangePicker";
+import Image from "next/image";
+import { imageUrl as urlFor } from "../../sanity/lib/imageUrl";
 
 const subtotal = "$19,483.00";
 const discount = { code: "CHEAPSKATE", amount: "$24.00" };
@@ -253,6 +250,13 @@ function OrderSummary({ slug, dates, setDates }) {
     }
   );
 
+  const { data: { mainImage } = {} } = api.properties.getMainImage.useQuery({
+    slug,
+  });
+  
+  const mainImageSrc = mainImage ? urlFor(mainImage).url() : "";
+  // const mainImageSrc = mainImage ? urlFor(mainImage).url() : "";
+
   const [errorMsg, setErrorMsg] = useState("");
 
   if (isError && errorMsg !== error.message) {
@@ -301,6 +305,7 @@ function OrderSummary({ slug, dates, setDates }) {
                   role="list"
                   className="divide-y divide-gray-200 border-b border-gray-200"
                 >
+                  {/* TODO: Don't map over products */}
                   {products.map((product) => (
                     <li key={product.id} className="flex space-x-6 py-6">
                       <img
@@ -387,30 +392,39 @@ function OrderSummary({ slug, dates, setDates }) {
         </h2>
 
         <ul role="list" className="flex-auto  overflow-y-auto px-6">
-          {/* TODO: Don't map over products */}
-          {products.map((product) => (
-            <li key={product.id} className="flex space-x-6 py-6">
-              <img
-                src={product.imageSrc}
-                alt={product.imageAlt}
-                className="h-40 w-40 flex-none rounded-md bg-gray-200 object-cover object-center"
+          <div className="flex space-x-6 py-6">
+            <div className="relative h-40 w-40 flex-none rounded-md bg-gray-200 object-cover object-center">
+              <Image
+                priority
+                className="sm:rounded-l-xl"
+                fill
+                style={{ objectFit: "cover" }}
+                src={mainImageSrc}
+                sizes="(min-width: 640px) 25vw, (min-width: 1024px) 15vw, 50vw"
+                // blurDataURL={blurImageSrc}
+                alt=""
               />
-              <div className="flex flex-col justify-between space-y-4">
-                <div className="space-y-1 text-sm font-medium">
-                  <h3 className="text-gray-900">{propertyName}</h3>
-                  {pricePerNight > 0 && (
-                    <p className="text-gray-900">{pricePerNight} per night</p>
-                  )}
-                  <br />
-                  <p className="text-gray-500">{`${dateToStringNumerical(
-                    dates.startDate
-                  )} - ${dateToStringNumerical(dates.endDate)}`}</p>
+            </div>
+            <div className="flex flex-col justify-between space-y-4">
+              <div className="space-y-1 text-sm font-medium">
+                <h3 className="text-gray-900">{propertyName}</h3>
+                {pricePerNight && (
+                  <p className="text-gray-900">{pricePerNight} per night</p>
+                )}
+                <br />
+                <p className="text-gray-500">{`${dateToStringNumerical(
+                  dates.startDate
+                )} - ${dateToStringNumerical(dates.endDate)}`}</p>
 
-                  <CalendarPopUp dates={dates} setDates={setDates} property={slug}/>
-                </div>
+                <CalendarPopUp
+                  dates={dates}
+                  setDates={setDates}
+                  property={slug}
+                />
               </div>
-            </li>
-          ))}
+            </div>
+          </div>
+
           <p className="mt-6 w-full animate-bounce px-8 text-rose-600">
             {errorMsg}
           </p>
@@ -616,7 +630,7 @@ function LoadingSpinner() {
 function CalendarPopUp({
   dates,
   setDates,
-  property
+  property,
 }: {
   dates?: { startDate: string; endDate: string };
 }) {
@@ -651,7 +665,7 @@ function CalendarPopUp({
             dates={dates}
             setDates={setDates}
             setCalendarShowing={setCalendarShowing}
-            property={property}      
+            property={property}
           />
         </div>
       </div>

@@ -1,4 +1,6 @@
-//TODO: Unique key for each list in app (observe browser console end-to-end)
+//TODO: Console cleanup (Observe browser console end-to-end, remove errors/warnings)
+// 1. Unique key for each list in app  
+// 2. No unnecessary queries (calling queries with undefined)
 
 import Head from "next/head";
 import Layout from "~/components/Layout";

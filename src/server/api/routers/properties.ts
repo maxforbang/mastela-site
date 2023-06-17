@@ -28,9 +28,9 @@ export const propertiesRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const propertyQuery = groq`
-    *[_type == 'property' && slug.current == $slug][0] {
-      name, slug, occupancy, mainImage, coords, preview, description, images
-    }`;
+        *[_type == 'property' && slug.current == $slug][0] {
+          name, slug, occupancy, mainImage, coords, preview, description, images
+      }`;
 
       const property = await sanityClient.fetch(propertyQuery, {
         slug: input.slug,
@@ -39,8 +39,8 @@ export const propertiesRouter = createTRPCRouter({
     }),
   getAllProperties: publicProcedure.query(async ({ ctx }) => {
     const allPropertiesQuery = groq`
-    *[_type == 'property'] {
-      name, slug, occupancy, mainImage, coords, preview
+      *[_type == 'property'] {
+        name, slug, occupancy, mainImage, coords, preview
     }`;
 
     const properties = await sanityClient.fetch(allPropertiesQuery);
@@ -105,8 +105,8 @@ export const propertiesRouter = createTRPCRouter({
         // ]
 
         const listingsQuery = groq`
-        *[_type == 'property' && _id in $availablePropertiesSanityIds] {
-          name, slug, occupancy, mainImage, coords, preview
+          *[_type == 'property' && _id in $availablePropertiesSanityIds] {
+            name, slug, occupancy, mainImage, coords, preview
         }`;
 
         const availableListings = await sanityClient.fetch(listingsQuery, {
@@ -131,7 +131,7 @@ export const propertiesRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const property = await getPropertyBySlug(ctx.prisma, input.slug);
-      const {lodgifyPropertyId, lodgifyRoomId} = property
+      const { lodgifyPropertyId, lodgifyRoomId } = property;
 
       const availabilityPeriods = await fetch(
         // Get all availabilities - https://docs.lodgify.com/reference/getcalendarbyuser
@@ -142,9 +142,16 @@ export const propertiesRouter = createTRPCRouter({
         }
       ).then((response) => response.json());
 
-      const unavailablePeriodStrings = availabilityPeriods[0].periods.filter(period => period.available === 0);
-      const unavailableDateRanges = unavailablePeriodStrings.map(period => {return {startDate: parseISO(period.start), endDate: parseISO(period.end)}})
-      return getDatesInRanges(unavailableDateRanges)
+      const unavailablePeriodStrings = availabilityPeriods[0].periods.filter(
+        (period) => period.available === 0
+      );
+      const unavailableDateRanges = unavailablePeriodStrings.map((period) => {
+        return {
+          startDate: parseISO(period.start),
+          endDate: parseISO(period.end),
+        };
+      });
+      return getDatesInRanges(unavailableDateRanges);
     }),
   getQuote: publicProcedure
     .input(
@@ -185,6 +192,24 @@ export const propertiesRouter = createTRPCRouter({
       );
 
       return pricingInfo;
+    }),
+  getMainImage: publicProcedure
+    .input(
+      z.object({
+        slug: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const imageQuery = groq`
+        *[_type == 'property' && slug.current == $slug][0] {
+          mainImage
+      }`;
+
+      const image = await sanityClient.fetch(imageQuery, {
+        slug: input.slug,
+      });
+
+      return image;
     }),
   getClientSecret: publicProcedure
     .input(
@@ -414,7 +439,11 @@ function getDatesInRanges(dateRanges) {
     const startDate = dateRange.startDate.getTime();
     const endDate = dateRange.endDate.getTime();
 
-    for (let date = startDate + (24 * 60 * 60 * 1000); date <= endDate; date += 24 * 60 * 60 * 1000) {
+    for (
+      let date = startDate + 24 * 60 * 60 * 1000;
+      date <= endDate;
+      date += 24 * 60 * 60 * 1000
+    ) {
       dates.push(new Date(date));
     }
   }
