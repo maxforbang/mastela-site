@@ -9,8 +9,8 @@ export const Map = ({ searchResults }: {searchResults: UnitDetails[]}) => {
 
   //   Transform coordinates into required array of objects in the correct shape
   const coordinates = searchResults.map((result) => ({
-    latitude: result.lat,
-    longitude: result.long,
+    latitude: 26.58957,
+    longitude: -82.033984,
   }));
 
 

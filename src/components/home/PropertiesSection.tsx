@@ -1,3 +1,9 @@
+import Image from "next/image";
+import { urlFor } from "../../../sanity/lib/urlFor";
+import { PropertyListing } from "types";
+import { api } from "~/utils/api";
+import Link from "next/link";
+
 const properties = [
   {
     name: "Villa Encore",
@@ -9,6 +15,9 @@ const properties = [
 ];
 
 export default function PropertiesSection() {
+  const { data: properties = [], isLoading } =
+    api.properties.getAllProperties.useQuery();
+
   return (
     <div className="bg-white py-12">
       <div className="mx-auto  px-6 lg:px-12">
@@ -25,28 +34,41 @@ export default function PropertiesSection() {
           role="list"
           className="mx-auto mt-20 grid grid-cols-1 gap-x-8 gap-y-16 sm:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-4"
         >
-          {[properties[0], properties[0], properties[0], properties[0]].map(
-            (property) => (
-              <li key={property?.name}>
-                <div className="transform transition duration-300 ease-out hover:scale-105 cursor-pointer">
-                  <img
-                    className="aspect-[21/20] w-full rounded-2xl object-cover"
-                    src={property?.imageUrl}
+          {properties.map((property: PropertyListing) => {
+            const {
+              name,
+              slug,
+              mainImage,
+              occupancy: { bathrooms = 0, bedrooms = 0, guests = 0 } = {},
+            } = property;
+
+            const imageUrl = mainImage
+              ? urlFor(mainImage).height(640).url()
+              : "";
+            return (
+              <li key={`${name}-neighborhood-card`}>
+                <Link href={`/properties/${slug.current}`}>
+                <div className="aspect-[21/20] w-full transform cursor-pointer transition duration-300 ease-out hover:scale-105">
+                  <Image
+                    className="  rounded-2xl object-cover"
+                    fill
+                    src={imageUrl}
                     alt=""
                   />
                 </div>
-                  <h3 className="mt-6 text-lg font-semibold leading-8 tracking-tight text-gray-900">
-                    {property?.name}
-                  </h3>
-                  <p className="text-base leading-7 text-gray-600">
-                    {property?.occupancy}
-                  </p>
-                  <p className="mt-2 text-base font-bold leading-7 text-gray-600">
-                    ${property?.price}+ night
-                  </p>
+                <h3 className="mt-6 text-lg font-semibold leading-8 tracking-tight text-gray-900">
+                  {name}
+                </h3>
+                </Link>
+                <p className="text-base leading-7 text-gray-600">
+                  {`${bedrooms} Bed | ${bathrooms} Bath | ${guests} Guests`}
+                </p>
+                <p className="mt-2 text-base font-bold leading-7 text-gray-600">
+                  $250+ night
+                </p>
               </li>
-            )
-          )}
+            );
+          })}
         </ul>
       </div>
     </div>

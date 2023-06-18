@@ -205,11 +205,12 @@ export const propertiesRouter = createTRPCRouter({
           mainImage
       }`;
 
-      const image = await sanityClient.fetch(imageQuery, {
+      const { mainImage } = await sanityClient.fetch(imageQuery, {
         slug: input.slug,
       });
+      console.log(mainImage)
 
-      return image;
+      return mainImage;
     }),
   getClientSecret: publicProcedure
     .input(
@@ -250,6 +251,7 @@ export const propertiesRouter = createTRPCRouter({
           lodgifyPropertyId,
           lodgifyRoomId,
           propertyName,
+          propertySlug: input.slug,
           totalPrice,
           pricePerNight,
           pricing: JSON.stringify(pricingDetails),
@@ -278,6 +280,7 @@ export const propertiesRouter = createTRPCRouter({
         created,
         metadata: {
           propertyName,
+          propertySlug,
           totalPrice,
           pricePerNight,
           pricing,
@@ -327,6 +330,7 @@ export const propertiesRouter = createTRPCRouter({
           phone,
         },
         propertyName,
+        propertySlug,
         dates: { arrival, departure },
         totalPrice,
         amountDetails,

@@ -1,13 +1,14 @@
 import Image from "next/image";
 import { ArrowUpOnSquareIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { urlFor } from "~/utils/functions/urlFor";
+import { urlFor } from "../../../sanity/lib/urlFor";
 import { PortableText } from "@portabletext/react";
 import { formatCurrencyRounded } from "~/utils/functions/formatCurrency";
+import { api } from "~/utils/api";
 
 export function ListingCard({ listing, arrival, departure }) {
   const { name, slug, mainImage, occupancy, preview } = listing;
-  
+
   const imageSrc = urlFor(mainImage).height(1000).url();
   const blurImageSrc = urlFor(mainImage).width(24).height(24).blur(10).url();
 
@@ -18,14 +19,15 @@ export function ListingCard({ listing, arrival, departure }) {
     beds > 1 ? "s" : ""
   } · ${bathrooms} bathroom${bathrooms > 1 ? "s" : ""}`;
 
-  // TODO: Get actual price quote from API
   const price = 426;
   const total = 1690;
 
   return (
     <Link
       href="/properties/[property]"
-      as={`/properties/${slug.current}${arrival && departure ? `?arrival=${arrival}&departure=${departure}` : ''}`}
+      as={`/properties/${slug.current}${
+        arrival && departure ? `?arrival=${arrival}&departure=${departure}` : ""
+      }`}
       className="flex transform cursor-pointer flex-col border-b px-2 py-7 pr-4 transition duration-200 ease-out first:border-t hover:scale-105 hover:opacity-80 hover:shadow-lg sm:flex-row"
     >
       <div className="relative aspect-[5/3] w-full flex-shrink-0 sm:h-48 sm:w-80">
@@ -51,7 +53,7 @@ export function ListingCard({ listing, arrival, departure }) {
         <div className="flex-grow pt-4 text-sm text-gray-500">
           <PortableText value={preview} />
         </div>
-        <div className="items-end flex justify-between pt-5">
+        <div className="flex items-end justify-between pt-5">
           <div>
             {/* REVIEWS */}
             {/* <p className="flex items-center">
@@ -60,14 +62,7 @@ export function ListingCard({ listing, arrival, departure }) {
             </p> */}
           </div>
 
-          <div>
-            <p className="lg:pb-1 text-lg font-semibold lg:text-2xl">
-              {formatCurrencyRounded(price)} / night
-            </p>
-            <p className="text-right font-extralight">
-              {formatCurrencyRounded(total)} total
-            </p>
-          </div>
+          <ListingPrice slug={slug} arrival={arrival} departure={departure} />
         </div>
       </div>
     </Link>
@@ -76,3 +71,77 @@ export function ListingCard({ listing, arrival, departure }) {
 
 export default ListingCard;
 
+function ListingPrice({ slug, arrival, departure }) {
+  const defaultDisplay = !arrival || !departure;
+
+  console.log(arrival);
+  console.log(departure);
+
+  const {
+    data: pricingInfo,
+    isLoading,
+    isError,
+    error,
+    isLoadingError,
+    isSuccess,
+  } = api.properties.getQuote.useQuery(
+    {
+      slug: slug.current,
+      startDate: arrival,
+      endDate: departure,
+    },
+    {
+      retry: 0,
+      enabled: !defaultDisplay,
+    }
+  );
+
+  let totalPrice = 0;
+  let pricePerNight = "Starting at $250";
+
+  if (pricingInfo && !isError) {
+    ({ totalPrice, pricePerNight } = pricingInfo);
+  }
+
+  return (
+    <>
+      {defaultDisplay ? (
+        <div>
+          <p className="text-lg font-semibold lg:pb-1 lg:text-2xl">
+            Starting at $250 / night
+          </p>
+        </div>
+      ) : isError ? (
+        <div>
+          <p className="text-lg font-semibold lg:pb-1 lg:text-2xl">
+            Starting at $250 / night
+          </p>
+          <p className="text-right font-extralight">
+            {/* Show minimum stay if that was the error */}
+            {error.message.indexOf('days') ? `${error.message.substring(error.message.indexOf('days') - 2, error.message.indexOf('days') - 1)}-day minimum stay` : ''} 
+          </p>
+        </div>
+      ) : isLoading ? (
+        <ListingPriceSkeleton />
+      ) : (
+        <div>
+          <p className="text-lg font-semibold lg:pb-1 lg:text-2xl">
+            {formatCurrencyRounded(pricePerNight)} / night
+          </p>
+          <p className="text-right font-extralight">
+            {formatCurrencyRounded(totalPrice)} total
+          </p>
+        </div>
+      )}
+    </>
+  );
+}
+
+function ListingPriceSkeleton() {
+  return (
+    <div className="flex w-full flex-col  gap-3">
+      <div className="h-8 w-5/12 animate-pulse self-end rounded-md bg-gray-300 " />
+      <div className="h-6 w-3/12 animate-pulse self-end rounded-md bg-gray-300 " />
+    </div>
+  );
+}

@@ -9,6 +9,9 @@ import { dateToStringNumerical } from "./properties/[property]";
 import { formatCurrencyExact } from "~/utils/functions/formatCurrency";
 import { PaymentMethod } from "types";
 import { formatPhoneNumber } from "~/utils/functions/dates/formatPhoneNumber";
+import Image from "next/image";
+import { urlFor } from "../../sanity/lib/urlFor";
+
 
 //TODO: ServerSideProps
 const ConfirmationPage: NextPageWithLayout = () => {
@@ -28,6 +31,7 @@ const ConfirmationPage: NextPageWithLayout = () => {
     data: {
       customer: { name = "", email = "", phone = "" } = {},
       propertyName = "",
+      propertySlug,
       dates: { arrival = "", departure = "" } = {},
       totalPrice = "",
       amountDetails,
@@ -47,13 +51,22 @@ const ConfirmationPage: NextPageWithLayout = () => {
     last4 = "",
   } = paymentMethod as PaymentMethod;
 
+  const { data: mainImage } = api.properties.getMainImage.useQuery({
+    slug: propertySlug,
+  }, {
+    enabled: !!propertySlug
+  });
+
+  const mainImageSrc = mainImage ? urlFor(mainImage).url() : "";
+
   return (
     <main className="relative lg:min-h-full">
       <div className="h-80 overflow-hidden lg:absolute lg:h-full lg:w-1/2 lg:pr-4 xl:pr-12">
-        <img
-          src="https://tailwindui.com/img/ecommerce-images/confirmation-page-06-hero.jpg"
+        <Image
+          src="https://images.unsplash.com/photo-1509233725247-49e657c54213?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1049&q=80&crop=entropy,edges&entropy=1.0&edges=0.1"
           alt="TODO"
-          className="h-full w-full object-cover object-center"
+          fill
+          className="h-full w-full object-cover object-left"
         />
       </div>
 
@@ -83,11 +96,20 @@ const ConfirmationPage: NextPageWithLayout = () => {
               className="mt-6 divide-y divide-gray-200 border-t border-gray-200 text-sm font-medium text-gray-500"
             >
               <div className="flex space-x-6 py-6">
-                <img
-                  // src={product.imageSrc}
-                  // alt={product.imageAlt}
-                  className="h-24 w-24 flex-none rounded-md bg-gray-100 object-cover object-center"
-                />
+              <div className="relative h-24 w-24">
+
+              <Image
+              
+                priority
+                className="rounded-md"
+                fill
+                style={{ objectFit: "cover" }}
+                src={mainImageSrc}
+                sizes="256px" // inputs w=640 in sanity url 
+                // blurDataURL={blurImageSrc}
+                alt=""
+              />
+              </div>
                 <div className="flex-auto space-y-1">
                   <h3 className="text-gray-900">
                     <div>{propertyName}</div>

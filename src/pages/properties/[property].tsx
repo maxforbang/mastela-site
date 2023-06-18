@@ -46,7 +46,7 @@ import {
 import { getUrlParams } from "~/utils/functions/getUrlParams";
 import { datesEqual } from "~/utils/functions/dates/datesEqual";
 import { DateRangePicker } from "~/components/DateRangePicker";
-import { imageUrl as urlFor } from "../../../sanity/lib/imageUrl";
+import { urlFor } from "../../../sanity/lib/urlFor";
 
 const PropertyPage: NextPageWithLayout = (
   props: InferGetStaticPropsType<typeof getStaticProps>
@@ -66,8 +66,6 @@ const PropertyPage: NextPageWithLayout = (
       });
     }
   }, [router.isReady, slug]);
-
-  console.log(arrival, departure);
 
   const [dates, setDates] = useState({
     startDate: arrival,
@@ -90,7 +88,7 @@ const PropertyPage: NextPageWithLayout = (
   const imageSources = images
     ? images.slice(0, 5).map((image) => urlFor(image).url())
     : [];
-  console.log(images);
+  console.log(imageSources);
 
   return (
     <>

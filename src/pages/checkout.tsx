@@ -23,7 +23,7 @@ import {
 import { getBaseUrl } from "~/utils/functions/getBaseUrl";
 import { DateRangePicker } from "~/components/DateRangePicker";
 import Image from "next/image";
-import { imageUrl as urlFor } from "../../sanity/lib/imageUrl";
+import { urlFor } from "../../sanity/lib/urlFor";
 
 const subtotal = "$19,483.00";
 const discount = { code: "CHEAPSKATE", amount: "$24.00" };
@@ -250,12 +250,12 @@ function OrderSummary({ slug, dates, setDates }) {
     }
   );
 
-  const { data: { mainImage } = {} } = api.properties.getMainImage.useQuery({
+  //TODO: Static props
+  const { data: mainImage } = api.properties.getMainImage.useQuery({
     slug,
   });
-  
   const mainImageSrc = mainImage ? urlFor(mainImage).url() : "";
-  // const mainImageSrc = mainImage ? urlFor(mainImage).url() : "";
+  const mainImageBlurSrc = mainImage ? urlFor(mainImage).height(32).blur(50).url() : "";
 
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -395,15 +395,27 @@ function OrderSummary({ slug, dates, setDates }) {
           <div className="flex space-x-6 py-6">
             <div className="relative h-40 w-40 flex-none rounded-md bg-gray-200 object-cover object-center">
               <Image
+              
                 priority
-                className="sm:rounded-l-xl"
+                className="rounded-md"
                 fill
                 style={{ objectFit: "cover" }}
                 src={mainImageSrc}
-                sizes="(min-width: 640px) 25vw, (min-width: 1024px) 15vw, 50vw"
-                // blurDataURL={blurImageSrc}
+                sizes="384px" // inputs w=640 in sanity url 
+                blurDataURL={mainImageBlurSrc}
                 alt=""
               />
+              {/* <Image
+                src={imageProps?.src}
+                loader={imageProps?.loader}
+                // fill
+                // objectFit="cover"
+                // style={{ width: "100%", height: "auto" }}
+                sizes="199px"
+                // sizes="2vw"
+                // blurDataURL={blurImageSrc}
+                alt=''
+              /> */}
             </div>
             <div className="flex flex-col justify-between space-y-4">
               <div className="space-y-1 text-sm font-medium">

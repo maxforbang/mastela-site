@@ -14,12 +14,18 @@ function HeroSection() {
     <div className="">
       <div className="relative -mx-8 h-75vh lg:-mx-12 ">
         <Image
+        priority
           className="-z-10"
           fill
           style={{ objectFit: "cover" }}
-          src={"/images/Encore.jpg"}
+          src='https://images.unsplash.com/photo-1511895426328-dc8714191300?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2370&q=80'
           alt=""
         />
+        <div className="absolute bottom-48 flex h-auto w-full justify-center">
+          <p className="[text-shadow:_2px_4px_20px_rgb(0_0_0_/_100%)] lg:text-7xl text-6xl text-white shadow-black text-center capitalize italic">
+            Start your vacation now
+          </p>
+        </div>
         <div className=" absolute bottom-20 left-1/2 flex w-2/3 -translate-x-1/2 flex-col items-center md:w-7/12 lg:w-1/2 xl:w-1/3">
           <SearchBar displayTop />
         </div>
@@ -128,7 +134,7 @@ export function SearchBar({
               cy="23"
               r="5.98611"
               stroke="white"
-              stroke-width="3"
+              strokeWidth="3"
             />
             <line
               x1="32.4492"
@@ -136,7 +142,7 @@ export function SearchBar({
               x2="26.0852"
               y2="26.6869"
               stroke="white"
-              stroke-width="3"
+              strokeWidth="3"
             />
             <defs>
               <linearGradient
@@ -147,8 +153,8 @@ export function SearchBar({
                 y2="48.5"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop stop-color="#0694D8" />
-                <stop offset="1" stop-color="#00DFD8" />
+                <stop stopColor="#0694D8" />
+                <stop offset="1" stopColor="#00DFD8" />
               </linearGradient>
             </defs>
           </svg>

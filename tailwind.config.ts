@@ -6,6 +6,7 @@ export default {
     extend: {
       scale: {
         "102": "1.02",
+        "104": "1.04",
       },
       height: {
         "10vh": "10vh",
