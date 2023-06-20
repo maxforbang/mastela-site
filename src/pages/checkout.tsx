@@ -5,7 +5,7 @@ import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { useRouter } from "next/router";
 import { parseISO } from "date-fns";
 import { dateToStringNumerical } from "./properties/[property]";
-import { api } from "~/utils/api";
+import { api, getBaseUrl } from "~/utils/api";
 import type {
   CalendarDates,
   CalendarComponent,
@@ -23,7 +23,6 @@ import {
   useElements,
   useStripe,
 } from "@stripe/react-stripe-js";
-import { getBaseUrl } from "~/utils/functions/getBaseUrl";
 import { DateRangePicker } from "~/components/DateRangePicker";
 import Image from "next/image";
 import { urlFor } from "../../sanity/lib/urlFor";
