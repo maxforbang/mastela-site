@@ -12,6 +12,7 @@ export const env = createEnv({
     LODGIFY_API_KEY: z.string(),
     STRIPE_SECRET_KEY: z.string(),
     WEBHOOK_SECRET_KEY: z.string(),
+    VERCEL_URL: z.optional(z.string())
   },
 
   /**
@@ -32,6 +33,7 @@ export const env = createEnv({
    */
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
+    VERCEL_URL: process.env.VERCEL_URL,
     DATABASE_URL: process.env.DATABASE_URL,
     LODGIFY_API_KEY: process.env.LODGIFY_API_KEY,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,

@@ -695,6 +695,6 @@ function CalendarPopUp({ dates, setDates, property }: CalendarComponent) {
 }
 
 export const getBaseUrl = () => {
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`; // If deployed, use vercel url
+  if (env.NODE_ENV === "production") return `https://${process.env.VERCEL_URL}`; // If deployed, use vercel url
   return `http://localhost:${process.env.PORT ?? 3000}`; // dev uses localhost
 };
