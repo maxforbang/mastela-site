@@ -8,7 +8,7 @@ import {
   lodgifyHeaders,
   propertiesRouter,
 } from "~/server/api/routers/properties";
-import type { Customer, StripePaymentIntent } from "types";
+import type { StripePaymentIntent } from "types";
 const STRIPE_SIGNATURE_HEADER = "stripe-signature";
 
 // NB: we disable body parser to receive the raw body string. The raw body

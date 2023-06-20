@@ -243,7 +243,6 @@ function CheckoutInvoiceItemDisplay({
 }
 
 function OrderSummary({ property, dates, setDates }: CalendarComponent) {
-  console.log("slug", property, dates?.startDate, dates?.endDate);
   const {
     data: pricingInfo,
     isError,

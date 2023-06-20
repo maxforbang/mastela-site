@@ -219,8 +219,6 @@ ConfirmationPage.getLayout = function getLayout(page: ReactElement) {
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ payment_intent: string }>
 ) {
-  console.log(context.query.payment_intent);
-
   const helpers = createServerSideHelpers({
     router: propertiesRouter,
     ctx: { prisma, sanityClient },

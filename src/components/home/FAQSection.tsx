@@ -1,6 +1,6 @@
 import { Disclosure } from '@headlessui/react'
 import { MinusSmallIcon, PlusSmallIcon } from '@heroicons/react/24/outline'
-import { FAQ } from 'types'
+import type { FAQ } from 'types'
 
 //TODO: Import from Sanity
 const faqs: FAQ[] = [
