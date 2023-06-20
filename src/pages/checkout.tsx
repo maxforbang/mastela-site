@@ -6,8 +6,12 @@ import { useRouter } from "next/router";
 import { parseISO } from "date-fns";
 import { dateToStringNumerical } from "./properties/[property]";
 import { api } from "~/utils/api";
-import Link from "next/link";
-import type { CalendarDates, CalendarComponent, InvoiceItem, BookingQuoteInfo } from "types";
+import type {
+  CalendarDates,
+  CalendarComponent,
+  InvoiceItem,
+  BookingQuoteInfo,
+} from "types";
 import { classNames } from "~/utils/functions/functions";
 import { formatCurrencyExact } from "~/utils/functions/formatCurrency";
 import { env } from "~/env.mjs";
@@ -23,6 +27,7 @@ import { getBaseUrl } from "~/utils/functions/getBaseUrl";
 import { DateRangePicker } from "~/components/DateRangePicker";
 import Image from "next/image";
 import { urlFor } from "../../sanity/lib/urlFor";
+import { getUrlParams } from "~/utils/functions/getUrlParams";
 
 const stripe = loadStripe(env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
@@ -40,54 +45,79 @@ CheckoutPage.getLayout = function getLayout(page: ReactElement) {
 function Checkout() {
   const router = useRouter();
 
-  if (!router.isReady) {
-    return null;
-  }
+  const [slug, setSlug] = useState<string | undefined>(undefined);
 
-  const { property: slug, arrival, departure } = router.query;
-
-  if (!slug || !arrival || !departure) {
-    let message = "";
-    if (!slug) {
-      message = "Please pick a property before proceeding to checkout.";
-    }
-
-    if (!arrival) {
-      message = "Please select an arrival date before proceeding to checkout.";
-    }
-
-    if (!departure) {
-      message = "Please select a departure date before proceeding to checkout.";
-    }
-
-    return (
-      <div className="mt-12 flex flex-col justify-center">
-        <p className="mx-auto text-xl">{message}</p>
-        <div className="mx-auto mt-4">
-          <Link href="/our-villas" className="text-l font-semibold leading-7 ">
-            <span aria-hidden="true">&larr;</span> Back to Our Villas
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  const [initialDates, setInitialDates] = useState<CalendarDates>({
+    startDate: undefined,
+    endDate: undefined,
+  });
 
   const [dates, setDates] = useState<CalendarDates>({
-    startDate: arrival as string,
-    endDate: departure as string,
+    startDate: undefined,
+    endDate: undefined,
   });
 
   const [paymentIntentQueryEnabled, setPaymentIntentQueryEnabled] =
-    useState(true);
+    useState(false);
+
+  useEffect(() => {
+    if (router.isReady) {
+      const { property, arrival, departure } = getUrlParams(router.asPath);
+
+      if (!property) {
+        void router.push("/our-villas");
+      } else if (!arrival || !departure) {
+        void router.push(`/properties/${property}`);
+      }
+
+      setSlug(property);
+      setDates({
+        startDate: arrival,
+        endDate: departure,
+      });
+      setInitialDates({
+        startDate: arrival,
+        endDate: departure,
+      });
+
+      setPaymentIntentQueryEnabled(true);
+    }
+  }, [router.isReady, router.asPath]);
+
+  // if (!slug || !arrival || !departure) {
+  //   let message = "";
+  //   if (!slug) {
+  //     message = "Please pick a property before proceeding to checkout.";
+  //   }
+
+  //   if (!arrival) {
+  //     message = "Please select an arrival date before proceeding to checkout.";
+  //   }
+
+  //   if (!departure) {
+  //     message = "Please select a departure date before proceeding to checkout.";
+  //   }
+
+  //   return (
+  //     <div className="mt-12 flex flex-col justify-center">
+  //       <p className="mx-auto text-xl">{message}</p>
+  //       <div className="mx-auto mt-4">
+  //         <Link href="/our-villas" className="text-l font-semibold leading-7 ">
+  //           <span aria-hidden="true">&larr;</span> Back to Our Villas
+  //         </Link>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   const { data: clientSecret } = api.properties.getClientSecret.useQuery(
     {
       slug: slug as string,
-      startDate: dates.startDate ?? '',
-      endDate: dates.endDate ?? '',
+      startDate: dates.startDate ?? "",
+      endDate: dates.endDate ?? "",
     },
     {
-      enabled: paymentIntentQueryEnabled,
+      enabled: !!slug && paymentIntentQueryEnabled,
     }
   );
 
@@ -98,10 +128,15 @@ function Checkout() {
   }, [clientSecret]);
 
   useEffect(() => {
-    if (arrival !== dates.startDate || departure !== dates.endDate) {
+    if (
+      initialDates.startDate !== dates.startDate ||
+      initialDates.endDate !== dates.endDate
+    ) {
       setPaymentIntentQueryEnabled(true);
       void router.push(
-        `/checkout?property=${slug}&arrival=${dates.startDate}&departure=${dates.endDate}`
+        `/checkout?property=${slug as string}&arrival=${
+          dates.startDate as string
+        }&departure=${dates.endDate as string}`
       );
     }
   }, [dates]);
@@ -111,7 +146,11 @@ function Checkout() {
       <main className="lg:flex lg:min-h-full lg:flex-row-reverse lg:overflow-hidden">
         <h1 className="sr-only">Checkout</h1>
 
-        <OrderSummary property={slug as string} dates={dates} setDates={setDates} />
+        <OrderSummary
+          property={slug as string}
+          dates={dates}
+          setDates={setDates}
+        />
 
         {/* Checkout form */}
         <section
@@ -204,12 +243,11 @@ function CheckoutInvoiceItemDisplay({
 }
 
 function OrderSummary({ property, dates, setDates }: CalendarComponent) {
+  console.log("slug", property, dates?.startDate, dates?.endDate);
   const {
     data: pricingInfo,
-    isLoading,
     isError,
     error,
-    isLoadingError,
     isSuccess,
   } = api.properties.getQuote.useQuery(
     {
@@ -219,16 +257,24 @@ function OrderSummary({ property, dates, setDates }: CalendarComponent) {
     },
     {
       retry: 0,
+      enabled: !!property && !!dates?.startDate && !!dates.endDate,
     }
   );
 
   //TODO: Static props
-  const { data: mainImage } = api.properties.getMainImage.useQuery({
-    slug: property ?? ''
-  });
+  const { data: mainImage } = api.properties.getMainImage.useQuery(
+    {
+      slug: property ?? "",
+    },
+    {
+      enabled: !!property,
+    }
+  );
 
   const mainImageSrc = mainImage ? urlFor(mainImage).url() : "";
-  const mainImageBlurSrc = mainImage ? urlFor(mainImage).height(32).blur(50).url() : "";
+  const mainImageBlurSrc = mainImage
+    ? urlFor(mainImage).height(32).blur(50).url()
+    : "";
 
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -244,7 +290,8 @@ function OrderSummary({ property, dates, setDates }: CalendarComponent) {
   let invoiceItems: InvoiceItem[] = [];
 
   if (isSuccess && pricingInfo !== null) {
-    ({ propertyName, totalPrice, pricePerNight, invoiceItems } = pricingInfo as BookingQuoteInfo & { pricePerNight: string });
+    ({ propertyName, totalPrice, pricePerNight, invoiceItems } =
+      pricingInfo as BookingQuoteInfo & { pricePerNight: string });
   }
 
   return (
@@ -368,13 +415,12 @@ function OrderSummary({ property, dates, setDates }: CalendarComponent) {
           <div className="flex space-x-6 py-6">
             <div className="relative h-40 w-40 flex-none rounded-md bg-gray-200 object-cover object-center">
               <Image
-              
                 priority
                 className="rounded-md"
                 fill
                 style={{ objectFit: "cover" }}
                 src={mainImageSrc}
-                sizes="384px" // inputs w=640 in sanity url 
+                sizes="384px" // inputs w=640 in sanity url
                 blurDataURL={mainImageBlurSrc}
                 alt=""
               />
@@ -440,7 +486,12 @@ function OrderSummary({ property, dates, setDates }: CalendarComponent) {
 
           <div className="mt-10 flex flex-col space-y-6 text-sm font-medium text-gray-500">
             {invoiceItems.map((invoiceItem: InvoiceItem, index) => {
-              return <CheckoutInvoiceItemDisplay invoiceItem={invoiceItem} />;
+              return (
+                <CheckoutInvoiceItemDisplay
+                  key={`${invoiceItem.description}-invoice-item`}
+                  invoiceItem={invoiceItem}
+                />
+              );
             })}
             <div className="flex items-center justify-between border-t border-gray-200 pt-6 text-gray-900">
               <dt className="text-base">Total</dt>
@@ -457,51 +508,41 @@ function CheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
 
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
 
-  const handleSubmit = async (event: { preventDefault: () => void; }) => {
-    // Prevent refreshing page on submit
+  const handleSubmit = (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
     if (!stripe || !elements) {
       return;
     }
 
-    const { error } = await stripe.confirmPayment({
-      //`Elements` instance that was used to create the Payment Element
-      elements,
-      confirmParams: {
-        return_url: `${getBaseUrl()}/confirmation`,
-
-        // shipping_details: {
-        //   name: "John Snow",
-        //   phone: "703-679-7985",
-        //   email: "Test-email@gmail.com",
-        // },
-        receipt_email: email,
-        shipping: {
-          name: name,
-          address: {
-            line1: "",
+    stripe
+      .confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: `${getBaseUrl()}/confirmation`,
+          receipt_email: email,
+          shipping: {
+            name: name,
+            address: {
+              line1: "",
+            },
+            phone: phone,
           },
-          phone: phone,
         },
-      },
-    });
-
-    if (error) {
-      // This point will only be reached if there is an immediate error when
-      // confirming the payment. Show error to your customer (for example, payment
-      // details incomplete)
-      setErrorMessage(error.message as string);
-    } else {
-      // Your customer will be redirected to your `return_url`. For some payment
-      // methods like iDEAL, your customer will be redirected to an intermediate
-      // site first to authorize the payment, then redirected to the `return_url`.
-    }
+      })
+      .then(({ error }) => {
+        if (error) {
+          setErrorMessage(error.message as string);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   return (
@@ -569,9 +610,12 @@ function SkeletonCheckoutForm() {
           <div className="h-10 w-full animate-pulse rounded-md bg-gray-300 " />
         </div>
       </div>
-      {Array.from(Array(3)).map((item, index) => {
+      {Array.from(Array(3)).map((_, index) => {
         return (
-          <div className="flex flex-col gap-1">
+          <div
+            className="flex flex-col gap-1"
+            key={`skeleton-checkout-field-${index}`}
+          >
             <div className="h-3 w-1/4 animate-pulse rounded-md bg-gray-300 " />
             <div className="h-10 w-full animate-pulse rounded-md bg-gray-300 " />
           </div>
@@ -612,11 +656,7 @@ function LoadingSpinner() {
   );
 }
 
-function CalendarPopUp({
-  dates,
-  setDates,
-  property,
-}: CalendarComponent) {
+function CalendarPopUp({ dates, setDates, property }: CalendarComponent) {
   const currentDate = new Date();
   const intialCalendarDates = [
     {

@@ -4,6 +4,7 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { classNames } from "~/utils/functions/functions";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import Head from "next/head";
 
 const navigation = {
   main: [
@@ -109,6 +110,14 @@ const Layout = ({ children }: { children: ReactNode }) => {
         <body class="h-full">
         ```
       */}
+      <Head>
+        <title>Mastela Vacations</title>
+        <meta
+          name="description"
+          content="Cape Coral Vacation Rentals - Waterfront Luxury Smart Homes"
+        />
+        <link rel="icon" href="/favicon.png" />
+      </Head>
       <div className="min-h-full">
         <Header />
         <main>
