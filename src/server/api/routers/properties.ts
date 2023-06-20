@@ -290,9 +290,9 @@ export const propertiesRouter = createTRPCRouter({
       })
     )
     .query(async ({ input }) => {
-      const paymentIntent = await stripe.paymentIntents.retrieve(
+      const paymentIntent = (await stripe.paymentIntents.retrieve(
         input.paymentIntent
-      ) as StripePaymentIntent;
+      )) as StripePaymentIntent;
 
       const {
         payment_method,
@@ -312,9 +312,8 @@ export const propertiesRouter = createTRPCRouter({
 
       const { name, phone } = shipping || { name: null, phone: null };
 
-      const paymentMethodPromise = stripe.paymentMethods.retrieve(
-        payment_method
-      );
+      const paymentMethodPromise =
+        stripe.paymentMethods.retrieve(payment_method);
 
       const priceDetails = JSON.parse(pricing as string) as Record<
         string,
@@ -330,10 +329,10 @@ export const propertiesRouter = createTRPCRouter({
       const createdDate = new Date(0);
       createdDate.setUTCSeconds(created);
 
-      let brand = ''
-      let exp_month = 0
-      let exp_year = 0
-      let last4 = ''
+      let brand = "";
+      let exp_month = 0;
+      let exp_year = 0;
+      let last4 = "";
 
       const paymentMethodInfo = await paymentMethodPromise;
       const isCard = paymentMethodInfo.type === "card";
@@ -387,7 +386,7 @@ export const propertiesRouter = createTRPCRouter({
       const { propertyId, roomId, guestName, arrival, departure, totalPrice } =
         input;
 
-      const bookingId = await fetch(
+      const bookingId = (await fetch(
         // Get all availabilities - https://docs.lodgify.com/reference/getcalendarbyuserF
         `https://api.lodgify.com/v1/reservation/booking`,
         {
@@ -397,7 +396,7 @@ export const propertiesRouter = createTRPCRouter({
             totalPrice
           )},"currency_code":"usd","origin":"Mastela Vacations Site"}`,
         }
-      ).then((response) => response.json()) as number | object;
+      ).then((response) => response.json())) as number | object;
 
       return bookingId;
     }),
@@ -511,6 +510,8 @@ function getDatesInRanges(dateRanges: DateRange[]) {
   return dates;
 }
 
-function isLodgifyError(error: LodgifyQuote[] | LodgifyError): error is LodgifyError {
+function isLodgifyError(
+  error: LodgifyQuote[] | LodgifyError
+): error is LodgifyError {
   return typeof error === "object" && error !== null && "code" in error;
 }
