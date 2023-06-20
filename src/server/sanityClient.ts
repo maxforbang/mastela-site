@@ -1,5 +1,4 @@
 import { createClient } from 'next-sanity'
-import { env } from "~/env.mjs";
 
 const apiVersion = '2023-05-30';
 const dataset = "production";

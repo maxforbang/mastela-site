@@ -1,14 +1,13 @@
 import Layout from "~/components/Layout";
 import type { NextPageWithLayout } from "./_app";
 import { useState, type ReactElement, useEffect } from "react";
-import { Disclosure } from "@headlessui/react";
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { useRouter } from "next/router";
 import { parseISO } from "date-fns";
 import { dateToStringNumerical } from "./properties/[property]";
 import { api } from "~/utils/api";
 import Link from "next/link";
-import { InvoiceItem } from "types";
+import type { CalendarDates, CalendarComponent, InvoiceItem, BookingQuoteInfo } from "types";
 import { classNames } from "~/utils/functions/functions";
 import { formatCurrencyExact } from "~/utils/functions/formatCurrency";
 import { env } from "~/env.mjs";
@@ -25,35 +24,9 @@ import { DateRangePicker } from "~/components/DateRangePicker";
 import Image from "next/image";
 import { urlFor } from "../../sanity/lib/urlFor";
 
-const subtotal = "$19,483.00";
-const discount = { code: "CHEAPSKATE", amount: "$24.00" };
-const taxes = "$00.03";
-const fees = "$1024.00";
-const total = "$20,483.03";
-const products = [
-  {
-    id: 1,
-    name: "Villa Encore",
-    href: "#",
-    price: "$426.00",
-    dates: "4/1/2023 - 6/30/2023",
-    size: "",
-    imageSrc: "images/Encore.jpg",
-    imageAlt:
-      "Moss green canvas compact backpack with double top zipper, zipper front pouch, and matching carry handle and backpack straps.",
-  },
-  // More products...
-];
-
 const stripe = loadStripe(env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
-// const appearance = {
-//   theme: 'stripe'
-// };
-
-// loader = 'auto'
-
-// TODO: Add getServerSideProps
+// TODO: Possbily add getServerSideProps for clientSecret
 const CheckoutPage: NextPageWithLayout = () => {
   return <Checkout />;
 };
@@ -99,10 +72,9 @@ function Checkout() {
     );
   }
 
-  const utils = api.useContext();
-  const [dates, setDates] = useState({
-    startDate: arrival,
-    endDate: departure,
+  const [dates, setDates] = useState<CalendarDates>({
+    startDate: arrival as string,
+    endDate: departure as string,
   });
 
   const [paymentIntentQueryEnabled, setPaymentIntentQueryEnabled] =
@@ -111,8 +83,8 @@ function Checkout() {
   const { data: clientSecret } = api.properties.getClientSecret.useQuery(
     {
       slug: slug as string,
-      startDate: dates.startDate as string,
-      endDate: dates.endDate as string,
+      startDate: dates.startDate ?? '',
+      endDate: dates.endDate ?? '',
     },
     {
       enabled: paymentIntentQueryEnabled,
@@ -128,7 +100,7 @@ function Checkout() {
   useEffect(() => {
     if (arrival !== dates.startDate || departure !== dates.endDate) {
       setPaymentIntentQueryEnabled(true);
-      router.push(
+      void router.push(
         `/checkout?property=${slug}&arrival=${dates.startDate}&departure=${dates.endDate}`
       );
     }
@@ -139,7 +111,7 @@ function Checkout() {
       <main className="lg:flex lg:min-h-full lg:flex-row-reverse lg:overflow-hidden">
         <h1 className="sr-only">Checkout</h1>
 
-        <OrderSummary slug={slug} dates={dates} setDates={setDates} />
+        <OrderSummary property={slug as string} dates={dates} setDates={setDates} />
 
         {/* Checkout form */}
         <section
@@ -206,7 +178,7 @@ function CheckoutInvoiceItemDisplay({
           {prices.map((price) => {
             return (
               <div
-                key={`checkout-subitem-${price.description}-${price.uid}`}
+                key={`checkout-subitem-${price.description}`}
                 className="flex justify-between gap-2"
               >
                 <p>{price.description}</p>
@@ -231,7 +203,7 @@ function CheckoutInvoiceItemDisplay({
   // </div>
 }
 
-function OrderSummary({ slug, dates, setDates }) {
+function OrderSummary({ property, dates, setDates }: CalendarComponent) {
   const {
     data: pricingInfo,
     isLoading,
@@ -241,9 +213,9 @@ function OrderSummary({ slug, dates, setDates }) {
     isSuccess,
   } = api.properties.getQuote.useQuery(
     {
-      slug: slug as string,
-      startDate: dates.startDate as string,
-      endDate: dates.endDate as string,
+      slug: property as string,
+      startDate: dates?.startDate as string,
+      endDate: dates?.endDate as string,
     },
     {
       retry: 0,
@@ -252,8 +224,9 @@ function OrderSummary({ slug, dates, setDates }) {
 
   //TODO: Static props
   const { data: mainImage } = api.properties.getMainImage.useQuery({
-    slug,
+    slug: property ?? ''
   });
+
   const mainImageSrc = mainImage ? urlFor(mainImage).url() : "";
   const mainImageBlurSrc = mainImage ? urlFor(mainImage).height(32).blur(50).url() : "";
 
@@ -268,16 +241,16 @@ function OrderSummary({ slug, dates, setDates }) {
   let propertyName = "";
   let totalPrice = 0;
   let pricePerNight = "";
-  let invoiceItems = [];
+  let invoiceItems: InvoiceItem[] = [];
 
   if (isSuccess && pricingInfo !== null) {
-    ({ propertyName, totalPrice, pricePerNight, invoiceItems } = pricingInfo);
+    ({ propertyName, totalPrice, pricePerNight, invoiceItems } = pricingInfo as BookingQuoteInfo & { pricePerNight: string });
   }
 
   return (
     <>
       {/* Mobile order summary */}
-      <section
+      {/* <section
         aria-labelledby="order-heading"
         className="bg-gray-50 px-4 py-6 sm:px-6 lg:hidden"
       >
@@ -305,7 +278,7 @@ function OrderSummary({ slug, dates, setDates }) {
                   role="list"
                   className="divide-y divide-gray-200 border-b border-gray-200"
                 >
-                  {/* TODO: Don't map over products */}
+                  
                   {products.map((product) => (
                     <li key={product.id} className="flex space-x-6 py-6">
                       <img
@@ -380,7 +353,7 @@ function OrderSummary({ slug, dates, setDates }) {
             </>
           )}
         </Disclosure>
-      </section>
+      </section> */}
 
       {/* Desktop Order summary */}
       <section
@@ -425,13 +398,13 @@ function OrderSummary({ slug, dates, setDates }) {
                 )}
                 <br />
                 <p className="text-gray-500">{`${dateToStringNumerical(
-                  dates.startDate
-                )} - ${dateToStringNumerical(dates.endDate)}`}</p>
+                  dates?.startDate
+                )} - ${dateToStringNumerical(dates?.endDate)}`}</p>
 
                 <CalendarPopUp
                   dates={dates}
                   setDates={setDates}
-                  property={slug}
+                  property={property}
                 />
               </div>
             </div>
@@ -484,12 +457,12 @@ function CheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
 
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: { preventDefault: () => void; }) => {
     // Prevent refreshing page on submit
     event.preventDefault();
 
@@ -523,7 +496,7 @@ function CheckoutForm() {
       // This point will only be reached if there is an immediate error when
       // confirming the payment. Show error to your customer (for example, payment
       // details incomplete)
-      setErrorMessage(error.message);
+      setErrorMessage(error.message as string);
     } else {
       // Your customer will be redirected to your `return_url`. For some payment
       // methods like iDEAL, your customer will be redirected to an intermediate
@@ -643,9 +616,7 @@ function CalendarPopUp({
   dates,
   setDates,
   property,
-}: {
-  dates?: { startDate: string; endDate: string };
-}) {
+}: CalendarComponent) {
   const currentDate = new Date();
   const intialCalendarDates = [
     {

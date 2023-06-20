@@ -1,22 +1,25 @@
 import { addYears, parseISO } from "date-fns";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-date-range";
+import type { DateRange as DateRangeType } from "types";
+import type { CalendarComponent } from "types";
 import { api } from "~/utils/api";
 import { datesEqual } from "~/utils/functions/dates/datesEqual";
-import { classNames, formatDateRangeUrl, formatDateUrl } from "~/utils/functions/functions";
+import {
+  classNames,
+  formatDateRangeUrl,
+  formatDateUrl,
+} from "~/utils/functions/functions";
 
 //TODO: Change styling to hide duplicate dates (or make the text & background white for the duplicates at the beginning and end of the month)
 export const DateRangePicker = ({
   dates,
   setDates,
   setCalendarShowing,
-  property,
+  property = "",
   ...props
-}: {
-  setCalendarShowing?: (state: boolean) => void;
-  property?: string;
-}) => {
-  const { data: unavailableDates = [], isSuccess } =
+}: CalendarComponent) => {
+  const { data: unavailableDates = [] } =
     api.properties.getBlockedDatesForProperty.useQuery(
       {
         slug: property,
@@ -29,15 +32,21 @@ export const DateRangePicker = ({
     );
 
   const currentDate = new Date();
+
+  const initialDates = {
+    startDate: dates?.startDate ? parseISO(dates.startDate) : currentDate,
+    endDate: dates?.endDate ? parseISO(dates.endDate) : currentDate,
+  };
+
   const intialCalendarDates = [
     {
-      startDate: dates?.startDate ? parseISO(dates.startDate) : currentDate,
-      endDate: dates?.endDate ? parseISO(dates.endDate) : currentDate,
+      ...initialDates,
       key: "selection",
     },
   ];
 
-  const [calendarDates, setCalendarDates] = useState(intialCalendarDates);
+  const [calendarDates, setCalendarDates] =
+    useState<(DateRangeType & { key: string })[]>(intialCalendarDates);
 
   // Sync calendars if there are multiple on the page
   useEffect(() => {
@@ -64,9 +73,15 @@ export const DateRangePicker = ({
     <DateRange
       className={classNames("my-1 rounded-2xl")}
       onChange={(item) => {
-        setCalendarDates([item.selection]);
+        setCalendarDates([
+          {
+            startDate: item.selection?.startDate ?? new Date(),
+            endDate: item.selection?.endDate ?? new Date(),
+            key: "selection",
+          },
+        ]);
         if (!datesEqual(item.selection?.startDate, item.selection?.endDate)) {
-          setDates(formatDateRangeUrl(item.selection));
+          setDates(formatDateRangeUrl(item.selection as DateRangeType));
           setCalendarShowing && setCalendarShowing(false);
         }
       }}

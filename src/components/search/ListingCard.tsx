@@ -5,22 +5,21 @@ import { urlFor } from "../../../sanity/lib/urlFor";
 import { PortableText } from "@portabletext/react";
 import { formatCurrencyRounded } from "~/utils/functions/formatCurrency";
 import { api } from "~/utils/api";
+import type { DateStringRange, Occupancy, PropertyListing, Slug } from "types";
+interface ListingCardProps {
+  listing: PropertyListing;
+  arrival?: string;
+  departure?: string;
+}
 
-export function ListingCard({ listing, arrival, departure }) {
+// TODO: Add an explicit CTA (Book Now) somewhere
+export function ListingCard({ listing, arrival, departure }: ListingCardProps) {
   const { name, slug, mainImage, occupancy, preview } = listing;
 
   const imageSrc = urlFor(mainImage).height(1000).url();
   const blurImageSrc = urlFor(mainImage).width(24).height(24).blur(10).url();
 
-  const { guests, bedrooms, beds, bathrooms } = occupancy;
-  const occupancyString = `${guests} guest${
-    guests > 1 ? "s" : ""
-  } · ${bedrooms} bedroom${bedrooms > 1 ? "s" : ""} · ${beds} bed${
-    beds > 1 ? "s" : ""
-  } · ${bathrooms} bathroom${bathrooms > 1 ? "s" : ""}`;
-
-  const price = 426;
-  const total = 1690;
+  const occupancyString = createOccupancyString(occupancy);
 
   return (
     <Link
@@ -51,7 +50,7 @@ export function ListingCard({ listing, arrival, departure }) {
         <div className="w-32 border-b pt-4" />
 
         <div className="flex-grow pt-4 text-sm text-gray-500">
-          <PortableText value={preview} />
+          <PortableText value={preview ?? []} />
         </div>
         <div className="flex items-end justify-between pt-5">
           <div>
@@ -62,7 +61,11 @@ export function ListingCard({ listing, arrival, departure }) {
             </p> */}
           </div>
 
-          <ListingPrice slug={slug} arrival={arrival} departure={departure} />
+          <ListingPrice
+            slug={slug}
+            arrival={arrival ?? ""}
+            departure={departure ?? ""}
+          />
         </div>
       </div>
     </Link>
@@ -71,22 +74,17 @@ export function ListingCard({ listing, arrival, departure }) {
 
 export default ListingCard;
 
-function ListingPrice({ slug, arrival, departure }) {
-  const defaultDisplay = !arrival || !departure;
-
-  console.log(arrival);
-  console.log(departure);
+function ListingPrice({ slug, arrival, departure }: DateStringRange) {
+  const defaultDisplay = !arrival.length || !departure.length;
 
   const {
     data: pricingInfo,
     isLoading,
     isError,
     error,
-    isLoadingError,
-    isSuccess,
   } = api.properties.getQuote.useQuery(
     {
-      slug: slug.current,
+      slug: (slug as Slug)?.current,
       startDate: arrival,
       endDate: departure,
     },
@@ -97,7 +95,7 @@ function ListingPrice({ slug, arrival, departure }) {
   );
 
   let totalPrice = 0;
-  let pricePerNight = "Starting at $250";
+  let pricePerNight;
 
   if (pricingInfo && !isError) {
     ({ totalPrice, pricePerNight } = pricingInfo);
@@ -118,7 +116,12 @@ function ListingPrice({ slug, arrival, departure }) {
           </p>
           <p className="text-right font-extralight">
             {/* Show minimum stay if that was the error */}
-            {error.message.indexOf('days') ? `${error.message.substring(error.message.indexOf('days') - 2, error.message.indexOf('days') - 1)}-day minimum stay` : ''} 
+            {error.message.indexOf("days")
+              ? `${error.message.substring(
+                  error.message.indexOf("days") - 2,
+                  error.message.indexOf("days") - 1
+                )}-day minimum stay`
+              : ""}
           </p>
         </div>
       ) : isLoading ? (
@@ -126,7 +129,11 @@ function ListingPrice({ slug, arrival, departure }) {
       ) : (
         <div>
           <p className="text-lg font-semibold lg:pb-1 lg:text-2xl">
-            {formatCurrencyRounded(pricePerNight)} / night
+            {`${
+              pricePerNight
+                ? formatCurrencyRounded(pricePerNight as number)
+                : "Starting at $250"
+            } / night`}
           </p>
           <p className="text-right font-extralight">
             {formatCurrencyRounded(totalPrice)} total
@@ -144,4 +151,13 @@ function ListingPriceSkeleton() {
       <div className="h-6 w-3/12 animate-pulse self-end rounded-md bg-gray-300 " />
     </div>
   );
+}
+
+export function createOccupancyString(occupancy: Occupancy, seperator = '•') {
+  const { guests, bedrooms, beds, bathrooms } = occupancy;
+  return `${guests} guest${guests > 1 ? "s" : ""} ${seperator} ${bedrooms} bedroom${
+    bedrooms > 1 ? "s" : ""
+  } ${seperator} ${beds} bed${beds > 1 ? "s" : ""} ${seperator} ${bathrooms} bathroom${
+    bathrooms > 1 ? "s" : ""
+  }`;
 }

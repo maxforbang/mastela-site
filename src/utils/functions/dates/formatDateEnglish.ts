@@ -1,6 +1,10 @@
 import { format, parseISO } from "date-fns";
 
-export function formatDateEnglish(date: Date | string) {
+export function formatDateEnglish(date: Date | string | undefined) {
+  if (!date) {
+    return ''
+  }
+  
   let parsedDate: Date | string = date;
 
   if (typeof date === 'string') {

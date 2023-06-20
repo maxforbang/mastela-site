@@ -5,13 +5,6 @@ import { classNames } from "~/utils/functions/functions";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-const user = {
-  name: "Tom Cook",
-  email: "tom@example.com",
-  imageUrl:
-    "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-};
-
 const navigation = {
   main: [
     { name: "Home", href: "/" },
@@ -158,6 +151,8 @@ function Header() {
                 {/* Desktop Nav */}
                 <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8 ">
                   {navigation.main.map((item) => (
+                    // TODO: Villas dropdown hover.
+                    // item.name === 'our-villas' ? hoverLink : normalLink
                     <Link
                       key={`nav-item-${item.name}`}
                       href={item.href}

@@ -2,16 +2,13 @@ import { useState } from "react";
 import ReactMapGL, { Marker, Popup } from "react-map-gl";
 import getCenter from "geolib/es/getCenter";
 import { env } from "~/env.mjs";
-import type { UnitDetails } from "~/pages/our-villas";
 
-export const Map = ({ searchResults }: {searchResults: UnitDetails[]}) => {
-  const [selectedLocation, setSelectedLocation] = useState<UnitDetails | object>({});
-
+export const Map = () => {
   //   Transform coordinates into required array of objects in the correct shape
-  const coordinates = searchResults.map((result) => ({
+  const coordinates = [{
     latitude: 26.58957,
     longitude: -82.033984,
-  }));
+  }];
 
 
   // The latitude and longitude of the center of locations coordinates
@@ -33,34 +30,6 @@ export const Map = ({ searchResults }: {searchResults: UnitDetails[]}) => {
       {...viewport}
       onMove={(nextViewport) => setViewport({...viewport, ...nextViewport.viewState})}
     >
-        {searchResults.map((result: UnitDetails) => (
-            <div key={result.long}>
-                <Marker
-                    longitude={result.long}
-                    latitude={result.lat}
-                >
-                    <p 
-                    onClick={() => setSelectedLocation(result)}
-                    aria-label="push-pin"
-                    role="img"
-                    className="cursor-pointer text-2xl animate-pulse">📌</p>
-                </Marker>
-
-                {/* popup that shows if we click on a maker */}
-                {(selectedLocation as UnitDetails).long  === result.long ? (
-                    <Popup
-                        onClose={() => setSelectedLocation({})}
-                        closeOnClick={true}
-                        latitude={result.lat}
-                        longitude={result.long}
-                    >
-                        {result.title}
-                    </Popup>
-                ) : (
-                    false
-                )}
-            </div>
-        ))}
     </ReactMapGL>
   );
 };

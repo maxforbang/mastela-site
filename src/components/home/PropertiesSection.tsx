@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { urlFor } from "../../../sanity/lib/urlFor";
-import { PropertyListing } from "types";
+import type { PropertyListing } from "types";
 import { api } from "~/utils/api";
 import Link from "next/link";
 
@@ -15,7 +15,7 @@ const properties = [
 ];
 
 export default function PropertiesSection() {
-  const { data: properties = [], isLoading } =
+  const { data: properties = [] }: {data: PropertyListing[] | undefined} =
     api.properties.getAllProperties.useQuery();
 
   return (

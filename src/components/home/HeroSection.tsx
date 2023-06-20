@@ -8,21 +8,21 @@ import { formatDateEnglish } from "~/utils/functions/dates/formatDateEnglish";
 import { classNames, formatDateUrl } from "~/utils/functions/functions";
 import { DateRangePicker } from "../DateRangePicker";
 import { useRouter } from "next/router";
-
+import type { CalendarDates } from "types";
 function HeroSection() {
   return (
     <div className="">
       <div className="relative -mx-8 h-75vh lg:-mx-12 ">
         <Image
-        priority
+          priority
           className="-z-10"
           fill
           style={{ objectFit: "cover" }}
-          src='https://images.unsplash.com/photo-1511895426328-dc8714191300?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2370&q=80'
+          src="https://images.unsplash.com/photo-1511895426328-dc8714191300?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2370&q=80"
           alt=""
         />
-        <div className="absolute bottom-48 flex h-auto w-full justify-center">
-          <p className="[text-shadow:_2px_4px_20px_rgb(0_0_0_/_100%)] lg:text-7xl text-6xl text-white shadow-black text-center capitalize italic">
+        <div className="absolute bottom-80 flex h-auto w-full justify-center">
+          <p className="text-center text-6xl capitalize italic text-white shadow-black [text-shadow:_2px_4px_20px_rgb(0_0_0_/_100%)] lg:text-7xl">
             Start your vacation now
           </p>
         </div>
@@ -47,20 +47,20 @@ export function SearchBar({
 }: {
   displayTop?: boolean;
   overLay?: boolean;
-  dates?: { startDate: string; endDate: string };
+  dates?: CalendarDates;
 }) {
   const router = useRouter();
-  const [dates, setDates] = useState(initialDates);
+  const [dates, setDates] = useState<CalendarDates>(initialDates);
   const [calendarShowing, setCalendarShowing] = useState(false);
-  const isValidEntry = dates?.startDate !== dates?.endDate;
+  const isValidEntry = !!dates.startDate && !!dates.endDate && (dates.startDate !== dates.endDate);
 
   useEffect(() => {
     if (router.isReady && isValidEntry) {
-      router.push(
-        `/search?arrival=${dates?.startDate}&departure=${dates?.endDate}`
+      void router.push(
+        `/search?arrival=${dates.startDate as string}&departure=${dates.endDate as string}`
       );
     }
-  }, [dates]);
+  }, [dates, router.isReady, isValidEntry]);
 
   return (
     <div
@@ -111,7 +111,7 @@ export function SearchBar({
           onClick={() => setCalendarShowing(false)}
           href={
             isValidEntry
-              ? `/search?arrival=${dates?.startDate}&departure=${dates?.endDate}`
+              ? `/search?arrival=${dates.startDate as string}&departure=${dates?.endDate as string}`
               : `/our-villas`
           }
         >

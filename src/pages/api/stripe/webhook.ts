@@ -1,13 +1,14 @@
 import { prisma } from "./../../../server/db";
+import sanityClient from "../../../../sanity/lib/sanityClient";
 import getRawBody from "raw-body";
-import { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest, NextApiResponse } from "next";
 import { env } from "~/env.mjs";
 import { stripe } from "~/server/api/stripe";
 import {
   lodgifyHeaders,
   propertiesRouter,
 } from "~/server/api/routers/properties";
-
+import type { Customer, StripePaymentIntent } from "types";
 const STRIPE_SIGNATURE_HEADER = "stripe-signature";
 
 // NB: we disable body parser to receive the raw body string. The raw body
@@ -27,11 +28,11 @@ export default async function checkoutsWebhooksHandler(
 
   const event = stripe.webhooks.constructEvent(
     rawBody,
-    signature,
+    signature as string,
     env.WEBHOOK_SECRET_KEY
   );
 
-  const caller = propertiesRouter.createCaller({ prisma });
+  const caller = propertiesRouter.createCaller({ prisma, sanityClient });
 
   // NB: if stripe.webhooks.constructEvent fails, it would throw an error
 
@@ -46,35 +47,36 @@ export default async function checkoutsWebhooksHandler(
           receipt_email: email,
           shipping: { name, phone },
           metadata: {
-            pricing,
-            pricePerNight,
-            propertyName,
-            totalPrice,
-            arrival,
-            departure,
-            lodgifyPropertyId,
-            lodgifyRoomId,
+            pricing = "",
+            pricePerNight = "",
+            propertyName = "",
+            totalPrice = "",
+            arrival = "",
+            departure = "",
+            lodgifyPropertyId = "",
+            lodgifyRoomId = "",
           },
-        } = data.object;
+        } = data.object as StripePaymentIntent;
 
-        const priceDetails = JSON.parse(pricing);
-        const amountDetails: { [key: string]: number } = {};
-        priceDetails.forEach(
-          (item: { [key: string]: number }, index: number) => {
-            const key: string = Object.keys(item)[0];
-            const value: number = item[key];
-            amountDetails[key] = value;
-          }
-        );
+        const priceDetails: Record<string, number>[] = JSON.parse(
+          pricing
+        ) as Record<string, number>[];
+        const amountDetails: Record<string, number> = {};
 
-        const bookingId = await caller.createBooking({
+        priceDetails.forEach((item) => {
+          const key: string = Object.keys(item)[0] ?? "";
+          const value: number = item[key] ?? 0;
+          amountDetails[key] = value;
+        });
+
+        const bookingId: number | object = (await caller.createBooking({
           propertyId: lodgifyPropertyId,
           roomId: lodgifyRoomId,
           guestName: name,
           arrival: arrival,
           departure: departure,
           totalPrice: totalPrice,
-        });
+        })) as number | object;
 
         if (typeof bookingId !== "number") {
           // TODO: Send some alert (email, text) to the team to resolve this. Customer has paid but Lodgify was unable to create the booking.
@@ -89,14 +91,15 @@ export default async function checkoutsWebhooksHandler(
           });
         }
 
-        const bookingResponse = await fetch(
+        //TODO: Booking first
+        const bookingResponse: { status: string } = (await fetch(
           // Gets a quote - https://docs.lodgify.com/reference/get_v2-quote-propertyid
           `https://api.lodgify.com/v2/reservations/bookings/${bookingId}`,
           {
             method: "GET",
             headers: lodgifyHeaders,
           }
-        ).then((response) => response.json());
+        ).then((response) => response.json())) as { status: string };
 
         if (bookingResponse.status !== "Booked") {
           // TODO: Send some alert (email, text) to the team to resolve this. Customer has paid but Lodgify was unable to create the booking.

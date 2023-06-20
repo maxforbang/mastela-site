@@ -1,6 +1,6 @@
 import Layout from "~/components/Layout";
 import type { NextPageWithLayout } from "../_app";
-import { ReactElement, useEffect, useState } from "react";
+import { type ReactElement, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -11,15 +11,8 @@ import {
 import Map from "~/components/search/Map";
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
-import { DateRange } from "react-date-range";
-import {
-  addDays,
-  addYears,
-  differenceInDays,
-  format,
-  parseISO,
-} from "date-fns";
-import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
+import { format, parseISO } from "date-fns";
+import type { GetStaticPropsContext, InferGetStaticPropsType } from "next";
 import { PortableText } from "@portabletext/react";
 import { createServerSideHelpers } from "@trpc/react-query/server";
 import { propertiesRouter } from "../../server/api/routers/properties";
@@ -35,60 +28,67 @@ import {
   SkeletonPropertyHeader,
   SkeletonPropertyImages,
 } from "~/components/property/LoadingPropertyPage";
-import { RouterOutputs } from "~/utils/api";
-import { InvoiceItem } from "types";
+import type {
+  CalendarComponent,
+  CalendarDates,
+  InvoiceItem,
+  Occupancy,
+  RichText,
+  SanityImage,
+} from "types";
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
-import {
-  classNames,
-  formatDateRangeUrl,
-  formatDateUrl,
-} from "~/utils/functions/functions";
+import { classNames } from "~/utils/functions/functions";
 import { getUrlParams } from "~/utils/functions/getUrlParams";
-import { datesEqual } from "~/utils/functions/dates/datesEqual";
 import { DateRangePicker } from "~/components/DateRangePicker";
 import { urlFor } from "../../../sanity/lib/urlFor";
+import type { DehydratedState } from "@tanstack/react-query";
+import { createOccupancyString } from "~/components/search/ListingCard";
 
-const PropertyPage: NextPageWithLayout = (
+type PropertyPageProps = {
+  trpcState: DehydratedState;
+  slug: string;
+};
+
+const PropertyPage: NextPageWithLayout<PropertyPageProps> = (
   props: InferGetStaticPropsType<typeof getStaticProps>
 ) => {
   const router = useRouter();
-  let { slug } = props;
-
-  let arrival;
-  let departure;
+  const { slug } = props;
 
   useEffect(() => {
     if (router.isReady) {
-      ({ arrival, departure } = getUrlParams(router.asPath));
+      const { arrival, departure } = getUrlParams(router.asPath);
       setDates({
         startDate: arrival,
         endDate: departure,
       });
     }
-  }, [router.isReady, slug]);
+  }, [router.isReady, slug, router.asPath]);
 
-  const [dates, setDates] = useState({
-    startDate: arrival,
-    endDate: departure,
+  const [dates, setDates] = useState<CalendarDates>({
+    startDate: undefined,
+    endDate: undefined,
   });
 
   const {
     data: {
       name = "",
-      occupancy = {},
-      mainImage,
-      coords,
-      preview,
-      description,
+      occupancy,
+      // coords,
+      preview = [],
+      // description,
       images = [],
     } = {},
-    isLoading: propertyIsLoading,
-  } = api.properties.getProperty.useQuery({ slug });
+  } = api.properties.getProperty.useQuery(
+    { slug: slug ?? "" },
+    {
+      enabled: !!slug,
+    }
+  );
 
   const imageSources = images
-    ? images.slice(0, 5).map((image) => urlFor(image).url())
+    ? images.slice(0, 5).map((image: SanityImage) => urlFor(image).url())
     : [];
-  console.log(imageSources);
 
   return (
     <>
@@ -96,10 +96,15 @@ const PropertyPage: NextPageWithLayout = (
         <PropertyImages imageSources={imageSources} />
         <div className="max-w-7xl sm:flex lg:gap-8">
           <div className="flex flex-col justify-center px-6 md:w-2/3">
-            <PropertyHeader name={name} occupancy={occupancy} />
+            <PropertyHeader
+              name={name}
+              occupancy={
+                occupancy ?? { guests: 0, bedrooms: 0, beds: 0, bathrooms: 0 }
+              }
+            />
             <PropertyFeatures />
             <PropertyDescription preview={preview} />
-            <PropertyMap coords={coords} />
+            <PropertyMap />
             <AvailabilityCalendar
               dates={dates}
               setDates={setDates}
@@ -107,10 +112,10 @@ const PropertyPage: NextPageWithLayout = (
             />
           </div>
           <BookNowDesktop
-            slug={slug}
-            propertyIsLoading={propertyIsLoading}
+            property={slug ?? ""}
             dates={dates}
             setDates={setDates}
+            guests={occupancy?.guests ?? 0}
           />
         </div>
       </div>
@@ -168,8 +173,15 @@ function PropertyFeatures() {
   );
 }
 
-function BookNowDesktop({ slug, propertyIsLoading, dates, setDates }) {
-  const enabled = !!dates.startDate && !!dates.endDate;
+function BookNowDesktop({
+  property = "",
+  dates,
+  setDates,
+  guests,
+}: CalendarComponent & {
+  guests: number;
+}) {
+  const enabled = dates && !!dates.startDate && !!dates.endDate;
   const [calendarShowing, setCalendarShowing] = useState(false);
 
   const {
@@ -177,13 +189,12 @@ function BookNowDesktop({ slug, propertyIsLoading, dates, setDates }) {
     isLoading,
     isError,
     error,
-    isLoadingError,
     isSuccess,
   } = api.properties.getQuote.useQuery(
     {
-      slug,
-      startDate: dates.startDate,
-      endDate: dates.endDate,
+      slug: property,
+      startDate: dates?.startDate,
+      endDate: dates?.endDate,
     },
     {
       retry: 0,
@@ -193,16 +204,17 @@ function BookNowDesktop({ slug, propertyIsLoading, dates, setDates }) {
 
   const [errorMsg, setErrorMsg] = useState("");
 
-  if (enabled && isLoading && !isError && !isLoadingError) {
+  if (enabled && isLoading && !isError) {
     return <SkeletonBookNowDesktop />;
   }
 
   let totalPrice = 0;
   let pricePerNight = "Starting at $250";
-  let invoiceItems = [];
+  let invoiceItems: InvoiceItem[] = [];
 
   if (pricingInfo && !isError) {
-    ({ totalPrice, pricePerNight, invoiceItems } = pricingInfo);
+    ({ totalPrice, invoiceItems } = pricingInfo);
+    pricePerNight = pricingInfo.pricePerNight as string;
   }
 
   if (isError && errorMsg !== error.message) {
@@ -221,25 +233,29 @@ function BookNowDesktop({ slug, propertyIsLoading, dates, setDates }) {
         <p className="text-xl font-semibold">{pricePerNight}</p>/<p> night</p>
       </div>
       <StackedSearchBar
-        dates={{ startDate: dates.startDate, endDate: dates.endDate }}
+        dates={{ startDate: dates?.startDate, endDate: dates?.endDate }}
         setDates={setDates}
-        property={slug}
+        property={property}
         calendarShowing={calendarShowing}
         setCalendarShowing={setCalendarShowing}
+        guests={guests}
       />
       <div className="py-5">
         {enabled ? (
           <Link
-            href={`/checkout?property=${slug}&arrival=${dates.startDate}&departure=${dates.endDate}`}
+            href={`/checkout?property=${property}&arrival=${
+              dates.startDate as string
+            }&departure=${dates.endDate as string}`}
           >
             <div className="text-md flex w-full rounded-lg bg-sky-500 px-6 py-3 text-center font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
               <p className="mx-auto">Reserve</p>
             </div>
           </Link>
         ) : (
-          <div 
-          onClick={() => setCalendarShowing(true)}
-          className="cursor-pointer text-md flex w-full rounded-lg bg-sky-500 px-6 py-3 text-center font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+          <div
+            onClick={() => setCalendarShowing(true)}
+            className="text-md flex w-full cursor-pointer rounded-lg bg-sky-500 px-6 py-3 text-center font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          >
             <p className="mx-auto">Add dates</p>
           </div>
         )}
@@ -249,8 +265,13 @@ function BookNowDesktop({ slug, propertyIsLoading, dates, setDates }) {
       {totalPrice > 0 && (
         <>
           <div className="mt-4 flex flex-col gap-4 border-b pb-4">
-            {invoiceItems.map((invoiceItem: InvoiceItem, index) => {
-              return <InvoiceItemDisplay invoiceItem={invoiceItem} />;
+            {invoiceItems.map((invoiceItem: InvoiceItem) => {
+              return (
+                <InvoiceItemDisplay
+                  key={`invoice-item-${invoiceItem.description}`}
+                  invoiceItem={invoiceItem}
+                />
+              );
             })}
           </div>
           <div className="text flex justify-between pt-4">
@@ -268,20 +289,18 @@ function BookNowDesktop({ slug, propertyIsLoading, dates, setDates }) {
 function StackedSearchBar({
   dates,
   setDates,
-  invalidate,
   property,
   calendarShowing,
   setCalendarShowing,
-}: {
-  dates?: { startDate: string; endDate: string };
-}) {
+  guests,
+}: CalendarComponent & { guests: number }) {
   return (
     <>
       <div className="mt-5 rounded-lg border border-gray-300">
         <div className="flex flex-col">
           <div
             onClick={() => {
-              setCalendarShowing(!calendarShowing);
+              setCalendarShowing && setCalendarShowing(!calendarShowing);
             }}
             className="flex items-center"
           >
@@ -310,11 +329,7 @@ function StackedSearchBar({
             <p className="thin text-xs font-bold uppercase tracking-tight">
               Guests
             </p>
-            <p>
-              {property === "the-twins-villa" || property === "villa-encore"
-                ? "Up to 10 guests"
-                : "Up to 8 guests"}
-            </p>
+            <p>{`Up to ${guests} guests`}</p>
           </div>
         </div>
       </div>
@@ -335,70 +350,34 @@ function StackedSearchBar({
   );
 }
 
-function BookNowMobile({ slug, arrival, departure }) {
-  if (!arrival || !departure) {
-    return <p>hi</p>;
-  }
+// function BookNowMobile({ slug, arrival, departure }) {
+//   if (!arrival || !departure) {
+//     return <p>...</p>;
+//   }
 
-  const { data: quote = [], isLoading } = api.properties.getQuote.useQuery({
-    slug,
-    startDate: arrival,
-    endDate: departure,
-  });
+//   return (
+//     <div className="fixed bottom-0 flex w-full items-center justify-between border-t bg-white px-6 py-5 md:hidden">
+//       <div className="text-sm">
+//         <p>{pricePerNight} night</p>
+//         <p className="underline">Sep 9 - 14</p>
+//       </div>
+//       <div className="">
+//         <Link
+//           href="/checkout"
+//           className="text-md rounded-lg bg-sky-500 px-6 py-3.5 text-center font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+//         >
+//           Reserve
+//         </Link>
+//       </div>
+//     </div>
+//   );
+// }
 
-  if (isLoading) {
-    return <p>Loading</p>; //BookNowMobile Skeleton
-  }
-
-  let totalPrice = 0;
-  let room_types = [];
-  //TODO: Instead of messy destructuring, return a custom type with only the data you need from server (int totalPrice, InvoiceItem[])
-  if (quote && quote[0]) {
-    ({ total_including_vat: totalPrice = 0, room_types = [] } = quote[0]) ?? {};
-  }
-
-  // TODO: Include subitems (price_types[].prices) from API
-  let invoiceItems = [];
-  let pricePerNight = "";
-
-  if (room_types && room_types[0]) {
-    invoiceItems = room_types[0].price_types
-      .map((item) => {
-        let description = item.description;
-        if (item.description === "Room Rate") {
-          const nights = differenceInDays(
-            new Date(departure),
-            new Date(arrival)
-          );
-          pricePerNight = formatCurrencyRounded(item.subtotal / nights);
-          description = `${pricePerNight} x ${nights} nights`;
-        }
-        return {
-          description: description,
-          price: item.subtotal,
-        };
-      })
-      .filter((item) => item.price > 0);
-  }
-  return (
-    <div className="fixed bottom-0 flex w-full items-center justify-between border-t bg-white px-6 py-5 md:hidden">
-      <div className="text-sm">
-        <p>{pricePerNight} night</p>
-        <p className="underline">Sep 9 - 14</p>
-      </div>
-      <div className="">
-        <Link
-          href="/checkout"
-          className="text-md rounded-lg bg-sky-500 px-6 py-3.5 text-center font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-        >
-          Reserve
-        </Link>
-      </div>
-    </div>
-  );
-}
-
-function AvailabilityCalendar({ dates, setDates, property }) {
+function AvailabilityCalendar({
+  dates,
+  setDates,
+  property,
+}: CalendarComponent) {
   return (
     <div className="border-t py-8">
       <p className="text-center text-xl font-semibold">Availability</p>
@@ -435,7 +414,7 @@ function AvailabilityCalendar({ dates, setDates, property }) {
   );
 }
 
-function PropertyMap({ coords }) {
+function PropertyMap() {
   // TODO: Add coords for marker
   return (
     <>
@@ -443,28 +422,13 @@ function PropertyMap({ coords }) {
         Surrounding Area
       </p>
       <div className="mb-8 h-30vh overflow-hidden rounded-lg">
-        <Map
-          searchResults={[
-            {
-              img: "https://links.papareact.com/xqj",
-              location: "Private room in center of London",
-              title: "Stay at this spacious Edwardian House",
-              description:
-                "1 guest · 1 bedroom · 1 bed · 1.5 shared bthrooms · Wifi · Kitchen · Free parking · Washing Machine",
-              star: 4.73,
-              price: "£30 / night",
-              total: "£117 total",
-              long: -0.0022275,
-              lat: 51.5421655,
-            },
-          ]}
-        />
+        <Map />
       </div>
     </>
   );
 }
 
-function PropertyImages({ imageSources: images }) {
+function PropertyImages({ imageSources: images }: { imageSources: string[] }) {
   if (!images.length) {
     return <SkeletonPropertyImages />;
   }
@@ -484,7 +448,7 @@ function PropertyImages({ imageSources: images }) {
           className="sm:rounded-l-xl"
           fill
           style={{ objectFit: "cover" }}
-          src={images[0]}
+          src={images[0] ?? ""}
           sizes="(min-width: 640px) 50vw, (min-width: 1536px) 40vw, 100vw"
           // blurDataURL={blurImageSrc}
           alt=""
@@ -496,7 +460,7 @@ function PropertyImages({ imageSources: images }) {
             className=""
             fill
             style={{ objectFit: "cover" }}
-            src={images[1]}
+            src={images[1] ?? ""}
             sizes="(min-width: 640px) 25vw, (min-width: 1536px) 20vw, 100vw"
             // blurDataURL={blurImageSrc}
             alt=""
@@ -507,7 +471,7 @@ function PropertyImages({ imageSources: images }) {
             className="rounded-tr-xl"
             fill
             style={{ objectFit: "cover" }}
-            src={images[2]}
+            src={images[2] ?? ""}
             sizes="(min-width: 640px) 25vw, (min-width: 1536px) 20vw, 100vw"
             // blurDataURL={blurImageSrc}
             alt=""
@@ -518,7 +482,7 @@ function PropertyImages({ imageSources: images }) {
             className=" "
             fill
             style={{ objectFit: "cover" }}
-            src={images[3]}
+            src={images[3] ?? ""}
             sizes="(min-width: 640px) 25vw, (min-width: 1536px) 20vw, 100vw"
             // blurDataURL={blurImageSrc}
             alt=""
@@ -529,7 +493,7 @@ function PropertyImages({ imageSources: images }) {
             className="rounded-br-xl"
             fill
             style={{ objectFit: "cover" }}
-            src={images[4]}
+            src={images[4] ?? ""}
             sizes="(min-width: 640px) 25vw, (min-width: 1536px) 20vw, 100vw"
             // blurDataURL={blurImageSrc}
             alt=""
@@ -545,25 +509,24 @@ function PropertyHeader({
   occupancy,
 }: {
   name: string;
-  occupancy: number;
+  occupancy: Occupancy;
 }) {
   if (!name || !occupancy) {
     return <SkeletonPropertyHeader />;
   }
 
-  const { guests = 0, bedrooms = 0, beds = 0, bathrooms = 0 } = occupancy;
-
+  //•
   return (
     <div className="mt-4 py-8 text-center text-4xl">
       <p className="">{name}</p>
       <p className="border-b py-3 pb-8 text-lg">
-        {guests} guests • {bedrooms} bedrooms • {beds} beds • {bathrooms} baths
+        {createOccupancyString(occupancy)}
       </p>
     </div>
   );
 }
 
-function PropertyDescription({ preview }) {
+function PropertyDescription({ preview }: { preview: RichText[] }) {
   if (!preview) {
     return <SkeletonPropertyDescription />;
   }
@@ -573,7 +536,7 @@ function PropertyDescription({ preview }) {
       <PortableText value={preview} />
       {/* &nbsp;&hellip; */}
       <div
-        // TODO: Add model for description's Show More
+        // TODO: Add modal/slide-over for description's Show More
         onClick={() => console.log("Description Pop-Up")}
         className="mt-4 flex cursor-pointer gap-2 text-base font-semibold"
       >
@@ -587,7 +550,7 @@ function PropertyDescription({ preview }) {
 }
 
 export async function getStaticPaths() {
-  const paths = await sanityClient.fetch(
+  const paths: string[] = await sanityClient.fetch(
     groq`*[_type == "property" && defined(slug.current)][].slug.current`
   );
 
@@ -602,10 +565,10 @@ export async function getStaticProps(
 ) {
   const helpers = createServerSideHelpers({
     router: propertiesRouter,
-    ctx: { prisma },
+    ctx: { prisma, sanityClient },
   });
 
-  const slug = context.params?.property;
+  const slug = context.params?.property || "";
 
   await helpers.getProperty.prefetch({ slug: slug });
 
@@ -657,7 +620,7 @@ function InvoiceItemDisplay({ invoiceItem }: { invoiceItem: InvoiceItem }) {
           {prices.map((price) => {
             return (
               <div
-                key={`bn-desktop-subitem-${price.uid}`}
+                key={`bn-desktop-subitem-${price.description}`}
                 className="flex justify-between gap-2"
               >
                 <p>{price.description}</p>
@@ -671,7 +634,11 @@ function InvoiceItemDisplay({ invoiceItem }: { invoiceItem: InvoiceItem }) {
   );
 }
 
-export function dateToStringNumerical(date: string | Date): string {
+export function dateToStringNumerical(date: string | Date | undefined): string {
+  if (!date) {
+    return "";
+  }
+
   if (typeof date === "string") {
     if (!date.length) {
       return "";

@@ -1,7 +1,7 @@
 import Image from "next/image";
-import { classNames } from "~/utils/functions/functions";
+import type { CaptionedImage } from "types";import { classNames } from "~/utils/functions/functions";
 
-const amenities = [
+const amenities: CaptionedImage[] = [
 {text: `Smart Home Controls`, imageUrl:'https://images.unsplash.com/photo-1558002038-1055907df827?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80'},
 {text: 'Heated Pools & Spas', imageUrl:"https://cdn.sanity.io/images/n9q65f5k/production/41aecff97aeaf842c995a25d10d3fdf1ce34787d-3000x2000.jpg?w=1000"},
 {text: 'Gulf-Access Boat Docks', imageUrl:'https://cdn.sanity.io/images/n9q65f5k/production/62f2f8adef0bd62739016504464d55959ba04f00-3000x2000.jpg?w=800'},
@@ -25,7 +25,7 @@ export default function AmenitiesSection() {
         </div>
         <div className="mt-10 grid w-full grid-cols-1 gap-4 pt-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 [&>*:nth-child(1)]:xl:col-span-2 [&>*:nth-child(2)]:xl:col-span-2 [&>*:nth-child(5)]:hidden [&>*:nth-child(5)]:lg:block [&>*:nth-child(6)]:hidden [&>*:nth-child(6)]:lg:block">
           {amenities.map((amenity, index) => (
-            <AmenitiesCard key={`amenities-${index}`} large={index <= 1} amenity={amenity} width={index > 1 ? 340 : 680}/>
+            <AmenitiesCard key={`amenities-${index}`} large={index <= 1} amenity={amenity}/>
           ))}
         </div>
       </div>
@@ -33,7 +33,12 @@ export default function AmenitiesSection() {
   );
 }
 
-function AmenitiesCard({ large = false, amenity, width }) {
+interface AmenitiesCardProps {
+  large: boolean,
+  amenity: CaptionedImage,
+}
+
+function AmenitiesCard({ large = false, amenity }: AmenitiesCardProps) {
   return (
     <section className="">
       <div

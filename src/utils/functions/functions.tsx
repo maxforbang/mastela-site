@@ -1,5 +1,4 @@
-import { DateRange } from "types";
-
+import type { DateRange } from "types";
 export function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
@@ -13,16 +12,16 @@ export function formatDateUrl(date: Date) {
 }
 
 
-export function formatDateRangeUrl({startDate, endDate} : {startDate: Date, endDate: Date}) {
-  const startYear = startDate.getFullYear();
-  const startMonth = (startDate.getMonth() + 1).toString().padStart(2, '0');
-  const startDay = startDate.getDate().toString().padStart(2, '0');
-  const formattedStartDate = `${startYear}-${startMonth}-${startDay}`;
+export function formatDateRangeUrl(dates: DateRange | undefined) {
+  
+  if (!dates) {
+    return {startDate: formatDateUrl(new Date()), endDate: formatDateUrl(new Date())}
+  }
 
-  const endYear = endDate.getFullYear();
-  const endMonth = (endDate.getMonth() + 1).toString().padStart(2, '0');
-  const endDay = endDate.getDate().toString().padStart(2, '0');
-  const formattedEndDate = `${endYear}-${endMonth}-${endDay}`;
+  const {startDate, endDate} = dates
+
+  const formattedStartDate = formatDateUrl(startDate);
+  const formattedEndDate = formatDateUrl(endDate);
   
   return {startDate: formattedStartDate, endDate: formattedEndDate}
 }

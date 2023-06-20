@@ -1,5 +1,5 @@
 import Layout from "~/components/Layout";
-import { NextPageWithLayout } from "../_app";
+import type { NextPageWithLayout } from "../_app";
 import type { ReactElement } from "react";
 
 const BlogPage: NextPageWithLayout = () => {
@@ -193,12 +193,6 @@ import {
 
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 import Link from "next/link";
-
-const items = [
-  { id: 1, title: 'Back End Developer', department: 'Engineering', type: 'Full-time', location: 'Remote' },
-  { id: 2, title: 'Front End Developer', department: 'Engineering', type: 'Full-time', location: 'Remote' },
-  { id: 3, title: 'User Interface Designer', department: 'Design', type: 'Full-time', location: 'Remote' },
-]
 
 function TopPagination() {
   return (

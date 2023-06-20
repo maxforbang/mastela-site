@@ -1,7 +1,7 @@
 export type BookingQuoteInfo = {
   propertyName: string;
   invoiceItems: InvoiceItem[];
-  pricePerNight: string;
+  pricePerNight: string | number;
   totalPrice: number;
 };
 
@@ -21,7 +21,7 @@ export type BookingInformation = {
   customer: Customer;
   propertyName: string;
   propertySlug: string;
-  dates: DateRange;
+  dates: DateStringRange;
   totalPrice: string;
   amountDetails: Record<string, number>;
   pricePerNight: string;
@@ -31,7 +31,7 @@ export type BookingInformation = {
 
 export type Customer = {
   name: string;
-  email: string;
+  email?: string;
   phone: string;
 };
 
@@ -41,11 +41,17 @@ export type PaymentMethod = {
   exp_month?: number;
   exp_year?: number;
   last4?: string;
-}
+};
 
-export type DateRange = {
+export type DateStringRange = {
   arrival: string;
   departure: string;
+  slug?: Slug | string;
+};
+
+export type DateRange = {
+  startDate: Date;
+  endDate: Date;
 };
 
 export type Coordinates = {
@@ -53,15 +59,15 @@ export type Coordinates = {
   long: number;
 };
 
-export type Preview = {
+export type RichText = {
   _type: string;
   style: string;
   _key: string;
   markDefs: any[];
-  children: PreviewChildren[];
+  children: RichTextChildren[];
 };
 
-export type PreviewChildren = {
+export type RichTextChildren = {
   marks: any[];
   text: string;
   _key: string;
@@ -80,7 +86,7 @@ export type Occupancy = {
   bathrooms: number;
 };
 
-export type MainImage = {
+export type SanityImage = {
   _type: string;
   alt: string;
   asset: {
@@ -89,18 +95,82 @@ export type MainImage = {
   };
 };
 
-export type PropertyListing = {
-  coords: Coordinates;
-  preview: Preview[];
+export interface PropertyListing {
+  coords?: Coordinates;
+  preview?: RichText[];
   name: string;
   slug: Slug;
   occupancy: Occupancy;
-  mainImage: MainImage;
-};
-
-export type FAQ = {
-  question: string,
-  answer: string
+  mainImage: SanityImage;
 }
 
+export interface Property extends PropertyListing {
+  description: string;
+  images: SanityImage[];
+}
 
+export type FAQ = {
+  question: string;
+  answer: string;
+};
+
+export type CalendarDates = {
+  startDate: string | undefined;
+  endDate: string | undefined;
+};
+
+export interface CalendarComponent {
+  setDates: (dates: CalendarDates) => void;
+  dates?: CalendarDates;
+  property?: string;
+  months?: number;
+  direction?: "horizontal" | "vertical";
+  calendarShowing?: boolean;
+  setCalendarShowing?: (toggle: boolean) => void;
+}
+
+export type LodgifyAvailabilityPeriod = {
+  available: 0 | 1;
+  start: string;
+  end: string;
+};
+
+export type LodgifyPropertyAvailabilities = {
+  periods: LodgifyAvailabilityPeriod[];
+  property_id: number;
+};
+
+export type CaptionedImage = {
+  text: string;
+  imageUrl: string;
+};
+
+export type StripePaymentIntentMetadata = {
+  pricing: string;
+  propertyName: string;
+  arrival: string;
+  lodgifyRoomId: string;
+  departure: string;
+  pricePerNight: string;
+  totalPrice: string;
+  lodgifyPropertyId: string;
+  propertySlug: string;
+};
+
+export type StripePaymentIntent = {
+  receipt_email: string;
+  shipping: Customer;
+  metadata: Record<string, string>;
+  created: number;
+  payment_method: string;
+};
+
+export type LodgifyQuote = {
+  total_including_vat: number;
+  room_types: { price_types: InvoiceItem[] }[];
+};
+
+export type LodgifyError = {
+  message: string;
+  code: number;
+};

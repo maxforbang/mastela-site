@@ -1,18 +1,31 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import sanityClient from "../../../../sanity/lib/sanityClient";
 import { env } from "~/env.mjs";
 import { groq } from "next-sanity";
 import { differenceInDays, parseISO } from "date-fns";
 import { formatCurrencyRounded } from "~/utils/functions/formatCurrency";
 import { TRPCError } from "@trpc/server";
-import {
+import type {
   BookingInformation,
-  BookingQuoteInfo as BookingQuoteInfo,
+  BookingQuoteInfo,
+  DateRange,
   InvoiceItem,
+  LodgifyAvailabilityPeriod,
   PaymentMethod,
+  PropertyListing,
+  Property,
+  LodgifyPropertyAvailabilities,
+  LodgifyQuote,
+  LodgifyError,
+  SanityImage,
+  StripePaymentIntent,
 } from "types";
 import { stripe } from "../stripe";
+import type {
+  PrismaClient,
+  Prisma,
+  Property as PropertyIdentifier,
+} from "@prisma/client";
 
 export const lodgifyHeaders = {
   accept: "application/json",
@@ -32,9 +45,10 @@ export const propertiesRouter = createTRPCRouter({
           name, slug, occupancy, mainImage, coords, preview, description, images
       }`;
 
-      const property = await sanityClient.fetch(propertyQuery, {
+      const property: Property = await ctx.sanityClient.fetch(propertyQuery, {
         slug: input.slug,
       });
+
       return property;
     }),
   getAllProperties: publicProcedure.query(async ({ ctx }) => {
@@ -43,7 +57,10 @@ export const propertiesRouter = createTRPCRouter({
         name, slug, occupancy, mainImage, coords, preview
     }`;
 
-    const properties = await sanityClient.fetch(allPropertiesQuery);
+    const properties: PropertyListing[] = await ctx.sanityClient.fetch(
+      allPropertiesQuery
+    );
+
     return properties;
   }),
   getAvailableProperties: publicProcedure
@@ -63,19 +80,22 @@ export const propertiesRouter = createTRPCRouter({
       }
 
       try {
-        const lodgifyPropertyAvailabilities = await fetch(
+        const lodgifyPropertyAvailabilities = (await fetch(
           // Get all availabilities - https://docs.lodgify.com/reference/getcalendarbyuser
           `https://api.lodgify.com/v2/availability?start=${input.startDate}&end=${input.endDate}&includeDetails=false`,
           {
             method: "GET",
             headers: lodgifyHeaders,
           }
-        ).then((response) => response.json());
+        ).then((response) =>
+          response.json()
+        )) as LodgifyPropertyAvailabilities[];
 
-        let availablePropertiesLodgifyIds = [];
-        for (let property of lodgifyPropertyAvailabilities) {
+        const availablePropertiesLodgifyIds: number[] = [];
+        for (const property of lodgifyPropertyAvailabilities) {
           const available = !property.periods.some(
-            (period) => period.available === 0 && period.start !== input.endDate // edge case: API returns {available: 0} for a range of 1 day if the next booking starts on your endDate param
+            (period: LodgifyAvailabilityPeriod) =>
+              period.available === 0 && period.start !== input.endDate // edge case: API returns {available: 0} for a range of 1 day if the next booking starts on your endDate param
           );
           if (available) {
             availablePropertiesLodgifyIds.push(property.property_id);
@@ -109,15 +129,16 @@ export const propertiesRouter = createTRPCRouter({
             name, slug, occupancy, mainImage, coords, preview
         }`;
 
-        const availableListings = await sanityClient.fetch(listingsQuery, {
-          availablePropertiesSanityIds,
-        });
+        const availableListings: PropertyListing[] =
+          await ctx.sanityClient.fetch(listingsQuery, {
+            availablePropertiesSanityIds,
+          });
 
         return availableListings;
       } catch (error) {
         console.error(error);
         throw new Error(
-          `Failed to fetch available properties. Error: ${error}`
+          `Failed to fetch available properties. Error: ${error as string}`
         );
       }
     }),
@@ -131,34 +152,39 @@ export const propertiesRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const property = await getPropertyBySlug(ctx.prisma, input.slug);
-      const { lodgifyPropertyId, lodgifyRoomId } = property;
 
-      const availabilityPeriods = await fetch(
+      const { lodgifyPropertyId } = property;
+
+      const availabilityPeriods = (await fetch(
         // Get all availabilities - https://docs.lodgify.com/reference/getcalendarbyuser
         `https://api.lodgify.com/v2/availability/${lodgifyPropertyId}?start=${input.startDate}&end=${input.endDate}&includeDetails=false`,
         {
           method: "GET",
           headers: lodgifyHeaders,
         }
-      ).then((response) => response.json());
+      ).then((response) => response.json())) as LodgifyPropertyAvailabilities[];
 
-      const unavailablePeriodStrings = availabilityPeriods[0].periods.filter(
-        (period) => period.available === 0
+      const unavailablePeriodStrings = availabilityPeriods[0]?.periods.filter(
+        (period: LodgifyAvailabilityPeriod) => period.available === 0
       );
-      const unavailableDateRanges = unavailablePeriodStrings.map((period) => {
-        return {
-          startDate: parseISO(period.start),
-          endDate: parseISO(period.end),
-        };
-      });
-      return getDatesInRanges(unavailableDateRanges);
+      const unavailableDateRanges = unavailablePeriodStrings?.map(
+        (period: LodgifyAvailabilityPeriod) => {
+          return {
+            startDate: parseISO(period.start),
+            endDate: parseISO(period.end),
+          };
+        }
+      );
+      return unavailableDateRanges
+        ? getDatesInRanges(unavailableDateRanges)
+        : undefined;
     }),
   getQuote: publicProcedure
     .input(
       z.object({
         slug: z.string(),
-        startDate: z.string(),
-        endDate: z.string(),
+        startDate: z.optional(z.string()),
+        endDate: z.optional(z.string()),
       })
     )
     .query(async ({ ctx, input }) => {
@@ -176,13 +202,6 @@ export const propertiesRouter = createTRPCRouter({
         input.startDate,
         input.endDate
       );
-
-      if (quote.code === 666) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: quote.message + `, please change your selection.`, //${property.name} from ${input.startDate} to ${input.endDate}`,
-        });
-      }
 
       const pricingInfo = calculateLodgifyPricingInfo(
         quote,
@@ -205,10 +224,10 @@ export const propertiesRouter = createTRPCRouter({
           mainImage
       }`;
 
-      const { mainImage } = await sanityClient.fetch(imageQuery, {
-        slug: input.slug,
-      });
-      console.log(mainImage)
+      const { mainImage }: { mainImage: SanityImage } =
+        await ctx.sanityClient.fetch(imageQuery, {
+          slug: input.slug,
+        });
 
       return mainImage;
     }),
@@ -270,10 +289,10 @@ export const propertiesRouter = createTRPCRouter({
         paymentIntent: z.string(),
       })
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ input }) => {
       const paymentIntent = await stripe.paymentIntents.retrieve(
         input.paymentIntent
-      );
+      ) as StripePaymentIntent;
 
       const {
         payment_method,
@@ -288,31 +307,43 @@ export const propertiesRouter = createTRPCRouter({
           departure,
         },
         receipt_email: email,
-        shipping: { name, phone },
+        shipping,
       } = paymentIntent;
 
-      const paymentMethodPromise =
-        stripe.paymentMethods.retrieve(payment_method);
+      const { name, phone } = shipping || { name: null, phone: null };
 
-      const priceDetails = JSON.parse(pricing);
+      const paymentMethodPromise = stripe.paymentMethods.retrieve(
+        payment_method
+      );
+
+      const priceDetails = JSON.parse(pricing as string) as Record<
+        string,
+        number
+      >[];
       const amountDetails: { [key: string]: number } = {};
-      priceDetails.forEach((item: { [key: string]: number }, index: number) => {
-        const key: string = Object.keys(item)[0];
-        const value: number = item[key];
+      priceDetails.forEach((item) => {
+        const key: string = Object.keys(item)[0] ?? "";
+        const value: number = item[key] ?? 0;
         amountDetails[key] = value;
       });
 
       const createdDate = new Date(0);
       createdDate.setUTCSeconds(created);
 
-      let brand, exp_month, exp_year, last4;
+      let brand = ''
+      let exp_month = 0
+      let exp_year = 0
+      let last4 = ''
+
       const paymentMethodInfo = await paymentMethodPromise;
       const isCard = paymentMethodInfo.type === "card";
 
       if (isCard) {
-        ({
-          card: { brand, exp_month, exp_year, last4 },
-        } = paymentMethodInfo);
+        if (paymentMethodInfo.card) {
+          ({
+            card: { brand, exp_month, exp_year, last4 },
+          } = paymentMethodInfo);
+        }
       }
 
       const paymentMethod: PaymentMethod = {
@@ -325,16 +356,16 @@ export const propertiesRouter = createTRPCRouter({
 
       const bookingInformation: BookingInformation = {
         customer: {
-          name,
-          email,
-          phone,
+          name: name ?? "",
+          email: email ?? "",
+          phone: phone ?? "",
         },
-        propertyName,
-        propertySlug,
-        dates: { arrival, departure },
-        totalPrice,
+        propertyName: propertyName ?? "",
+        propertySlug: propertySlug ?? "",
+        dates: { arrival: arrival ?? "", departure: departure ?? "" },
+        totalPrice: totalPrice ?? "",
         amountDetails,
-        pricePerNight,
+        pricePerNight: pricePerNight ?? "",
         createdDate,
         paymentMethod,
       };
@@ -352,7 +383,7 @@ export const propertiesRouter = createTRPCRouter({
         totalPrice: z.string(),
       })
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ input }) => {
       const { propertyId, roomId, guestName, arrival, departure, totalPrice } =
         input;
 
@@ -366,59 +397,84 @@ export const propertiesRouter = createTRPCRouter({
             totalPrice
           )},"currency_code":"usd","origin":"Mastela Vacations Site"}`,
         }
-      ).then((response) => response.json());
+      ).then((response) => response.json()) as number | object;
 
       return bookingId;
     }),
 });
 
-const getPropertyBySlug = async (prisma, slug: string) => {
-  return await prisma.property.findFirst({
+const getPropertyBySlug = async (
+  prisma: PrismaClient<
+    Prisma.PrismaClientOptions,
+    never,
+    Prisma.RejectOnNotFound | Prisma.RejectPerOperation | undefined
+  >,
+  slug: string
+) => {
+  const property = await prisma.property.findFirst({
     where: {
       slug: slug,
     },
   });
+
+  if (!property) {
+    throw new Error(`Failed to fetch property from database [${slug}]`);
+  }
+
+  return property;
 };
 
 const getLodgifyQuote = async (
-  property,
+  property: PropertyIdentifier,
   startDate: string,
   endDate: string
 ) => {
   const { lodgifyPropertyId, lodgifyRoomId } = property;
 
-  const quote = await fetch(
+  const quote = (await fetch(
     // Gets a quote - https://docs.lodgify.com/reference/get_v2-quote-propertyid
     `https://api.lodgify.com/v2/quote/${lodgifyPropertyId}?arrival=${startDate}&departure=${endDate}&roomTypes[0].Id=${lodgifyRoomId}&roomTypes[0].People=4`,
     {
       method: "GET",
       headers: lodgifyHeaders,
     }
-  ).then((response) => response.json());
+  ).then((response) => response.json())) as LodgifyQuote[] | LodgifyError;
+
+  if (isLodgifyError(quote)) {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: quote.message + `, please change your selection.`,
+    });
+  }
 
   return quote;
 };
 
 function calculateLodgifyPricingInfo(
-  quote,
+  quote: LodgifyQuote[],
   propertyName: string,
   startDate: string,
   endDate: string
 ) {
-  let { total_including_vat: totalPrice, room_types } = quote[0];
-  const invoiceItems: InvoiceItem[] = room_types[0].price_types.filter(
-    (invoiceItem) => invoiceItem.subtotal > 0
-  ); // TODO: Add discount items (remove filter)
+  const { total_including_vat: totalPrice, room_types } = quote[0] ?? {
+    total_including_vat: 0,
+    room_types: [{ price_types: [] }],
+  };
+
+  const invoiceItems: InvoiceItem[] =
+    room_types[0]?.price_types.filter(
+      (invoiceItem: InvoiceItem) => invoiceItem.subtotal > 0
+    ) ?? []; // TODO: Add discount items (remove filter)
 
   const numNights = differenceInDays(new Date(endDate), new Date(startDate));
 
   let pricePerNight = "";
-  for (let invoiceItem of invoiceItems) {
+  for (const invoiceItem of invoiceItems) {
     if (invoiceItem.prices.length === 1) {
       invoiceItem.description =
         invoiceItem.prices[0]?.description || invoiceItem.description;
     }
-    for (let subItem of invoiceItem.prices) {
+    for (const subItem of invoiceItem.prices) {
       if (subItem.room_rate_type === 0) {
         pricePerNight = formatCurrencyRounded(subItem.amount / numNights);
         invoiceItem.description = `${numNights} nights (${pricePerNight}/night)`;
@@ -436,7 +492,7 @@ function calculateLodgifyPricingInfo(
   return pricingInfo;
 }
 
-function getDatesInRanges(dateRanges) {
+function getDatesInRanges(dateRanges: DateRange[]) {
   const dates = [];
 
   for (const dateRange of dateRanges) {
@@ -453,4 +509,8 @@ function getDatesInRanges(dateRanges) {
   }
 
   return dates;
+}
+
+function isLodgifyError(error: LodgifyQuote[] | LodgifyError): error is LodgifyError {
+  return typeof error === "object" && error !== null && "code" in error;
 }

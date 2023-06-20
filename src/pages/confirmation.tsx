@@ -7,11 +7,10 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { dateToStringNumerical } from "./properties/[property]";
 import { formatCurrencyExact } from "~/utils/functions/formatCurrency";
-import { PaymentMethod } from "types";
+import type { PaymentMethod, SanityImage } from "types";
 import { formatPhoneNumber } from "~/utils/functions/dates/formatPhoneNumber";
 import Image from "next/image";
 import { urlFor } from "../../sanity/lib/urlFor";
-
 
 //TODO: ServerSideProps
 const ConfirmationPage: NextPageWithLayout = () => {
@@ -21,7 +20,7 @@ const ConfirmationPage: NextPageWithLayout = () => {
     return null;
   }
 
-  const { payment_intent, payment_intent_client_secret } = router.query;
+  const { payment_intent } = router.query;
 
   if (!payment_intent) {
     return null;
@@ -44,18 +43,21 @@ const ConfirmationPage: NextPageWithLayout = () => {
   });
 
   const {
-    type = "",
     brand = "",
     exp_month = 0,
     exp_year = 0,
     last4 = "",
   } = paymentMethod as PaymentMethod;
 
-  const { data: mainImage } = api.properties.getMainImage.useQuery({
-    slug: propertySlug,
-  }, {
-    enabled: !!propertySlug
-  });
+  const { data: mainImage }: { data: SanityImage | undefined } =
+    api.properties.getMainImage.useQuery(
+      {
+        slug: propertySlug as string,
+      },
+      {
+        enabled: !!propertySlug,
+      }
+    );
 
   const mainImageSrc = mainImage ? urlFor(mainImage).url() : "";
 
@@ -79,9 +81,8 @@ const ConfirmationPage: NextPageWithLayout = () => {
             </p>
             {/* Add hyperlink to digital guidebook */}
             <p className="mt-2 text-base text-gray-500">
-              You'll receive a confirmation email soon. In the meantime, feel
-              free to take a look at your digital guidebook for {propertyName}{" "}
-              before your stay.
+              {`You'll receive a confirmation email soon. In the meantime, feel
+              free to take a look at your digital guidebook for ${propertyName} before your stay.`}
             </p>
 
             <dl className="mt-16 text-sm font-medium">
@@ -96,20 +97,18 @@ const ConfirmationPage: NextPageWithLayout = () => {
               className="mt-6 divide-y divide-gray-200 border-t border-gray-200 text-sm font-medium text-gray-500"
             >
               <div className="flex space-x-6 py-6">
-              <div className="relative h-24 w-24">
-
-              <Image
-              
-                priority
-                className="rounded-md"
-                fill
-                style={{ objectFit: "cover" }}
-                src={mainImageSrc}
-                sizes="256px" // inputs w=640 in sanity url 
-                // blurDataURL={blurImageSrc}
-                alt=""
-              />
-              </div>
+                <div className="relative h-24 w-24">
+                  <Image
+                    priority
+                    className="rounded-md"
+                    fill
+                    style={{ objectFit: "cover" }}
+                    src={mainImageSrc}
+                    sizes="256px" // inputs w=640 in sanity url
+                    // blurDataURL={blurImageSrc}
+                    alt=""
+                  />
+                </div>
                 <div className="flex-auto space-y-1">
                   <h3 className="text-gray-900">
                     <div>{propertyName}</div>
@@ -131,7 +130,7 @@ const ConfirmationPage: NextPageWithLayout = () => {
                   <div className="flex justify-between" key={key}>
                     <dt>{key}</dt>
                     <dd className="text-gray-900">
-                      {formatCurrencyExact(value as number)}
+                      {formatCurrencyExact(value)}
                     </dd>
                   </div>
                 ))}
@@ -204,33 +203,3 @@ export default ConfirmationPage;
 ConfirmationPage.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
 };
-
-const products = [
-  {
-    id: 1,
-    name: "Basic Tee",
-    href: "#",
-    price: "$36.00",
-    color: "Charcoal",
-    size: "L",
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/confirmation-page-06-product-01.jpg",
-    imageAlt: "Model wearing men's charcoal basic tee in large.",
-  },
-  // More products...
-];
-
-function Checkout() {
-  return (
-    <>
-      {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full bg-white">
-        <body class="h-full">
-        ```
-      */}
-    </>
-  );
-}

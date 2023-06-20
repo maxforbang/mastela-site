@@ -29,7 +29,6 @@
     "geolib": "^3.3.3",
     "next": "^13.4.2",
     "next-sanity": "^4.3.3",
-    "next-sanity-image": "^6.1.0",
     "raw-body": "^2.5.2",
     "react": "18.2.0",
     "react-date-range": "^1.4.0",
