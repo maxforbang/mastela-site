@@ -69,14 +69,14 @@ export default async function checkoutsWebhooksHandler(
           amountDetails[key] = value;
         });
 
-        const bookingId: number | object = (await caller.createBooking({
+        const bookingId = (await caller.createBooking({
           propertyId: lodgifyPropertyId,
           roomId: lodgifyRoomId,
           guestName: name,
           arrival: arrival,
           departure: departure,
           totalPrice: totalPrice,
-        })) as number | object;
+        }));
 
         if (typeof bookingId !== "number") {
           // TODO: Send some alert (email, text) to the team to resolve this. Customer has paid but Lodgify was unable to create the booking.
