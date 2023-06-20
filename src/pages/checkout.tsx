@@ -5,7 +5,7 @@ import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { useRouter } from "next/router";
 import { parseISO } from "date-fns";
 import { dateToStringNumerical } from "./properties/[property]";
-import { api, getBaseUrl } from "~/utils/api";
+import { api } from "~/utils/api";
 import type {
   CalendarDates,
   CalendarComponent,
@@ -693,3 +693,8 @@ function CalendarPopUp({ dates, setDates, property }: CalendarComponent) {
     </div>
   );
 }
+
+export const getBaseUrl = () => {
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`; // If deployed, use vercel url
+  return `http://localhost:${process.env.PORT ?? 3000}`; // dev uses localhost
+};
