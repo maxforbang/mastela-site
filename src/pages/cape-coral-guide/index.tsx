@@ -72,7 +72,6 @@ const BlogPage: NextPageWithLayout = () => {
             COMING SOON
           </h2>
           <p className="mt-2 text-lg leading-8 text-gray-600">
-            How to make the most of everything Cape Coral has to offer.
           </p>
           <BlogSearchBar />
           <TopPagination />

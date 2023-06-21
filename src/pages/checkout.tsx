@@ -27,6 +27,8 @@ import { DateRangePicker } from "~/components/DateRangePicker";
 import Image from "next/image";
 import { urlFor } from "../../sanity/lib/urlFor";
 import { getUrlParams } from "~/utils/functions/getUrlParams";
+import { Disclosure } from "@headlessui/react";
+import SlideOver from "~/components/SlideOver";
 
 const stripe = loadStripe(env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
@@ -242,6 +244,7 @@ function CheckoutInvoiceItemDisplay({
 }
 
 function OrderSummary({ property, dates, setDates }: CalendarComponent) {
+  const [calendarShowing, setCalendarShowing] = useState(false);
   const {
     data: pricingInfo,
     isError,
@@ -292,24 +295,44 @@ function OrderSummary({ property, dates, setDates }: CalendarComponent) {
       pricingInfo as BookingQuoteInfo & { pricePerNight: string });
   }
 
+  const [open, setOpen] = useState(false);
+
+  const dateString = `${dateToStringNumerical(
+    dates?.startDate
+  )} - ${dateToStringNumerical(dates?.endDate)}`;
+
+  // const openMobileCalendar
+
   return (
     <>
       {/* Mobile order summary */}
-      {/* <section
+      <section
         aria-labelledby="order-heading"
-        className="bg-gray-50 px-4 py-6 sm:px-6 lg:hidden"
+        className="relative bg-gray-50 px-4 py-6 sm:px-6 lg:hidden"
       >
+        <div className="h-full">
+          <SlideOver title="Choose Dates" open={open} setOpen={setOpen}>
+            <CalendarPopUp
+              dates={dates}
+              setDates={setDates}
+              property={property}
+              calendarShowing={open}
+              setCalendarShowing={setOpen}
+            />
+          </SlideOver>
+        </div>
+
         <Disclosure as="div" className="mx-auto max-w-lg">
           {({ open }) => (
             <>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between pb-4">
                 <h2
                   id="order-heading"
                   className="text-lg font-medium text-gray-900"
                 >
                   Your Booking
                 </h2>
-                <Disclosure.Button className="font-medium text-indigo-600 hover:text-indigo-500">
+                <Disclosure.Button className="font-medium text-sky-600 hover:text-sky-500">
                   {open ? (
                     <span>Hide full summary</span>
                   ) : (
@@ -319,37 +342,47 @@ function OrderSummary({ property, dates, setDates }: CalendarComponent) {
               </div>
 
               <Disclosure.Panel>
-                <ul
-                  role="list"
-                  className="divide-y divide-gray-200 border-b border-gray-200"
-                >
-                  
-                  {products.map((product) => (
-                    <li key={product.id} className="flex space-x-6 py-6">
-                      <img
-                        src={product.imageSrc}
-                        alt={product.imageAlt}
-                        className="h-40 w-40 flex-none rounded-md bg-gray-200 object-cover object-center"
+                <div className="divide-y divide-gray-200 border-b border-gray-200">
+                  <div className="flex space-x-6 py-6">
+                    <div className="relative h-40 w-40 flex-none rounded-md">
+                      <Image
+                        priority
+                        className="rounded-md"
+                        fill
+                        style={{ objectFit: "cover" }}
+                        src={mainImageSrc}
+                        sizes="384px" // inputs w=640 in sanity url
+                        blurDataURL={mainImageBlurSrc}
+                        alt=""
                       />
-                      <div className="flex flex-col justify-between space-y-4">
-                        <div className="space-y-1 text-sm font-medium">
-                          <h3 className="text-gray-900">{product.name}</h3>
+                    </div>
+                    <div className="relative flex flex-col justify-between space-y-4">
+                      <div className="space-y-1 text-sm font-medium">
+                        <h3 className="text-gray-900">{propertyName}</h3>
+                        {pricePerNight && (
                           <p className="text-gray-900">
-                            {product.price} per night
+                            {pricePerNight} per night
                           </p>
-                          <br />
-                          <p className="text-gray-500">{product.dates}</p>
-                          <button
-                            type="button"
-                            className="text-sm font-medium text-sky-600 hover:text-sky-500"
+                        )}
+                        <br />
+                        <div
+                          onClick={() => {
+                            setOpen(true);
+                          }}
+                        >
+                          <p className="text-gray-500">{dateString}</p>
+                          <div
+                            className={classNames(
+                              "cursor-pointer text-sm font-medium text-sky-600 hover:text-sky-500"
+                            )}
                           >
                             Edit Dates
-                          </button>
+                          </div>
                         </div>
                       </div>
-                    </li>
-                  ))}
-                </ul>
+                    </div>
+                  </div>
+                </div>
 
                 <form className="mt-10">
                   <label
@@ -373,8 +406,17 @@ function OrderSummary({ property, dates, setDates }: CalendarComponent) {
                     </button>
                   </div>
                 </form>
-
-                <div className="mt-10 space-y-6 text-sm font-medium text-gray-500">
+                <div className="mt-10 flex flex-col space-y-6 text-sm font-medium text-gray-500">
+                  {invoiceItems.map((invoiceItem: InvoiceItem, index) => {
+                    return (
+                      <CheckoutInvoiceItemDisplay
+                        key={`${invoiceItem.description}-invoice-item`}
+                        invoiceItem={invoiceItem}
+                      />
+                    );
+                  })}
+                </div>
+                {/* <div className="mt-10 space-y-6 text-sm font-medium text-gray-500">
                   <div className="flex justify-between">
                     <dt>Subtotal</dt>
                     <dd className="text-gray-900">{subtotal}</dd>
@@ -388,17 +430,38 @@ function OrderSummary({ property, dates, setDates }: CalendarComponent) {
                     <dt>Fees</dt>
                     <dd className="text-gray-900">{fees}</dd>
                   </div>
-                </div>
+                </div> */}
               </Disclosure.Panel>
 
-              <p className="mt-6 flex items-center justify-between border-t border-gray-200 pt-6 text-sm font-medium text-gray-900">
-                <span className="text-base">Total</span>
-                <span className="text-base">{total}</span>
-              </p>
+              {!isError && (
+                <div className="flex items-center justify-between border-t border-gray-200 pt-6 font-semibold text-gray-900">
+                  <div className="text-base">Total</div>
+                  <div className="text-base">
+                    {formatCurrencyExact(totalPrice)}
+                  </div>
+                </div>
+              )}
+              {isError ? (
+                <div onClick={() => setOpen(true)}>
+                  <p className="mt-6 w-full animate-pulse px-8 text-rose-600">
+                    {errorMsg}
+                  </p>
+
+                  <div className="flex flex-col items-center">
+                    <p className="mb-1 mt-3 text-gray-500">{dateString}</p>
+                    <button
+                      type="button"
+                      className="text-sm font-medium text-sky-600 hover:text-sky-500"
+                    >
+                      {calendarShowing ? "Cancel" : "Edit Dates"}
+                    </button>
+                  </div>
+                </div>
+              ) : null}
             </>
           )}
         </Disclosure>
-      </section> */}
+      </section>
 
       {/* Desktop Order summary */}
       <section
@@ -422,17 +485,6 @@ function OrderSummary({ property, dates, setDates }: CalendarComponent) {
                 blurDataURL={mainImageBlurSrc}
                 alt=""
               />
-              {/* <Image
-                src={imageProps?.src}
-                loader={imageProps?.loader}
-                // fill
-                // objectFit="cover"
-                // style={{ width: "100%", height: "auto" }}
-                sizes="199px"
-                // sizes="2vw"
-                // blurDataURL={blurImageSrc}
-                alt=''
-              /> */}
             </div>
             <div className="flex flex-col justify-between space-y-4">
               <div className="space-y-1 text-sm font-medium">
@@ -441,20 +493,31 @@ function OrderSummary({ property, dates, setDates }: CalendarComponent) {
                   <p className="text-gray-900">{pricePerNight} per night</p>
                 )}
                 <br />
-                <p className="text-gray-500">{`${dateToStringNumerical(
-                  dates?.startDate
-                )} - ${dateToStringNumerical(dates?.endDate)}`}</p>
-
-                <CalendarPopUp
-                  dates={dates}
-                  setDates={setDates}
-                  property={property}
-                />
+                <p className="text-gray-500">{dateString}</p>
+                <button
+                  type="button"
+                  className="text-sm font-medium text-sky-600 hover:text-sky-500"
+                  onClick={() =>
+                    setCalendarShowing && setCalendarShowing(!calendarShowing)
+                  }
+                >
+                  {calendarShowing ? "Cancel" : "Edit Dates"}
+                </button>
+                <div className="absolute left-1/2 top-36 z-10 w-11/12 -translate-x-1/2">
+                  {/* TODO: Add OutsideClickHandler https://github.com/airbnb/react-outside-click-handler */}
+                  <CalendarPopUp
+                    dates={dates}
+                    setDates={setDates}
+                    property={property}
+                    calendarShowing={calendarShowing}
+                    setCalendarShowing={setCalendarShowing}
+                  />
+                </div>
               </div>
             </div>
           </div>
 
-          <p className="mt-6 w-full animate-bounce px-8 text-rose-600">
+          <p className="mt-6 w-full animate-pulse px-8 text-rose-600">
             {errorMsg}
           </p>
         </ul>
@@ -491,9 +554,9 @@ function OrderSummary({ property, dates, setDates }: CalendarComponent) {
                 />
               );
             })}
-            <div className="flex items-center justify-between border-t border-gray-200 pt-6 text-gray-900">
-              <dt className="text-base">Total</dt>
-              <dd className="text-base">{formatCurrencyExact(totalPrice)}</dd>
+            <div className="flex items-center justify-between border-t border-gray-200 pt-6 font-semibold text-gray-900">
+              <div className="text-base">Total</div>
+              <div className="text-base">{formatCurrencyExact(totalPrice)}</div>
             </div>
           </div>
         </div>
@@ -654,33 +717,16 @@ function LoadingSpinner() {
   );
 }
 
-function CalendarPopUp({ dates, setDates, property }: CalendarComponent) {
-  const currentDate = new Date();
-  const intialCalendarDates = [
-    {
-      startDate: dates?.startDate ? parseISO(dates.startDate) : currentDate,
-      endDate: dates?.endDate ? parseISO(dates.endDate) : currentDate,
-      key: "selection",
-    },
-  ];
-  const [calendarDates, setCalendarDates] = useState(intialCalendarDates);
-  const [calendarShowing, setCalendarShowing] = useState(false);
-
+function CalendarPopUp({
+  dates,
+  setDates,
+  property,
+  calendarShowing,
+  setCalendarShowing,
+}: CalendarComponent) {
   return (
     <div className="">
-      <button
-        type="button"
-        className="text-sm font-medium text-sky-600 hover:text-sky-500"
-        onClick={() => setCalendarShowing(!calendarShowing)}
-      >
-        {calendarShowing ? "Cancel" : "Edit Dates"}
-      </button>
-      <div
-        className={classNames(
-          "absolute left-1/2 top-36 z-10 w-11/12 -translate-x-1/2",
-          !calendarShowing ? "hidden" : ""
-        )}
-      >
+      <div className={classNames(!calendarShowing ? "hidden" : "")}>
         <div className="relative">
           <DateRangePicker
             dates={dates}
@@ -695,6 +741,7 @@ function CalendarPopUp({ dates, setDates, property }: CalendarComponent) {
 }
 
 export const getBaseUrl = () => {
-  if (env.NEXT_PUBLIC_VERCEL_URL) return `https://${env.NEXT_PUBLIC_VERCEL_URL ?? ''}`; // If specified in deployment, use vercel url
+  if (env.NEXT_PUBLIC_VERCEL_URL)
+    return `https://${env.NEXT_PUBLIC_VERCEL_URL ?? ""}`; // If specified in deployment, use vercel url
   return `http://localhost:${process.env.PORT ?? 3000}`; // dev uses localhost
 };

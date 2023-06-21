@@ -2,7 +2,7 @@ import { format, parseISO } from "date-fns";
 
 export function formatDateEnglish(
   date: Date | string | undefined,
-  excludeYear: boolean = false
+  excludeYear = false
 ) {
   if (!date) {
     return "";
