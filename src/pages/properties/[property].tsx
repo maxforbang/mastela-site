@@ -11,7 +11,7 @@ import {
 import Map from "~/components/search/Map";
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
-import { format, parseISO } from "date-fns";
+import { addDays, differenceInCalendarDays, format, parseISO, subDays } from "date-fns";
 import type { GetStaticPropsContext, InferGetStaticPropsType } from "next";
 import { PortableText } from "@portabletext/react";
 import { createServerSideHelpers } from "@trpc/react-query/server";
@@ -104,7 +104,7 @@ const PropertyPage: NextPageWithLayout<PropertyPageProps> = (
                 occupancy ?? { guests: 0, bedrooms: 0, beds: 0, bathrooms: 0 }
               }
             />
-            <PropertyFeatures />
+            <PropertyFeatures dates={dates} />
             <PropertyDescription preview={preview} />
             <PropertyMap />
             <AvailabilityCalendar
@@ -139,7 +139,7 @@ PropertyPage.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
 };
 
-function PropertyFeatures() {
+function PropertyFeatures({ dates }: { dates: CalendarDates }) {
   return (
     <div className="flex flex-col gap-8 border-b pb-8">
       <div className="flex items-center gap-4 ">
@@ -164,7 +164,7 @@ function PropertyFeatures() {
         <CalendarDaysIcon height={36} />
         <div className="relative">
           <p className="text-lg  font-semibold">
-            Free cancellation until Aug 16th
+            {refundPolicyString(dates)}
           </p>
           <p className=" text-gray-600">
             100% refund for any reason before the grace period ends.
@@ -173,6 +173,31 @@ function PropertyFeatures() {
       </div>
     </div>
   );
+}
+
+function refundPolicyString(dates: CalendarDates) {
+  // The number of days before an arrival date in which a guest will no longer be able to receive a refund
+  const gracePeriodDays = 14;
+
+  const { startDate, endDate } = dates;
+  if (!startDate || !endDate) {
+    return "Free cancellation";
+  }
+
+  const currentDate = new Date();
+  const arrivalDate = parseISO(startDate);
+
+  const daysUntilBooking = differenceInCalendarDays(arrivalDate, currentDate);
+  console.log(daysUntilBooking)
+  if (daysUntilBooking <= gracePeriodDays + 3) {
+    if (daysUntilBooking <= 3) {
+      return "Free cancellation before check-in";
+    }
+    return `Free cancellation until ${formatDateEnglish(addDays(currentDate, 3))}`;
+  }
+
+  const gracePeriodEndDate = subDays(arrivalDate, gracePeriodDays)
+  return `Free cancellation until ${formatDateEnglish(gracePeriodEndDate)}`;
 }
 
 function BookNowDesktop({
@@ -417,9 +442,10 @@ function BookNowMobile({ property = "", dates, setDates }: CalendarComponent) {
               {errorMsg}
             </p>
           ) : (
-            <div 
-            onClick={() => setCalendarShowing(!calendarShowing)}
-            className="cursor-pointer text-sm">
+            <div
+              onClick={() => setCalendarShowing(!calendarShowing)}
+              className="cursor-pointer text-sm"
+            >
               <p>{pricePerNight} night</p>
               {enabled ? (
                 <p className="underline">{`${formatDateEnglish(
@@ -450,7 +476,11 @@ function BookNowMobile({ property = "", dates, setDates }: CalendarComponent) {
                 onClick={() => setCalendarShowing(!calendarShowing)}
                 className="whitespace-nowrap "
               >
-                {calendarShowing ? "Cancel" : isError ? "Change dates" : "Add dates"}
+                {calendarShowing
+                  ? "Cancel"
+                  : isError
+                  ? "Change dates"
+                  : "Add dates"}
               </div>
             )}
           </div>
