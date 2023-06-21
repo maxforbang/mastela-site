@@ -6,12 +6,50 @@ const BlogPage: NextPageWithLayout = () => {
   const posts = [
     {
       id: 1,
-      title: "Chadscaling in Cape Coral",
+      title: "Activies the Kids Will Love in Cape Coral",
       href: "how-to-chadscale-in-cape-coral",
       description:
         "Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel iusto corrupti dicta laboris incididunt.",
       imageUrl:
-        "https://images.unsplash.com/photo-1496128858413-b36217c2ce36?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3603&q=80",
+        "https://images.unsplash.com/photo-1616952248800-9d62f964033c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2373&q=80",
+      date: "Mar 16, 2020",
+      datetime: "2020-03-16",
+      category: { title: "Marketing", href: "#" },
+      author: {
+        name: "Michael Foster",
+        role: "Co-Founder / CTO",
+        href: "#",
+        imageUrl:
+          "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      },
+    },
+    {
+      id: 1,
+      title: "#1 Getaways for Couples in Cape Coral",
+      href: "how-to-chadscale-in-cape-coral",
+      description:
+        "Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel iusto corrupti dicta laboris incididunt.",
+      imageUrl:
+        "https://images.unsplash.com/photo-1613722434757-e6990063b306?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=988&q=80",
+      date: "Mar 16, 2020",
+      datetime: "2020-03-16",
+      category: { title: "Marketing", href: "#" },
+      author: {
+        name: "Michael Foster",
+        role: "Co-Founder / CTO",
+        href: "#",
+        imageUrl:
+          "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      },
+    },
+    {
+      id: 1,
+      title: "Traveling alone? Here's your Guide to the Perfect Solo Retreat",
+      href: "how-to-chadscale-in-cape-coral",
+      description:
+        "Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel iusto corrupti dicta laboris incididunt.",
+      imageUrl:
+        "https://images.unsplash.com/photo-1427097829427-56a905bf7004?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2370&q=80",
       date: "Mar 16, 2020",
       datetime: "2020-03-16",
       category: { title: "Marketing", href: "#" },
@@ -31,15 +69,15 @@ const BlogPage: NextPageWithLayout = () => {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:max-w-4xl">
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            From the blog
+            COMING SOON
           </h2>
           <p className="mt-2 text-lg leading-8 text-gray-600">
-            Learn how to grow your business with our expert advice.
+            How to make the most of everything Cape Coral has to offer.
           </p>
           <BlogSearchBar />
           <TopPagination />
           <div className="mt-16 space-y-20 lg:mt-20 lg:space-y-20">
-            {[posts[0], posts[0], posts[0], posts[0], posts[0]].map((post) => (
+            {[posts[0], posts[1], posts[2], posts[0], posts[0]].map((post) => (
               <article
                 key={post?.id}
                 className="relative isolate flex flex-col gap-8 lg:flex-row"
