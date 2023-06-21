@@ -24,6 +24,7 @@ import { useRouter } from "next/router";
 import { formatCurrencyRounded } from "~/utils/functions/formatCurrency";
 import {
   SkeletonBookNowDesktop,
+  SkeletonBookNowMobile,
   SkeletonPropertyDescription,
   SkeletonPropertyHeader,
   SkeletonPropertyImages,
@@ -43,6 +44,7 @@ import { DateRangePicker } from "~/components/DateRangePicker";
 import { urlFor } from "../../../sanity/lib/urlFor";
 import type { DehydratedState } from "@tanstack/react-query";
 import { createOccupancyString } from "~/components/search/ListingCard";
+import { formatDateEnglish } from "~/utils/functions/dates/formatDateEnglish";
 
 type PropertyPageProps = {
   trpcState: DehydratedState;
@@ -121,7 +123,7 @@ const PropertyPage: NextPageWithLayout<PropertyPageProps> = (
       </div>
 
       {/* Possibly set to scroll=enabled for mobile */}
-      {/* <BookNowMobile slug={slug} arrival={arrival} departure={departure} /> */}
+      <BookNowMobile property={slug ?? ""} dates={dates} setDates={setDates} />
 
       {/* Possibly add: */}
       {/* Reviews */}
@@ -256,11 +258,11 @@ function BookNowDesktop({
             onClick={() => setCalendarShowing(true)}
             className="text-md flex w-full cursor-pointer rounded-lg bg-sky-500 px-6 py-3 text-center font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            <p className="mx-auto">Add dates</p>
+            <p className="mx-auto cursor-pointer">Add dates</p>
           </div>
         )}
       </div>
-      <p className="text-rose-600">{errorMsg}</p>
+      <p className="animate-pulse text-rose-600">{errorMsg}</p>
 
       {totalPrice > 0 && (
         <>
@@ -350,28 +352,113 @@ function StackedSearchBar({
   );
 }
 
-// function BookNowMobile({ slug, arrival, departure }) {
-//   if (!arrival || !departure) {
-//     return <p>...</p>;
-//   }
+function BookNowMobile({ property = "", dates, setDates }: CalendarComponent) {
+  const enabled = dates && !!dates.startDate && !!dates.endDate;
+  const [calendarShowing, setCalendarShowing] = useState(false);
 
-//   return (
-//     <div className="fixed bottom-0 flex w-full items-center justify-between border-t bg-white px-6 py-5 md:hidden">
-//       <div className="text-sm">
-//         <p>{pricePerNight} night</p>
-//         <p className="underline">Sep 9 - 14</p>
-//       </div>
-//       <div className="">
-//         <Link
-//           href="/checkout"
-//           className="text-md rounded-lg bg-sky-500 px-6 py-3.5 text-center font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-//         >
-//           Reserve
-//         </Link>
-//       </div>
-//     </div>
-//   );
-// }
+  const {
+    data: pricingInfo,
+    isLoading,
+    isError,
+    error,
+    isSuccess,
+  } = api.properties.getQuote.useQuery(
+    {
+      slug: property,
+      startDate: dates?.startDate,
+      endDate: dates?.endDate,
+    },
+    {
+      retry: 0,
+      enabled: enabled,
+    }
+  );
+
+  const [errorMsg, setErrorMsg] = useState("");
+
+  if (enabled && isLoading && !isError) {
+    return <SkeletonBookNowMobile />;
+  }
+
+  let totalPrice = 0;
+  let pricePerNight = "Starting at $250";
+  let invoiceItems: InvoiceItem[] = [];
+
+  if (pricingInfo && !isError) {
+    ({ totalPrice, invoiceItems } = pricingInfo);
+    pricePerNight = pricingInfo.pricePerNight as string;
+  }
+
+  if (isError && errorMsg !== error.message) {
+    setErrorMsg(error.message);
+  } else if (isSuccess && errorMsg.length) {
+    setErrorMsg("");
+  }
+
+  return (
+    <div className="fixed bottom-0 w-full">
+      <div className="flex flex-col">
+        <div
+          className={classNames(
+            "-mb-1 w-full",
+            calendarShowing ? "" : "hidden"
+          )}
+        >
+          <DateRangePicker
+            dates={dates}
+            setDates={setDates}
+            setCalendarShowing={setCalendarShowing}
+            property={property}
+          />
+        </div>
+        <div className="flex h-24  items-center justify-between border-t bg-white px-6 py-5 md:hidden">
+          {isError ? (
+            <p className=" animate-pulse pr-6 text-sm text-rose-600">
+              {errorMsg}
+            </p>
+          ) : (
+            <div 
+            onClick={() => setCalendarShowing(!calendarShowing)}
+            className="cursor-pointer text-sm">
+              <p>{pricePerNight} night</p>
+              {enabled ? (
+                <p className="underline">{`${formatDateEnglish(
+                  dates?.startDate,
+                  true
+                )} - ${formatDateEnglish(dates?.endDate, true)}`}</p>
+              ) : (
+                <p
+                  className="underline"
+                  onClick={() => setCalendarShowing(true)}
+                >
+                  Add dates
+                </p>
+              )}
+            </div>
+          )}
+          <div className="text-md cursor-pointer rounded-lg bg-sky-500 px-6 py-3.5 text-center font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+            {enabled && !isError ? (
+              <Link
+                href={`/checkout?property=${property}&arrival=${
+                  dates.startDate as string
+                }&departure=${dates.endDate as string}`}
+              >
+                Reserve
+              </Link>
+            ) : (
+              <div
+                onClick={() => setCalendarShowing(!calendarShowing)}
+                className="whitespace-nowrap "
+              >
+                {calendarShowing ? "Cancel" : isError ? "Change dates" : "Add dates"}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function AvailabilityCalendar({
   dates,

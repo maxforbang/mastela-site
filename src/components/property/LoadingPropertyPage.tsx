@@ -71,19 +71,19 @@ export const SkeletonBookNowDesktop = () => {
   );
 };
 
-export function SkeletonBookNowMobile() {
-  return (
-    <div className="fixed bottom-0 flex w-full items-center justify-between border-t bg-white px-6 py-5 md:hidden">
-      <div className="text-sm">
-        <div className="h-6 w-1/12 animate-pulse rounded-md bg-gray-300 " />
-        <div className="h-6 w-1/12 animate-pulse rounded-md bg-gray-300 " />
-      </div>
-      <div className="">
-        <div className="animate-pulse rounded-lg px-6 py-3.5 shadow-sm " />
-      </div>
-    </div>
-  );
-}
+// export function SkeletonBookNowMobile() {
+//   return (
+//     <div className="fixed bottom-0 flex w-full items-center justify-between border-t bg-white px-6 py-5 md:hidden">
+//       <div className="text-sm">
+//         <div className="h-6 w-1/12 animate-pulse rounded-md bg-gray-300 " />
+//         <div className="h-6 w-1/12 animate-pulse rounded-md bg-gray-300 " />
+//       </div>
+//       <div className="">
+//         <div className="animate-pulse rounded-lg px-6 py-3.5 shadow-sm " />
+//       </div>
+//     </div>
+//   );
+// }
 
 export function SkeletonPropertyImages() {
   return (
@@ -134,6 +134,22 @@ export function SkeletonPropertyDescription() {
         );
       })}
       <div className="h-6 w-1/3 animate-pulse rounded-md bg-gray-300 " />
+    </div>
+  );
+}
+
+export function SkeletonBookNowMobile() {
+  return (
+    <div className="fixed bottom-0 flex h-24 w-full items-center justify-between border-t bg-white px-6 py-5 md:hidden">
+      <div className="-mb-2 flex w-1/3 flex-col gap-2">
+        <div className="h-4 w-1/2 animate-pulse rounded-md bg-gray-300 " />
+        <div className="h-4 w-3/4 animate-pulse rounded-md bg-gray-300 cursor-pointer" />
+      </div>
+      <div className="">
+        <div className="text-md rounded-lg bg-gray-300 animate-pulse px-6 py-3.5 text-center font-semibold text-white shadow-sm hover:bg-gray-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+          Reserve
+        </div>
+      </div>
     </div>
   );
 }
