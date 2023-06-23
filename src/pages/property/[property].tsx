@@ -52,7 +52,6 @@ import { urlFor } from "../../../sanity/lib/urlFor";
 import type { DehydratedState } from "@tanstack/react-query";
 import { createOccupancyString } from "~/components/search/ListingCard";
 import { formatDateEnglish } from "~/utils/functions/dates/formatDateEnglish";
-import { Transition } from "@headlessui/react";
 import ImageGallery from "~/components/property/ImageGallery";
 
 type PropertyPageProps = {
@@ -98,7 +97,7 @@ const PropertyPage: NextPageWithLayout<PropertyPageProps> = (
   );
 
   const imageSources = images
-    ? images.slice(0, 5).map((image: SanityImage) => urlFor(image).url())
+    ? images.map((image: SanityImage) => urlFor(image).url())
     : [];
 
   const [galleryIsShowing, setGalleryIsShowing] = useState(false);
@@ -112,9 +111,8 @@ const PropertyPage: NextPageWithLayout<PropertyPageProps> = (
           setGalleryIsShowing={setGalleryIsShowing}
           slug={slug}
         />
-
         <PropertyImages
-          imageSources={imageSources}
+          imageSources={imageSources.slice(0,5)}
           setGalleryIsShowing={setGalleryIsShowing}
         />
         <div className="max-w-7xl sm:flex lg:gap-8">

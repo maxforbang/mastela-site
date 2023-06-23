@@ -7,6 +7,7 @@ import Image from "next/image";
 import { useState } from "react";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
+import { Toast } from "../shared/Toast";
 
 export default function ImageGallery({
   imageSources,
@@ -19,7 +20,6 @@ export default function ImageGallery({
   setGalleryIsShowing: (state: boolean) => void;
   slug: string;
 }) {
-
   // TODO: Make proper responsive breakpoint sizes
   const photos = imageSources.map((src, index) => {
     return {
@@ -30,18 +30,29 @@ export default function ImageGallery({
   });
 
   const [index, setIndex] = useState(-1);
+  const [showNotification, setShowNotification] = useState(false);
+
+  const triggerNotification = () => {
+    setShowNotification(true);
+    setTimeout(() => {
+      setShowNotification(false);
+    }, 2000);
+  };
 
   return (
     <>
       <PageOverlay
         open={galleryIsShowing}
         setOpen={setGalleryIsShowing}
+        triggerNotification={triggerNotification}
         slug={slug}
       >
         <div className="relative mx-auto h-full max-w-5xl">
+          <Toast show={showNotification} message="Link Copied!" />
+
           <PhotoAlbum
             layout="rows"
-            photos={[...photos, ...photos, ...photos]}
+            photos={photos}
             defaultContainerWidth={1000}
             targetRowHeight={300}
             componentsProps={{
