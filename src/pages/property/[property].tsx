@@ -7,11 +7,18 @@ import {
   DevicePhoneMobileIcon,
   WifiIcon,
   CalendarDaysIcon,
+  Squares2X2Icon,
 } from "@heroicons/react/24/outline";
 import Map from "~/components/search/Map";
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
-import { addDays, differenceInCalendarDays, format, parseISO, subDays } from "date-fns";
+import {
+  addDays,
+  differenceInCalendarDays,
+  format,
+  parseISO,
+  subDays,
+} from "date-fns";
 import type { GetStaticPropsContext, InferGetStaticPropsType } from "next";
 import { PortableText } from "@portabletext/react";
 import { createServerSideHelpers } from "@trpc/react-query/server";
@@ -45,6 +52,8 @@ import { urlFor } from "../../../sanity/lib/urlFor";
 import type { DehydratedState } from "@tanstack/react-query";
 import { createOccupancyString } from "~/components/search/ListingCard";
 import { formatDateEnglish } from "~/utils/functions/dates/formatDateEnglish";
+import { Transition } from "@headlessui/react";
+import ImageGallery from "~/components/property/ImageGallery";
 
 type PropertyPageProps = {
   trpcState: DehydratedState;
@@ -92,10 +101,22 @@ const PropertyPage: NextPageWithLayout<PropertyPageProps> = (
     ? images.slice(0, 5).map((image: SanityImage) => urlFor(image).url())
     : [];
 
+  const [galleryIsShowing, setGalleryIsShowing] = useState(false);
+
   return (
     <>
       <div className="mx-auto max-w-7xl text-gray-800 sm:px-6 lg:px-8">
-        <PropertyImages imageSources={imageSources} />
+        <ImageGallery
+          imageSources={imageSources}
+          galleryIsShowing={galleryIsShowing}
+          setGalleryIsShowing={setGalleryIsShowing}
+          slug={slug}
+        />
+
+        <PropertyImages
+          imageSources={imageSources}
+          setGalleryIsShowing={setGalleryIsShowing}
+        />
         <div className="max-w-7xl sm:flex lg:gap-8">
           <div className="flex flex-col justify-center px-6 md:w-2/3">
             <PropertyHeader
@@ -163,9 +184,7 @@ function PropertyFeatures({ dates }: { dates: CalendarDates }) {
       <div className="flex items-center gap-4 ">
         <CalendarDaysIcon height={36} />
         <div className="relative">
-          <p className="text-lg  font-semibold">
-            {refundPolicyString(dates)}
-          </p>
+          <p className="text-lg  font-semibold">{refundPolicyString(dates)}</p>
           <p className=" text-gray-600">
             100% refund for any reason before the grace period ends.
           </p>
@@ -188,15 +207,17 @@ function refundPolicyString(dates: CalendarDates) {
   const arrivalDate = parseISO(startDate);
 
   const daysUntilBooking = differenceInCalendarDays(arrivalDate, currentDate);
-  console.log(daysUntilBooking)
+  console.log(daysUntilBooking);
   if (daysUntilBooking <= gracePeriodDays + 3) {
     if (daysUntilBooking <= 3) {
       return "Free cancellation before check-in";
     }
-    return `Free cancellation until ${formatDateEnglish(addDays(currentDate, 3))}`;
+    return `Free cancellation until ${formatDateEnglish(
+      addDays(currentDate, 3)
+    )}`;
   }
 
-  const gracePeriodEndDate = subDays(arrivalDate, gracePeriodDays)
+  const gracePeriodEndDate = subDays(arrivalDate, gracePeriodDays);
   return `Free cancellation until ${formatDateEnglish(gracePeriodEndDate)}`;
 }
 
@@ -438,7 +459,10 @@ function BookNowMobile({ property = "", dates, setDates }: CalendarComponent) {
         </div>
         <div className="flex h-24  items-center justify-between border-t bg-white px-6 py-5 md:hidden">
           {isError ? (
-            <p className=" animate-pulse pr-6 text-sm text-rose-600">
+            <p
+              onClick={() => setCalendarShowing(!calendarShowing)}
+              className=" animate-pulse pr-6 text-sm text-rose-600"
+            >
               {errorMsg}
             </p>
           ) : (
@@ -462,19 +486,21 @@ function BookNowMobile({ property = "", dates, setDates }: CalendarComponent) {
               )}
             </div>
           )}
-          <div className="text-md cursor-pointer rounded-lg bg-sky-500 px-6 py-3.5 text-center font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+          <div>
             {enabled && !isError ? (
               <Link
                 href={`/checkout?property=${property}&arrival=${
                   dates.startDate as string
                 }&departure=${dates.endDate as string}`}
               >
-                Reserve
+                <div className="text-md cursor-pointer rounded-lg bg-sky-500 px-6 py-3.5 text-center font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600">
+                  Reserve
+                </div>
               </Link>
             ) : (
               <div
                 onClick={() => setCalendarShowing(!calendarShowing)}
-                className="whitespace-nowrap "
+                className="text-md cursor-pointer whitespace-nowrap rounded-lg bg-sky-500 px-6 py-3.5 text-center font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
               >
                 {calendarShowing
                   ? "Cancel"
@@ -545,7 +571,13 @@ function PropertyMap() {
   );
 }
 
-function PropertyImages({ imageSources: images }: { imageSources: string[] }) {
+function PropertyImages({
+  imageSources: images,
+  setGalleryIsShowing,
+}: {
+  imageSources: string[];
+  setGalleryIsShowing: (state: boolean) => void;
+}) {
   if (!images.length) {
     return <SkeletonPropertyImages />;
   }
@@ -559,6 +591,14 @@ function PropertyImages({ imageSources: images }: { imageSources: string[] }) {
 
   return (
     <div className="relative flex aspect-[3/2] w-full gap-2 sm:mt-6 sm:aspect-[2]">
+      <div
+        onClick={() => setGalleryIsShowing(true)}
+        className="absolute bottom-6 right-6 z-10 flex h-9 w-40 cursor-pointer items-center justify-center gap-2 rounded-lg border-2 border-slate-600 bg-white active:bg-gray-200"
+      >
+        {/* TODO: Make mobile a carousel instead - onClick it becomes react-lightbox */}
+        <Squares2X2Icon className="h-6" />
+        <p className="text-sm font-medium tracking-tight ">Show all photos</p>
+      </div>
       <div className="relative w-full sm:w-1/2">
         <Image
           priority

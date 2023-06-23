@@ -1,11 +1,20 @@
-import { Fragment, ReactNode, useState } from 'react'
-import { Dialog, Transition } from '@headlessui/react'
-import { XMarkIcon } from '@heroicons/react/24/outline'
+import { Fragment, ReactNode, useState } from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
-export default function SlideOver({children, title, open, setOpen}: {children: ReactNode, title: string, open: boolean, setOpen: (state: boolean) => void}) {
-
+export default function SlideOver({
+  children,
+  title,
+  open,
+  setOpen,
+}: {
+  children: ReactNode;
+  title: string;
+  open: boolean;
+  setOpen: (state: boolean) => void;
+}) {
   return (
-    <Transition.Root show={open} as={Fragment}>
+    <Transition.Root show={open} as={'div'}>
       <Dialog as="div" className="relative z-10" onClose={setOpen}>
         <Transition.Child
           as={Fragment}
@@ -31,9 +40,8 @@ export default function SlideOver({children, title, open, setOpen}: {children: R
                 leaveFrom="translate-x-0"
                 leaveTo="translate-x-full"
               >
-                
                 <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
-                <div className="bg-white pt-16"></div>
+                  <div className="bg-white pt-20"></div>
                   <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
                     <div className="px-4 sm:px-6">
                       <div className="flex items-start justify-between">
@@ -52,7 +60,9 @@ export default function SlideOver({children, title, open, setOpen}: {children: R
                         </div>
                       </div>
                     </div>
-                    <div className="relative mt-6 flex-1 px-4 sm:px-6">{children}</div>
+                    <div className="relative mt-6 flex-1 px-4 sm:px-6">
+                      {children}
+                    </div>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
@@ -61,5 +71,5 @@ export default function SlideOver({children, title, open, setOpen}: {children: R
         </div>
       </Dialog>
     </Transition.Root>
-  )
+  );
 }

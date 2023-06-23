@@ -47,7 +47,7 @@ export default function PropertiesSection() {
               : "";
             return (
               <li key={`${name}-neighborhood-card`}>
-                <Link href={`/properties/${slug.current}`}>
+                <Link href={`/property/${slug.current}`}>
                 <div className="aspect-[21/20] w-full transform cursor-pointer transition duration-300 ease-out hover:scale-105">
                   <Image
                     className="  rounded-2xl object-cover"

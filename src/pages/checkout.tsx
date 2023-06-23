@@ -4,7 +4,7 @@ import { useState, type ReactElement, useEffect } from "react";
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { useRouter } from "next/router";
 import { parseISO } from "date-fns";
-import { dateToStringNumerical } from "./properties/[property]";
+import { dateToStringNumerical } from "./property/[property]";
 import { api } from "~/utils/api";
 import type {
   CalendarDates,
@@ -68,7 +68,7 @@ function Checkout() {
       if (!property) {
         void router.push("/our-villas");
       } else if (!arrival || !departure) {
-        void router.push(`/properties/${property}`);
+        void router.push(`/property/${property}`);
       }
 
       setSlug(property);
@@ -443,7 +443,7 @@ function OrderSummary({ property, dates, setDates }: CalendarComponent) {
               )}
               {isError ? (
                 <div onClick={() => setOpen(true)}>
-                  <p className="mt-6 w-full animate-pulse px-8 text-rose-600">
+                  <p className="mt-6 text-center w-full animate-pulse px-8 text-rose-600">
                     {errorMsg}
                   </p>
 

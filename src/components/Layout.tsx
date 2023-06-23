@@ -15,10 +15,10 @@ const navigation = {
     { name: "Contact", href: "/contact" },
   ],
   villas: [
-    { name: "Villa Encore", href: "/properties/villa-encore" },
-    { name: "The Twins Villas", href: "/properties/the-twins-villa" },
-    { name: "Villa Aviator", href: "/properties/villa-aviator" },
-    { name: "Maya Serenity", href: "/properties/maya-serenity" },
+    { name: "Villa Encore", href: "/property/villa-encore" },
+    { name: "The Twins Villas", href: "/property/the-twins-villa" },
+    { name: "Villa Aviator", href: "/property/villa-aviator" },
+    { name: "Maya Serenity", href: "/property/maya-serenity" },
   ],
   guide: [
     // TODO: Add links for Blog Categories

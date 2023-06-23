@@ -23,8 +23,8 @@ export function ListingCard({ listing, arrival, departure }: ListingCardProps) {
 
   return (
     <Link
-      href="/properties/[property]"
-      as={`/properties/${slug.current}${
+      href="/property/[property]"
+      as={`/property/${slug.current}${
         arrival && departure ? `?arrival=${arrival}&departure=${departure}` : ""
       }`}
       className="flex transform cursor-pointer flex-col border-b px-2 py-7 pr-4 transition duration-200 ease-out first:border-t hover:scale-105 hover:opacity-80 hover:shadow-lg sm:flex-row"

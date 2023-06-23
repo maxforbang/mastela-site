@@ -4,7 +4,7 @@ import { type ReactElement } from "react";
 import { api } from "~/utils/api";
 import Link from "next/link";
 import { format } from "date-fns";
-import { dateToStringNumerical } from "./properties/[property]";
+import { dateToStringNumerical } from "./property/[property]";
 import { formatCurrencyExact } from "~/utils/functions/formatCurrency";
 import type { PaymentMethod, SanityImage } from "types";
 import { formatPhoneNumber } from "~/utils/functions/dates/formatPhoneNumber";

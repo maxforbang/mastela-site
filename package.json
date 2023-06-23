@@ -34,10 +34,12 @@
     "react-date-range": "^1.4.0",
     "react-dom": "18.2.0",
     "react-map-gl": "^7.0.25",
+    "react-photo-album": "^2.2.2",
     "sanity": "^3.11.3",
     "stripe": "^12.9.0",
     "styled-components": "^5.3.11",
     "superjson": "^1.12.2",
+    "yet-another-react-lightbox": "^3.11.2",
     "zod": "^3.21.4"
   },
   "devDependencies": {
