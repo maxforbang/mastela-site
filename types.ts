@@ -93,6 +93,20 @@ export type SanityImage = {
     _ref: string;
     _type: string;
   };
+  crop?: {
+    _type: "sanity.imageCrop";
+    right: number;
+    top: number;
+    left: number;
+    bottom: number;
+  };
+  hotspot?: {
+    _type: "sanity.imageHotspot";
+    width: number;
+    x: number;
+    y: number;
+    height: number;
+  };
 };
 
 export interface PropertyListing {
@@ -173,4 +187,32 @@ export type LodgifyQuote = {
 export type LodgifyError = {
   message: string;
   code: number;
+};
+
+export type BlogCategory = {
+  title: string;
+  slug: Slug;
+  description?: string;
+  image?: SanityImage;
+};
+
+export type Author = {
+  name: string;
+  slug: Slug;
+  bio?: string;
+  role: string;
+  image: SanityImage;
+};
+
+export type BlogPost = {
+  _type: "post";
+  title: string;
+  slug: Slug;
+  author: Author;
+  mainImage: SanityImage;
+  categories: BlogCategory[];
+  publishedAt: string; // Consider using a specific date type instead of 'string'
+  body?: RichText;
+  textPreview?: string;
+  // Add other fields if needed
 };

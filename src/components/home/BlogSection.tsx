@@ -7,7 +7,7 @@ export default function BlogSection() {
     {
       id: "post-1",
       title: "Best family-friend beaches in Cape Coral",
-      href: "/cape-coral-guide",
+      href: "/cape-coral-guides",
       description:
         "Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel. Iusto corrupti dicta.",
       imageUrl:
@@ -22,7 +22,7 @@ export default function BlogSection() {
     {
       id: "post-2",
       title: "Fourth of July Activities near Cape Coral & Fort Meyers",
-      href: "/cape-coral-guide",
+      href: "/cape-coral-guides",
       description:
         "Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel. Iusto corrupti dicta.",
       imageUrl:
@@ -37,7 +37,7 @@ export default function BlogSection() {
     {
       id: "post-3",
       title: "Must-see hiking locations while staying in Cape Coral",
-      href: "/cape-coral-guide",
+      href: "/cape-coral-guides",
       description:
         "Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel. Iusto corrupti dicta.",
       imageUrl:
@@ -70,7 +70,7 @@ export default function BlogSection() {
               key={post.id}
               className="relative isolate flex transform cursor-pointer flex-col justify-end overflow-hidden rounded-2xl bg-gray-900 px-8 pb-8 pt-80 transition duration-300 ease-out hover:scale-105 sm:pt-48 lg:pt-80"
             >
-              <Link href="/cape-coral-guide" >
+              <Link href="/cape-coral-guides" >
                 
                 <Image
                 fill

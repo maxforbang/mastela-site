@@ -10,7 +10,7 @@ const navigation = {
   main: [
     { name: "Home", href: "/" },
     { name: "Our Villas", href: "/our-villas" },
-    { name: "Cape Coral Guide", href: "/cape-coral-guide" },
+    { name: "Cape Coral Guide", href: "/cape-coral-guides" },
     { name: "About", href: "/about" },
     { name: "Contact", href: "/contact" },
   ],
@@ -284,7 +284,7 @@ function Footer() {
             </div>
             <div className="md:grid md:grid-cols-2 md:gap-8">
               <div>
-                <Link href="/cape-coral-guide">
+                <Link href="/cape-coral-guides">
                   <h3 className="text-sm font-semibold leading-6 text-gray-900">
                     Cape Coral Guide
                   </h3>

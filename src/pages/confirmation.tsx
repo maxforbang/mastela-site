@@ -195,7 +195,7 @@ const ConfirmationPage: NextPageWithLayout<ConfirmationPageProps> = (
 
               <div className="mt-16 border-t border-gray-200 py-6 text-right">
                 <Link
-                  href="/cape-coral-guide"
+                  href="/cape-coral-guides"
                   className="text-sm font-medium text-sky-600 hover:text-sky-500"
                 >
                   Explore Cape Coral
