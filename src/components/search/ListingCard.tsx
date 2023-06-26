@@ -2,10 +2,11 @@ import Image from "next/image";
 import { ArrowUpOnSquareIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { urlFor } from "../../../sanity/lib/urlFor";
-import { PortableText } from "@portabletext/react";
+
 import { formatCurrencyRounded } from "~/utils/functions/formatCurrency";
 import { api } from "~/utils/api";
 import type { DateStringRange, Occupancy, PropertyListing, Slug } from "types";
+import PortableText from "react-portable-text";
 interface ListingCardProps {
   listing: PropertyListing;
   arrival?: string;
@@ -50,7 +51,7 @@ export function ListingCard({ listing, arrival, departure }: ListingCardProps) {
         <div className="w-32 border-b pt-4" />
 
         <div className="flex-grow pt-4 text-sm text-gray-500">
-          <PortableText value={preview ?? []} />
+          <PortableText content={preview ?? []} />
         </div>
         <div className="flex items-end justify-between pt-5">
           <div>

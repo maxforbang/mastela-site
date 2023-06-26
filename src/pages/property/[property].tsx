@@ -20,7 +20,7 @@ import {
   subDays,
 } from "date-fns";
 import type { GetStaticPropsContext, InferGetStaticPropsType } from "next";
-import { PortableText } from "@portabletext/react";
+
 import { createServerSideHelpers } from "@trpc/react-query/server";
 import { propertiesRouter } from "../../server/api/routers/properties";
 import { prisma } from "~/server/db";
@@ -53,6 +53,7 @@ import type { DehydratedState } from "@tanstack/react-query";
 import { createOccupancyString } from "~/components/search/ListingCard";
 import { formatDateEnglish } from "~/utils/functions/dates/formatDateEnglish";
 import ImageGallery from "~/components/property/ImageGallery";
+import PortableText from "react-portable-text";
 
 type PropertyPageProps = {
   trpcState: DehydratedState;
@@ -112,7 +113,7 @@ const PropertyPage: NextPageWithLayout<PropertyPageProps> = (
           slug={slug}
         />
         <PropertyImages
-          imageSources={imageSources.slice(0,5)}
+          imageSources={imageSources.slice(0, 5)}
           setGalleryIsShowing={setGalleryIsShowing}
         />
         <div className="max-w-7xl sm:flex lg:gap-8">
@@ -205,7 +206,6 @@ function refundPolicyString(dates: CalendarDates) {
   const arrivalDate = parseISO(startDate);
 
   const daysUntilBooking = differenceInCalendarDays(arrivalDate, currentDate);
-  console.log(daysUntilBooking);
   if (daysUntilBooking <= gracePeriodDays + 3) {
     if (daysUntilBooking <= 3) {
       return "Free cancellation before check-in";
@@ -688,7 +688,7 @@ function PropertyDescription({ preview }: { preview: RichText[] }) {
 
   return (
     <div className="border-b py-8">
-      <PortableText value={preview} />
+      <PortableText content={preview} />
       {/* &nbsp;&hellip; */}
       <div
         // TODO: Add modal/slide-over for description's Show More

@@ -13,7 +13,7 @@
   "dependencies": {
     "@headlessui/react": "^1.7.14",
     "@heroicons/react": "^2.0.18",
-    "@portabletext/react": "^3.0.0",
+    "@portabletext/react": "^3.0.3",
     "@prisma/client": "^4.14.0",
     "@sanity/image-url": "^1.0.2",
     "@sanity/vision": "^3.11.3",
@@ -35,6 +35,7 @@
     "react-dom": "18.2.0",
     "react-map-gl": "^7.0.25",
     "react-photo-album": "^2.2.2",
+    "react-portable-text": "^0.6.0",
     "sanity": "^3.11.3",
     "stripe": "^12.9.0",
     "styled-components": "^5.3.11",
@@ -43,6 +44,7 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.9",
     "@types/eslint": "^8.37.0",
     "@types/node": "^18.16.0",
     "@types/prettier": "^2.7.2",

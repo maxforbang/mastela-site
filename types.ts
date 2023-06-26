@@ -199,7 +199,7 @@ export type BlogCategory = {
 export type Author = {
   name: string;
   slug: Slug;
-  bio?: string;
+  bio?: RichText[];
   role: string;
   image: SanityImage;
 };
@@ -212,7 +212,7 @@ export type BlogPost = {
   mainImage: SanityImage;
   categories: BlogCategory[];
   publishedAt: string; // Consider using a specific date type instead of 'string'
-  body?: RichText;
+  body?: RichText[];
   textPreview?: string;
   // Add other fields if needed
 };

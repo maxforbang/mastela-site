@@ -96,17 +96,3 @@ const RenderPhoto = ({
     </div>
   );
 };
-
-const RenderRow: RenderRowContainer = ({
-  rowContainerProps,
-  rowIndex,
-  rowsCount,
-  children,
-}) => {
-  console.log(rowContainerProps);
-  return (
-    <>
-      <div {...rowContainerProps}>{children}</div>
-    </>
-  );
-};
