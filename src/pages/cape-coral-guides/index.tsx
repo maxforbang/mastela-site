@@ -6,10 +6,20 @@ import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import sanityClient from "../../../sanity/lib/sanityClient";
 import { groq } from "next-sanity";
 import BlogPostsContent from "~/components/blog/BlogPostsContent";
-import { allPostsQuery, featuredCategoriesQuery } from "~/utils/sanityQueries";
+import {
+  allArticlesCategoryQuery,
+  allPostsQuery,
+  featuredCategoriesQuery,
+} from "~/utils/sanityQueries";
+import { createServerSideHelpers } from "@trpc/react-query/server";
+import { blogRouter } from "~/server/api/routers/blog";
+import { prisma } from "~/server/db";
+import { DehydratedState } from "@tanstack/react-query";
+import { api } from "~/utils/api";
 
 type BlogPostsPageProps = {
-  posts: BlogPost[];
+  trpcState: DehydratedState;
+  searchString: string;
   categories: BlogCategory[];
   currentCategory: BlogCategory;
 };
@@ -17,7 +27,13 @@ type BlogPostsPageProps = {
 const BlogPostsPage: NextPageWithLayout<BlogPostsPageProps> = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) => {
-  return <BlogPostsContent props={props} />;
+  const { categories, currentCategory, searchString } = props;
+
+  const { data: { posts = [] } = {}, isLoading } = api.blog.getPosts.useQuery({
+    searchString: searchString as string,
+  });
+
+  return <BlogPostsContent props={{ posts, categories, currentCategory, postsLoading: isLoading, searchString: searchString as string }} />;
 };
 
 export default BlogPostsPage;
@@ -27,33 +43,14 @@ BlogPostsPage.getLayout = function getLayout(page: ReactElement) {
 };
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const searchString = context.query?.search;
+  const searchString = context.query?.search || "";
 
-  const searchPostsQuery = groq`*[_type == 'post' && dateTime(publishedAt) <= dateTime(now()) && (title match $searchString + "*" || body[].children[].text match $searchString)] {
-    title,
-    author->{name, slug, image, role},
-    "categories": categories[]->{title, slug},
-    mainImage,
-    // TODO: make the text preview the same text that contains the matched searchString
-    "textPreview": body[style == 'normal'][0].children[0].text, 
-    //  "textPreview": body[_type == 'block' && children[]._type == 'span' && children[].text match $searchString][0].children[].text,
+  const helpers = createServerSideHelpers({
+    router: blogRouter,
+    ctx: { prisma, sanityClient },
+  });
 
-    publishedAt,
-    slug,
-  } | order(publishedAt desc) | score(title match $searchString + "*")`;
-
-  const allArticlesCategoryQuery = groq`*[_type == 'category' && title == 'All Articles'][0] {
-    title,
-    slug,
-    description,
-  }`;
-
-  const posts: BlogPost[] = await sanityClient.fetch(
-    searchString ? searchPostsQuery : allPostsQuery,
-    {
-      searchString: searchString ?? "",
-    }
-  );
+  await helpers.getPosts.prefetch({ searchString: searchString as string });
 
   const categories: BlogCategory[] = await sanityClient.fetch(
     featuredCategoriesQuery
@@ -63,14 +60,12 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     allArticlesCategoryQuery
   );
 
-  // await helpers.getProperty.prefetch({ slug: slug });
-
   return {
     props: {
-      // trpcState: helpers.dehydrate(),
-      posts,
-      categories,
+      trpcState: helpers.dehydrate(),
+      searchString: searchString,
       currentCategory,
+      categories,
     },
   };
 }

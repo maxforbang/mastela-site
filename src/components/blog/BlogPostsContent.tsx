@@ -4,11 +4,14 @@ import { classNames } from "~/utils/functions/functions";
 import { BlogSearchBar } from "~/components/blog/BlogSearchBar";
 import { BlogCategory, BlogPost } from "types";
 import BlogPostPreview from "./BlogPostPreview";
+import SkeletonBlogPostPreview from "./SkeletonBlogPostPreview";
 
 type BlogPostsPageProps = {
   posts: BlogPost[];
   categories: BlogCategory[];
   currentCategory: BlogCategory;
+  postsLoading?: boolean;
+  searchString?: string;
 };
 
 export default function BlogPostsContent({
@@ -16,7 +19,8 @@ export default function BlogPostsContent({
 }: {
   props: BlogPostsPageProps;
 }) {
-  const { posts, categories, currentCategory } = props;
+  const { posts, categories, currentCategory, postsLoading, searchString } =
+    props;
 
   return (
     <div className="bg-white">
@@ -45,7 +49,7 @@ export default function BlogPostsContent({
                 as={`/cape-coral-guides/${category.slug?.current ?? ""}`}
                 className={classNames(
                   "relative z-10 rounded-full  px-3 py-1.5 text-xl font-medium text-gray-600 hover:bg-gray-100",
-                  currentCategory?.slug?.current === category.slug?.current
+                  currentCategory?.slug?.current === category.slug?.current && !searchString?.length
                     ? "pointer-events-none bg-sky-500 text-white shadow"
                     : ""
                 )}
@@ -56,10 +60,25 @@ export default function BlogPostsContent({
           </div>
           <BlogSearchBar />
         </div>
-        <div className="mx-auto grid grid-cols-1 gap-x-8 gap-y-20 py-2 sm:grid-cols-2 lg:mx-0 lg:grid-cols-3">
-          {posts.map((post) => {
-            return <BlogPostPreview post={post} />
-          })}
+        {!postsLoading && searchString?.length ? (
+          <p className="-mt-2 ml-1 mb-2 text-xl font-medium text-gray-600">
+            {posts?.length > 0
+              ? `${posts.length} results for "${searchString}"`
+              : `Zero results for "${searchString}"`}
+          </p>
+        ) : null}
+        <div
+          className={classNames(
+            "mx-auto grid grid-cols-1 gap-x-8 gap-y-20 py-2 sm:grid-cols-2 lg:mx-0 lg:grid-cols-3"
+          )}
+        >
+          {postsLoading ? (
+            Array.from(Array(3)).map((_, index) => <SkeletonBlogPostPreview />)
+          ) : posts.length ? (
+            posts.map((post) => <BlogPostPreview post={post} />)
+          ) : (
+            <div className="h-80"></div>
+          )}
         </div>
       </div>
     </div>

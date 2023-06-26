@@ -5,12 +5,11 @@ import Link from "next/link";
 import { BlogPost } from "types";
 import { useRouter } from "next/router";
 
-export default function BlogPostPreview({post}: {post: BlogPost}) {
-  
+export default function BlogPostPreview({ post }: { post: BlogPost }) {
   // Use search to .replace() highlight every word that matches the search word
-  // const router = useRouter()
-  // const {search} = router.query
-  
+  const router = useRouter();
+  const { search } = router.query;
+
   const {
     mainImage,
     publishedAt,
@@ -72,11 +71,19 @@ export default function BlogPostPreview({post}: {post: BlogPost}) {
               as={`/cape-coral-guide/${slug?.current}`}
             >
               <span className="absolute inset-0" />
-              {title}
+              <div>
+                {search
+                  ? highlightSearchWords(title ?? "", search as string)
+                  : title}
+              </div>
             </Link>
           </h3>
           <p className="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">
-            {textPreview}
+            <div>
+              {search
+                ? highlightSearchWords(textPreview ?? "", search as string)
+                : textPreview}
+            </div>
           </p>
         </div>
         <div className="relative mt-8 flex items-center gap-x-4">
@@ -102,4 +109,31 @@ export default function BlogPostPreview({post}: {post: BlogPost}) {
       </div>
     </article>
   );
+}
+
+function highlightSearchWords(text: string, searchWords: string) {
+  const words = searchWords.trim().split(/\s+/);
+  const regex = new RegExp(`(${words.join("|")})`, "gi");
+  let match;
+  const searchWordIndexes = [];
+
+  while ((match = regex.exec(text)) !== null) {
+    const wordIndex = match.index;
+    searchWordIndexes.push(wordIndex);
+  }
+
+  searchWordIndexes.sort((a, b) => a - b);
+
+  const firstSearchWordIndex = searchWordIndexes[0];
+  if (firstSearchWordIndex && firstSearchWordIndex > 90) {
+    text = "&hellip;" + text.slice(Math.max(0, firstSearchWordIndex - 110));
+    
+  }
+
+  const highlightedText = text.replace(
+    regex,
+    (_, word) => `<span class="bg-yellow-200">${word}</span>`
+  );
+
+  return <p dangerouslySetInnerHTML={{ __html: highlightedText }} />;
 }

@@ -9,14 +9,24 @@ import { classNames } from "~/utils/functions/functions";
 
 export function BlogSearchBar({ sort = false }) {
   const router = useRouter();
+  const { search: initialSearchValue = "" } = router.query;
 
-  const { search: initialSearchValue = '' } = router.query;
   const [searchValue, setSearchValue] = useState(initialSearchValue as string);
+
+  useEffect(() => {
+    if (initialSearchValue === "" && searchValue !== "") {
+      setSearchValue("");
+    }
+  }, [initialSearchValue]);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (searchValue?.trim() !== initialSearchValue) {
-        router.push(`/cape-coral-guides${searchValue ? '?search=' + encodeURIComponent(searchValue) : ''}`);
+        router.push(
+          `/cape-coral-guides${
+            searchValue ? "?search=" + encodeURIComponent(searchValue) : ""
+          }`
+        );
       }
     }, 500);
 
