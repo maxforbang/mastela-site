@@ -33,7 +33,11 @@ export default function BlogPostPreview({ post }: { post: BlogPost }) {
       key={`${slug?.current}-blog-card`}
       className="flex flex-col items-start justify-between"
     >
-      <div className="relative aspect-[16/9] w-full lg:aspect-[3/2]">
+      <Link
+        href={`/cape-coral-guide/[slug]`}
+        as={`/cape-coral-guide/${slug?.current}`}
+        className="relative aspect-[16/9] w-full lg:aspect-[3/2] hover:opacity-95 transform duration-200 hover:scale-102 hover:drop-shadow-xl"
+      >
         <Image
           fill
           src={
@@ -43,8 +47,8 @@ export default function BlogPostPreview({ post }: { post: BlogPost }) {
           alt={mainImage.alt}
           className=" w-full rounded-2xl bg-gray-100 object-cover "
         />
-        <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" />
-      </div>
+      </Link>
+
       <div className="max-w-xl flex-grow">
         <div className="mt-5 flex items-center gap-4 text-xs">
           <time dateTime={publishedAt} className="py-1.5 text-gray-500">

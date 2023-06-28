@@ -43,13 +43,18 @@ const BlogPage: NextPageWithLayout<BlogPageProps> = (
         </div>
         <div className=" my-4 grid grid-cols-2 gap-5 sm:my-6 md:grid-cols-3 ">
           {categories?.map((category) => {
-            return <CategoryCard key={`category-card-${category?.slug?.current}`} category={category} />;
+            return (
+              <CategoryCard
+                key={`category-card-${category?.slug?.current}`}
+                category={category}
+              />
+            );
           })}
         </div>
         <div className="ml-auto mt-10 w-max">
           <Link
             href="/cape-coral-guides"
-            className="text-xl font-semibold leading-7 "
+            className="text-xl font-semibold leading-7 hover:opacity-60 duration-100 ease-out"
           >
             View all guides <span aria-hidden="true">&rarr;</span>
           </Link>
@@ -79,7 +84,7 @@ function CategoryCard({ category }: { category: BlogCategory }) {
       <section>
         <div
           className={classNames(
-            "relative mx-auto h-52 transform cursor-pointer overflow-hidden rounded-2xl shadow-md transition duration-300 ease-out first-of-type:hover:z-10 md:h-64"
+            "relative mx-auto h-52 transform cursor-pointer overflow-hidden rounded-2xl shadow-md transition duration-300 ease-out hover:scale-102 hover:drop-shadow-2xl first-of-type:hover:z-10 md:h-64"
           )}
         >
           <Image
@@ -87,9 +92,9 @@ function CategoryCard({ category }: { category: BlogCategory }) {
             fill
             style={{ objectFit: "cover" }}
             src={imageUrl}
-            alt={category?.image?.alt ?? 'cape coral guide category picture'}
+            alt={category?.image?.alt ?? "cape coral guide category picture"}
           />
-          <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-black bg-opacity-30 ">
+          <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-black bg-opacity-30 hover:bg-opacity-10 transition duration-300 ease-out">
             <p className="w-2/3 text-center text-4xl font-semibold text-white  [text-shadow:_0_4px_1px_rgb(0_0_0_/_50%)]">
               {category?.title}
             </p>
