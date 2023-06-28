@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { classNames } from "~/utils/functions/functions";
-
 import { BlogSearchBar } from "~/components/blog/BlogSearchBar";
-import { BlogCategory, BlogPost } from "types";
+import type { BlogCategory, BlogPost } from "types";
 import BlogPostPreview from "./BlogPostPreview";
 import SkeletonBlogPostPreview from "./SkeletonBlogPostPreview";
 
@@ -41,6 +40,7 @@ export default function BlogPostsContent({
           <div className="flex flex-wrap items-center gap-x-6 text-xs">
             {categories?.map((category) => (
               <Link
+              key={`category-nav-pill-${category?.slug?.current}`}
                 href={
                   category.slug?.current
                     ? "/cape-coral-guides/[category]"
@@ -73,9 +73,9 @@ export default function BlogPostsContent({
           )}
         >
           {postsLoading ? (
-            Array.from(Array(3)).map((_, index) => <SkeletonBlogPostPreview />)
+            Array.from(Array(3)).map((_, index) => <SkeletonBlogPostPreview key={`skeleton-blog-post-preview-${index}`}/>)
           ) : posts.length ? (
-            posts.map((post) => <BlogPostPreview post={post} />)
+            posts.map((post) => <BlogPostPreview key={`blog-post-preview-${post?.slug?.current}`} post={post} />)
           ) : (
             <div className="h-80"></div>
           )}

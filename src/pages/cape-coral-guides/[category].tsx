@@ -1,16 +1,10 @@
 import Layout from "~/components/Layout";
 import type { NextPageWithLayout } from "../_app";
 import type { ReactElement } from "react";
-import { classNames } from "~/utils/functions/functions";
-import Link from "next/link";
 import { BlogCategory, BlogPost, Slug } from "types";
 import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
 import sanityClient from "../../../sanity/lib/sanityClient";
 import { groq } from "next-sanity";
-import { formatDateEnglish } from "~/utils/functions/dates/formatDateEnglish";
-import { urlFor } from "../../../sanity/lib/urlFor";
-import Image from "next/image";
-import { BlogSearchBar } from "~/components/blog/BlogSearchBar";
 import BlogPostsContent from "~/components/blog/BlogPostsContent";
 import { featuredCategoriesQuery } from "~/utils/sanityQueries";
 
@@ -36,6 +30,9 @@ export async function getStaticPaths() {
   const featuredCategoriesQuery = groq`*[_type == 'category' && slug != null] {
     title,
     slug,
+
+
+    
   }`;
 
   const categorySlugs: { slug: Slug }[] = await sanityClient.fetch(

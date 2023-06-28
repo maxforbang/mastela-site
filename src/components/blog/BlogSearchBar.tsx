@@ -22,7 +22,7 @@ export function BlogSearchBar({ sort = false }) {
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (searchValue?.trim() !== initialSearchValue) {
-        router.push(
+        void router.push(
           `/cape-coral-guides${
             searchValue ? "?search=" + encodeURIComponent(searchValue) : ""
           }`

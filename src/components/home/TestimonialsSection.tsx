@@ -2,15 +2,15 @@ import { StarIcon } from "@heroicons/react/20/solid";
 
 const reviews = [
   {
-    name: "Shannon Jacobs",
+    name: "Shannon J",
     date: "May 2023",
     imageUrl:
       "https://a0.muscache.com/im/pictures/user/373705b5-f4de-402f-b243-1cfa0a69eb0c.jpg?aki_policy=profile_x_medium",
     text: "We absolutely fell in love with this place! Stunning house with so much to do without leaving, if you do choose to leave the area is also absolutely gorgeous with so much to see and explore. The hosts were also amazing and so helpful and accommodating 10/5 stars!",
   },
-  { name: "Emily Meyer", date: "May 2023", imageUrl: "https://a0.muscache.com/im/pictures/user/2480a6e9-f512-4c0b-8329-4beb71bf9a5b.jpg?aki_policy=profile_x_medium", text: "Mastela’s place was absolutely perfect for us, our 4 adult boys and 3 of their girlfriends. There was a room for each couple and there was plenty of lounging space that we never felt crowded whatsoever. The place was just perfect for us! I can’t speak highly enough for this place. We spent all of our time in the outdoor space enjoying the kayaks, fishing, the pool, hot tub and outdoor furniture. This will definitely be our first choice when we come back in the future!" },
+  { name: "Emily M", date: "May 2023", imageUrl: "https://a0.muscache.com/im/pictures/user/2480a6e9-f512-4c0b-8329-4beb71bf9a5b.jpg?aki_policy=profile_x_medium", text: "Mastela’s place was absolutely perfect for us, our 4 adult boys and 3 of their girlfriends. There was a room for each couple and there was plenty of lounging space that we never felt crowded whatsoever. The place was just perfect for us! I can’t speak highly enough for this place. We spent all of our time in the outdoor space enjoying the kayaks, fishing, the pool, hot tub and outdoor furniture. This will definitely be our first choice when we come back in the future!" },
   { name: "Amie L", date: "November 2022", imageUrl: "https://a0.muscache.com/im/pictures/user/080f7ec7-adf1-4276-8652-e6961f793694.jpg?aki_policy=profile_x_medium", text: "If I can stay at any of Thomases locations here in Cape Coral, I would again. He was a very responsive host, extremely accommodating, friendly, and provided a really outstanding experience for our team. This particular Airbnb is stocked full of appliances that are amenities, which added a touch of epicure class to our time here. An espresso maker! a smoothie maker! And just an all together beautiful house, highly recommended" },
-  { name: "Megan Twardecki", date: "May 2023", imageUrl: "https://a0.muscache.com/im/pictures/user/User-72596762/original/07300167-f163-463e-b5d8-c59fe4b976df.jpeg?aki_policy=profile_x_medium", text: "We had a wonderful stay at this beautiful home! Anna and Thomas were easy to work with and maintained great communication. This was the definitely cleanest Airbnb I’ve ever stayed at— inside and out! There was not a speck of dust in the whole house, and the patio/pool were spotless too. The screened in pool makes all the difference.. I don’t think I saw a single bug! " },
+  { name: "Megan T", date: "May 2023", imageUrl: "https://a0.muscache.com/im/pictures/user/User-72596762/original/07300167-f163-463e-b5d8-c59fe4b976df.jpeg?aki_policy=profile_x_medium", text: "We had a wonderful stay at this beautiful home! Anna and Thomas were easy to work with and maintained great communication. This was the definitely cleanest Airbnb I’ve ever stayed at— inside and out! There was not a speck of dust in the whole house, and the patio/pool were spotless too. The screened in pool makes all the difference.. I don’t think I saw a single bug! " },
 ];
 
 interface TestimonialProps {

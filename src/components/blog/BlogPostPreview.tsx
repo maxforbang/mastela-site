@@ -2,7 +2,7 @@ import { formatDateEnglish } from "~/utils/functions/dates/formatDateEnglish";
 import { urlFor } from "../../../sanity/lib/urlFor";
 import Image from "next/image";
 import Link from "next/link";
-import { BlogPost } from "types";
+import type { BlogPost } from "types";
 import { useRouter } from "next/router";
 
 export default function BlogPostPreview({ post }: { post: BlogPost }) {
@@ -45,15 +45,16 @@ export default function BlogPostPreview({ post }: { post: BlogPost }) {
         />
         <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" />
       </div>
-      <div className="max-w-xl">
-        <div className="mt-8 flex items-center gap-4 text-xs">
-          <time dateTime={publishedAt} className="text-gray-500">
+      <div className="max-w-xl flex-grow">
+        <div className="mt-5 flex items-center gap-4 text-xs">
+          <time dateTime={publishedAt} className="py-1.5 text-gray-500">
             {formatDateEnglish(publishedAt)}
           </time>
           <div className="flex flex-wrap gap-3">
             {categories?.slice(0, 3).map((category) => {
               return (
                 <Link
+                  key={`post-category-tag-${category?.slug?.current}`}
                   href={`/cape-coral-guides/[category]`}
                   as={`/cape-coral-guides/${category?.slug?.current}`}
                   className="relative z-10 rounded-full bg-gray-100 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-300"
@@ -90,7 +91,7 @@ export default function BlogPostPreview({ post }: { post: BlogPost }) {
           {/* Sanity Image */}
           <Image
             src={authorImageUrl}
-            alt=""
+            alt={author?.image?.alt}
             height={40}
             width={40}
             className="rounded-full bg-white"
@@ -127,12 +128,11 @@ function highlightSearchWords(text: string, searchWords: string) {
   const firstSearchWordIndex = searchWordIndexes[0];
   if (firstSearchWordIndex && firstSearchWordIndex > 90) {
     text = "&hellip;" + text.slice(Math.max(0, firstSearchWordIndex - 110));
-    
   }
 
   const highlightedText = text.replace(
     regex,
-    (_, word) => `<span class="bg-yellow-200">${word}</span>`
+    (_, word: string) => `<span class="bg-yellow-200">${word}</span>`
   );
 
   return <p dangerouslySetInnerHTML={{ __html: highlightedText }} />;

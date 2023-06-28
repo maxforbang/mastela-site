@@ -1,8 +1,6 @@
-import { Fragment, ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import {
-  ArrowLeftIcon
-} from "@heroicons/react/24/outline";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import ShareButton from "./shared/ShareButton";
 
 export default function PageOverlay({
@@ -52,8 +50,10 @@ export default function PageOverlay({
                         </div>
                       </div>
                       <ShareButton
-                      triggerNotification={triggerNotification}
-                        link={`https://www.mastelavacations.com/property/${slug ?? ''}`}
+                        triggerNotification={triggerNotification}
+                        link={`https://www.mastelavacations.com/property/${
+                          slug ?? ""
+                        }`}
                       />
                     </div>
                   </div>

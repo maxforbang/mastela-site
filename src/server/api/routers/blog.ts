@@ -1,10 +1,7 @@
-import { BlogCategory, BlogPost } from "types";
+import { BlogPost } from "types";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 import {
-  allArticlesCategoryQuery,
-  allPostsQuery,
-  featuredCategoriesQuery,
-  searchPostsQuery,
+  allPostsQuery, searchPostsQuery
 } from "~/utils/sanityQueries";
 import { z } from "zod";
 

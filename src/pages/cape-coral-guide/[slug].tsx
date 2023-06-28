@@ -1,10 +1,6 @@
 import Layout from "~/components/Layout";
 import type { NextPageWithLayout } from "../_app";
 import type { ReactElement } from "react";
-import {
-  CheckCircleIcon,
-  InformationCircleIcon,
-} from "@heroicons/react/20/solid";
 import { groq } from "next-sanity";
 import sanityClient from "../../../sanity/lib/sanityClient";
 import { BlogPost, Slug } from "types";
@@ -41,7 +37,7 @@ ArticlePage.getLayout = function getLayout(page: ReactElement) {
 };
 
 export async function getStaticPaths() {
-  const postSlugsQuery = groq`*[_type == 'post' && slug != null] {
+  const postSlugsQuery = groq`*[_type == 'post' && slug != null && dateTime(publishedAt) <= dateTime(now())] {
     slug
   }`;
 
@@ -86,10 +82,12 @@ export async function getStaticProps(
     slug,
   });
 
+  const suggestedCategory = (post.categories && post.categories[0]?.slug?.current) ?? "activities"
+
   const suggestedPosts: BlogPost[] = await sanityClient.fetch(
     suggestedPostsFromCategory,
     {
-      category: post.categories[0]?.slug?.current ?? 'activities',
+      category: suggestedCategory,
       slug: post.slug.current,
     }
   );
@@ -105,8 +103,10 @@ export async function getStaticProps(
 
 function Article({ post }: { post: BlogPost }) {
   const { body, mainImage, author } = post;
-  const introductionIndex =
-    body?.indexOf(body?.find((child) => child.style === "normal")) ?? 0;
+  const firstParagraph = body?.find((child) => child.style === "normal");
+  const introductionIndex = firstParagraph
+    ? body?.indexOf(firstParagraph) ?? 1
+    : 1;
 
   const postImageUrl = mainImage
     ? urlFor(mainImage).width(1024).height(768).url()
@@ -118,7 +118,7 @@ function Article({ post }: { post: BlogPost }) {
 
   return (
     <div className="bg-white px-6 py-16 lg:px-8">
-      <div className="prose mx-auto max-w-3xl text-base leading-7 text-gray-700">
+      <article className="prose mx-auto max-w-3xl text-base leading-7 text-gray-700">
         <PortableText
           value={body?.slice(0, introductionIndex + 1) as TypedObject[]}
         />
@@ -153,7 +153,7 @@ function Article({ post }: { post: BlogPost }) {
             <PortableText value={author?.bio as TypedObject[]} />
           </div>
         </div>
-      </div>
+      </article>
     </div>
   );
 }
@@ -233,9 +233,11 @@ function SuggestedPosts({ suggestedPosts }: { suggestedPosts: BlogPost[] }) {
         </div>
         <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
           {suggestedPosts.map((post) => (
-            <BlogPostPreview post={post} />
+            <BlogPostPreview key={`blog-post-preview-${post?.slug?.current}`} post={post} />
           ))}
         </div>
+
+        
       </div>
     </div>
   );

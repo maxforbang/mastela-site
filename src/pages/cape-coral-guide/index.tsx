@@ -6,7 +6,7 @@ import { classNames } from "~/utils/functions/functions";
 import { BlogCategory } from "types";
 import Image from "next/image";
 import sanityClient from "../../../sanity/lib/sanityClient";
-import { GetStaticPropsContext, InferGetStaticPropsType } from "next/types";
+import { InferGetStaticPropsType } from "next/types";
 import { groq } from "next-sanity";
 import { urlFor } from "../../../sanity/lib/urlFor";
 import { BlogSearchBar } from "~/components/blog/BlogSearchBar";
@@ -43,7 +43,7 @@ const BlogPage: NextPageWithLayout<BlogPageProps> = (
         </div>
         <div className=" my-4 grid grid-cols-2 gap-5 sm:my-6 md:grid-cols-3 ">
           {categories?.map((category) => {
-            return <CategoryCard category={category} />;
+            return <CategoryCard key={`category-card-${category?.slug?.current}`} category={category} />;
           })}
         </div>
         <div className="ml-auto mt-10 w-max">

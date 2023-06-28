@@ -1,15 +1,12 @@
 import Layout from "~/components/Layout";
 import type { NextPageWithLayout } from "../_app";
 import type { ReactElement } from "react";
-import { BlogCategory, BlogPost } from "types";
+import { BlogCategory } from "types";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import sanityClient from "../../../sanity/lib/sanityClient";
-import { groq } from "next-sanity";
 import BlogPostsContent from "~/components/blog/BlogPostsContent";
 import {
-  allArticlesCategoryQuery,
-  allPostsQuery,
-  featuredCategoriesQuery,
+  allArticlesCategoryQuery, featuredCategoriesQuery
 } from "~/utils/sanityQueries";
 import { createServerSideHelpers } from "@trpc/react-query/server";
 import { blogRouter } from "~/server/api/routers/blog";
@@ -58,6 +55,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   const currentCategory: BlogCategory = await sanityClient.fetch(
     allArticlesCategoryQuery
+
+    
   );
 
   return {

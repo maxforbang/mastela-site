@@ -3,25 +3,24 @@ import type { NextPageWithLayout } from "./_app";
 import { useState, type ReactElement, useEffect } from "react";
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { useRouter } from "next/router";
-import { parseISO } from "date-fns";
 import { dateToStringNumerical } from "./property/[property]";
 import { api } from "~/utils/api";
 import type {
-  CalendarDates,
-  CalendarComponent,
-  InvoiceItem,
-  BookingQuoteInfo,
+    CalendarDates,
+    CalendarComponent,
+    InvoiceItem,
+    BookingQuoteInfo,
 } from "types";
 import { classNames } from "~/utils/functions/functions";
 import { formatCurrencyExact } from "~/utils/functions/formatCurrency";
 import { env } from "~/env.mjs";
 import { loadStripe } from "@stripe/stripe-js";
 import {
-  Elements,
-  LinkAuthenticationElement,
-  PaymentElement,
-  useElements,
-  useStripe,
+    Elements,
+    LinkAuthenticationElement,
+    PaymentElement,
+    useElements,
+    useStripe,
 } from "@stripe/react-stripe-js";
 import { DateRangePicker } from "~/components/DateRangePicker";
 import Image from "next/image";
@@ -29,6 +28,8 @@ import { urlFor } from "../../sanity/lib/urlFor";
 import { getUrlParams } from "~/utils/functions/getUrlParams";
 import { Disclosure } from "@headlessui/react";
 import SlideOver from "~/components/SlideOver";
+
+
 
 const stripe = loadStripe(env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 

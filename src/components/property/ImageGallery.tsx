@@ -1,6 +1,5 @@
 import PhotoAlbum, {
-  RenderPhotoProps,
-  RenderRowContainer,
+  RenderPhotoProps
 } from "react-photo-album";
 import PageOverlay from "../PageOverlay";
 import Image from "next/image";
@@ -21,7 +20,8 @@ export default function ImageGallery({
   slug: string;
 }) {
   // TODO: Make proper responsive breakpoint sizes
-  const photos = imageSources.map((src, index) => {
+  const photos = imageSources.map((src, 
+    ) => {
     return {
       src: src,
       width: 900,
@@ -82,7 +82,7 @@ const RenderPhoto = ({
   photo,
   imageProps: { alt, title, sizes, className, onClick },
   wrapperStyle,
-  layout: { index },
+  // layout: { index },
 }: RenderPhotoProps) => {
   return (
     <div style={{ ...wrapperStyle, position: "relative" }}>
