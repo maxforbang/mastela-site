@@ -18,12 +18,20 @@ export default defineType({
         source: "title",
         maxLength: 96,
       },
+      description: "How the title appears up in the url"
     }),
     defineField({
       name: "author",
       title: "Author",
       type: "reference",
       to: { type: "author" },
+    }),
+    defineField({
+      name: "priority",
+      title: "Feature Priority",
+      type: "number",
+      description: "Optional- How high the post will show up in search results. Higher numbers have a higher priority.",
+      initialValue: 0
     }),
     defineField({
       name: "mainImage",

@@ -126,7 +126,7 @@ function Article({ post }: { post: BlogPost }) {
           <Image
             fill
             src={postImageUrl}
-            alt={mainImage.alt}
+            alt={mainImage?.alt}
             className=" w-full rounded-2xl bg-gray-100 object-cover "
           />
         </div>
@@ -137,7 +137,7 @@ function Article({ post }: { post: BlogPost }) {
           {/* Sanity Image */}
           <Image
             src={authorImageUrl}
-            alt=""
+            alt={author?.image?.alt ?? 'Blog author picture'}
             height={320}
             width={320}
             className="rounded-full bg-white"

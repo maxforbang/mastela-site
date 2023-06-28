@@ -11,7 +11,7 @@ const ContactPage: NextPageWithLayout = () => {
           fill
           className="h-64 w-full bg-gray-50 object-cover sm:h-80 lg:absolute lg:h-full"
           src="https://images.unsplash.com/photo-1542596594-649edbc13630?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80"
-          alt=""
+          alt="Girl smiling with double peace signs"
         />
       </div>
       <div className="pb-24 pt-16 sm:pb-32 lg:mx-auto lg:grid lg:max-w-7xl lg:grid-cols-2">

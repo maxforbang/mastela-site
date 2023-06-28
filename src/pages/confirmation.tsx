@@ -73,7 +73,7 @@ const ConfirmationPage: NextPageWithLayout<ConfirmationPageProps> = (
         <div className="relative h-80 overflow-hidden lg:absolute lg:h-full lg:w-1/2 lg:pr-4 xl:pr-12">
           <Image
             src="https://images.unsplash.com/photo-1509233725247-49e657c54213?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1049&q=80&crop=entropy,edges&entropy=1.0&edges=0.1"
-            alt="TODO"
+            alt="Palm trees in south florida"
             fill
             className="h-full w-full object-cover object-left"
           />
@@ -113,7 +113,7 @@ const ConfirmationPage: NextPageWithLayout<ConfirmationPageProps> = (
                       src={mainImageSrc}
                       sizes="256px" // inputs w=640 in sanity url
                       // blurDataURL={blurImageSrc}
-                      alt=""
+                      alt="Luxury Villa Vacation Rental in Cape Coral"
                     />
                   </div>
                   <div className="flex-auto space-y-1">

@@ -214,5 +214,12 @@ export type BlogPost = {
   publishedAt: string; // Consider using a specific date type instead of 'string'
   body?: RichText[];
   textPreview?: string;
+  calendarEvent?: BlogPostCalendarEvent;
   // Add other fields if needed
+};
+
+export type BlogPostCalendarEvent = {
+  isCalendarEvent: boolean;
+  eventDate: Date;
+  dateChangesAnnually: boolean;
 };

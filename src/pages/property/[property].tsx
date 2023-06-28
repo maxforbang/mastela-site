@@ -605,8 +605,10 @@ function PropertyImages({
           style={{ objectFit: "cover" }}
           src={images[0] ?? ""}
           sizes="(min-width: 640px) 50vw, (min-width: 1536px) 40vw, 100vw"
+          // TODO: Add blur data url
           // blurDataURL={blurImageSrc}
           alt=""
+          // TODO: Add alt pictures for property pictures
         />
       </div>
       <div className="relative hidden w-1/2 grid-cols-2 grid-rows-2 gap-2 sm:grid">

@@ -53,7 +53,7 @@ export default function PropertiesSection() {
                     className="  rounded-2xl object-cover"
                     fill
                     src={imageUrl}
-                    alt=""
+                    alt="Luxury Villa Vacation Rental in Cape Coral"
                   />
                 </div>
                 <h3 className="mt-6 text-lg font-semibold leading-8 tracking-tight text-gray-900">

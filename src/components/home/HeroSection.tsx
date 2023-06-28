@@ -19,7 +19,7 @@ function HeroSection() {
           fill
           style={{ objectFit: "cover" }}
           src="https://images.unsplash.com/photo-1511895426328-dc8714191300?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2370&q=80"
-          alt=""
+          alt="Family holding hands on the beach in the sunset"
         />
         <div className="absolute bottom-80 flex h-auto w-full justify-center">
           <p className="text-center text-6xl capitalize italic text-white shadow-black [text-shadow:_2px_4px_20px_rgb(0_0_0_/_100%)] lg:text-7xl">

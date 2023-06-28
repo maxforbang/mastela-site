@@ -74,7 +74,7 @@ function CategoryCard({ category }: { category: BlogCategory }) {
   return (
     <Link
       href="/cape-coral-guides/[category]"
-      as={`/cape-coral-guides/${category.slug.current}`}
+      as={`/cape-coral-guides/${category?.slug?.current}`}
     >
       <section>
         <div
@@ -87,11 +87,11 @@ function CategoryCard({ category }: { category: BlogCategory }) {
             fill
             style={{ objectFit: "cover" }}
             src={imageUrl}
-            alt=""
+            alt={category?.image?.alt ?? 'cape coral guide category picture'}
           />
           <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-black bg-opacity-30 ">
             <p className="w-2/3 text-center text-4xl font-semibold text-white  [text-shadow:_0_4px_1px_rgb(0_0_0_/_50%)]">
-              {category.title}
+              {category?.title}
             </p>
           </div>
         </div>

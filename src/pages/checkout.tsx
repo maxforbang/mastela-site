@@ -354,7 +354,7 @@ function OrderSummary({ property, dates, setDates }: CalendarComponent) {
                         src={mainImageSrc}
                         sizes="384px" // inputs w=640 in sanity url
                         blurDataURL={mainImageBlurSrc}
-                        alt=""
+                        alt="Luxury Villa Vacation Rental in Cape Coral"
                       />
                     </div>
                     <div className="relative flex flex-col justify-between space-y-4">
@@ -484,7 +484,7 @@ function OrderSummary({ property, dates, setDates }: CalendarComponent) {
                 src={mainImageSrc}
                 sizes="384px" // inputs w=640 in sanity url
                 blurDataURL={mainImageBlurSrc}
-                alt=""
+                alt="Luxury Villa Vacation Rental in Cape Coral"
               />
             </div>
             <div className="flex flex-col justify-between space-y-4">

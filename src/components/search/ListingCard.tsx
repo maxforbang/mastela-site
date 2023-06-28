@@ -36,7 +36,7 @@ export function ListingCard({ listing, arrival, departure }: ListingCardProps) {
           fill
           objectFit="cover"
           className="rounded-2xl"
-          alt={mainImage.alt}
+          alt='Luxury Villa Vacation Rental in Cape Coral'
           blurDataURL={blurImageSrc}
         />
       </div>
