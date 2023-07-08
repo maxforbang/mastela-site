@@ -86,32 +86,6 @@ function Checkout() {
     }
   }, [router.isReady, router.asPath]);
 
-  // if (!slug || !arrival || !departure) {
-  //   let message = "";
-  //   if (!slug) {
-  //     message = "Please pick a property before proceeding to checkout.";
-  //   }
-
-  //   if (!arrival) {
-  //     message = "Please select an arrival date before proceeding to checkout.";
-  //   }
-
-  //   if (!departure) {
-  //     message = "Please select a departure date before proceeding to checkout.";
-  //   }
-
-  //   return (
-  //     <div className="mt-12 flex flex-col justify-center">
-  //       <p className="mx-auto text-xl">{message}</p>
-  //       <div className="mx-auto mt-4">
-  //         <Link href="/our-villas" className="text-l font-semibold leading-7 ">
-  //           <span aria-hidden="true">&larr;</span> Back to Our Villas
-  //         </Link>
-  //       </div>
-  //     </div>
-  //   );
-  // }
-
   const { data: clientSecret } = api.properties.getClientSecret.useQuery(
     {
       slug: slug as string,
@@ -162,7 +136,6 @@ function Checkout() {
           <div className="mx-auto max-w-lg">
             <div className="flex gap-4">
               <p className="pb-6 text-2xl">Checkout</p>
-              {/* {!clientSecret && <LoadingSpinner />} */}
             </div>
 
             {clientSecret ? (
@@ -302,7 +275,6 @@ function OrderSummary({ property, dates, setDates }: CalendarComponent) {
     dates?.startDate
   )} - ${dateToStringNumerical(dates?.endDate)}`;
 
-  // const openMobileCalendar
 
   return (
     <>

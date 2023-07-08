@@ -22,11 +22,12 @@ const navigation = {
   ],
   guide: [
     // TODO: Add links for Blog Categories
-    { name: "Beaches", href: "/" },
-    { name: "Dining", href: "/" },
-    { name: "Tours / Museums", href: "/" },
-    { name: "Nature / Hiking", href: "/" },
-    { name: "Fitness", href: "/" },
+    { name: "Activities", href: "/cape-coral-guides/activities" },
+    { name: "Beaches", href: "/cape-coral-guides/beaches" },
+    { name: "Dining", href: "/cape-coral-guides/dining" },
+    { name: "Fitness", href: "/cape-coral-guides/fitness" },
+    { name: "Nature", href: "/cape-coral-guides/nature" },
+    { name: "Shopping", href: "/cape-coral-guides/shopping" },
   ],
   legal: [
     { name: "Refund Policy", href: "/refund-policy" },
@@ -148,12 +149,12 @@ function Header() {
                   <img
                     className="block h-8 w-auto lg:hidden"
                     src="/images/Mastela-Logo.png"
-                    alt="Your Company"
+                    alt="Mastela Vacations"
                   />
                   <img
                     className="hidden h-12 w-auto lg:block"
                     src="/images/Mastela-Logo.png"
-                    alt="Your Company"
+                    alt="Mastela Vacations"
                   />
                 </Link>
 
