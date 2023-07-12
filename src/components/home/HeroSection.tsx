@@ -9,6 +9,7 @@ import { classNames, formatDateUrl } from "~/utils/functions/functions";
 import { DateRangePicker } from "../DateRangePicker";
 import { useRouter } from "next/router";
 import type { CalendarDates } from "types";
+import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 function HeroSection() {
   return (
     <div className="">
@@ -70,11 +71,11 @@ export function SearchBar({
       )}
     >
       <div className="flex w-full rounded-full border-2 border-slate-300 bg-white py-2 shadow-sm">
-        <div className="flex flex-grow pl-6">
-          <div className="flex">
+        <div className="flex flex-grow w-full">
+          <div className="hidden sm:flex w-full">
             <input
               className={classNames(
-                "mx-2 w-1/3 cursor-pointer bg-transparent text-gray-500 outline-none",
+                "mx-2 w-full cursor-pointer text-center bg-transparent text-gray-500 outline-none",
                 isValidEntry ? "text-inherit" : ""
               )}
               type="text"
@@ -85,9 +86,10 @@ export function SearchBar({
               readOnly
               onClick={() => setCalendarShowing(true)}
             />
+            <div className="w-1.5 h-full rounded bg-gray-200"></div>
             <input
               className={classNames(
-                "mx-2 w-1/3 cursor-pointer bg-transparent text-gray-500 outline-none",
+                "mx-2 w-full text-center cursor-pointer bg-transparent text-gray-500 outline-none",
                 isValidEntry ? "text-inherit" : ""
               )}
               type="text"
@@ -99,12 +101,18 @@ export function SearchBar({
               onClick={() => setCalendarShowing(true)}
             />
 
-            <input
+            {/* <input
               className="mx-2 mr-0 w-1/3 bg-transparent placeholder-gray-500 outline-none"
               type="text"
               placeholder="Guests"
               onClick={() => setCalendarShowing(false)}
-            />
+            /> */}
+          </div>
+          <div className="flex gap-4 items-center sm:hidden mr-3 pl-6">
+            <CalendarDaysIcon className="h-7 w-7" />
+            <p className="text-gray-500">
+              View Availability
+              </p>
           </div>
         </div>
         <Link
