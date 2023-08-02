@@ -180,13 +180,13 @@ function Header() {
                     </Link>
                   ))}
                   <Link
-                    href="tel:+18039957240"
+                    href="tel:+18139957240"
                     className={classNames(
                       "border-transparent text-gray-800  hover:text-sky-600",
                       "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-bold"
                     )}
                   >
-                    +1 (803) 995-7240
+                    +1 (813) 995-7240
                   </Link>
                 </div>
               </div>
