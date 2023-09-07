@@ -73,6 +73,8 @@ export default async function checkoutsWebhooksHandler(
           propertyId: lodgifyPropertyId,
           roomId: lodgifyRoomId,
           guestName: name,
+          guestEmail: email,
+          guestPhone: phone,
           arrival: arrival,
           departure: departure,
           totalPrice: totalPrice,
@@ -91,7 +93,6 @@ export default async function checkoutsWebhooksHandler(
           });
         }
 
-        //TODO: Booking first
         const bookingResponse: { status: string } = (await fetch(
           // Gets a quote - https://docs.lodgify.com/reference/get_v2-quote-propertyid
           `https://api.lodgify.com/v2/reservations/bookings/${bookingId}`,

@@ -40,3 +40,15 @@ model Guest {
   phone String?
   email String?
 }
+
+model EntryCode {
+  id    String  @id @default(cuid())
+  name  String
+  propertySlug String
+  code String
+  codeSlot Int
+  reservationId String?
+  createdAt DateTime @default(now())
+  expiryDate DateTime?
+}
+

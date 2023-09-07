@@ -2,7 +2,7 @@ import { Disclosure } from '@headlessui/react'
 import { MinusSmallIcon, PlusSmallIcon } from '@heroicons/react/24/outline'
 import type { FAQ } from 'types'
 
-//TODO: Import from Sanity
+//TODO: More detailed FAQ's (copy Roelens) + Import from Sanity
 const faqs: FAQ[] = [
   {
     question: "What is the cancellation policy?",

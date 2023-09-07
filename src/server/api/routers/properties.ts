@@ -4,6 +4,7 @@ import { env } from "~/env.mjs";
 import { groq } from "next-sanity";
 import { differenceInDays, parseISO } from "date-fns";
 import { formatCurrencyRounded } from "~/utils/functions/formatCurrency";
+import { utcDate } from "~/utils/functions/dates/utcDate";
 import { TRPCError } from "@trpc/server";
 import type {
   BookingInformation,
@@ -115,6 +116,7 @@ export const propertiesRouter = createTRPCRouter({
         );
 
         //TODO: Get price and combine with sanity objects (https://docs.lodgify.com/reference/listproperties)
+        // Use Promise.all() to fetch prices while sanity is fetching Listing info: https://chat.openai.com/share/1f94a5a3-500c-4d33-833c-0824c01f1fbe
         // Total price along with a field for average price which you calculate here on server
 
         // Return an array of ListingViews
@@ -164,17 +166,19 @@ export const propertiesRouter = createTRPCRouter({
         }
       ).then((response) => response.json())) as LodgifyPropertyAvailabilities[];
 
-      const unavailablePeriodStrings = availabilityPeriods[0]?.periods.filter(
+      const unavailablePeriods = availabilityPeriods[0]?.periods.filter(
         (period: LodgifyAvailabilityPeriod) => period.available === 0
       );
-      const unavailableDateRanges = unavailablePeriodStrings?.map(
+
+      const unavailableDateRanges = unavailablePeriods?.map(
         (period: LodgifyAvailabilityPeriod) => {
           return {
-            startDate: parseISO(period.start),
-            endDate: parseISO(period.end),
+            startDate: utcDate(period.start),
+            endDate: utcDate(period.end),
           };
         }
       );
+
       return unavailableDateRanges
         ? getDatesInRanges(unavailableDateRanges)
         : undefined;
@@ -377,22 +381,32 @@ export const propertiesRouter = createTRPCRouter({
         propertyId: z.string(),
         roomId: z.string(),
         guestName: z.string(),
+        guestEmail: z.string(),
+        guestPhone: z.string(),
         arrival: z.string(),
         departure: z.string(),
         totalPrice: z.string(),
       })
     )
     .query(async ({ input }) => {
-      const { propertyId, roomId, guestName, arrival, departure, totalPrice } =
-        input;
+      const {
+        propertyId,
+        roomId,
+        guestName,
+        guestEmail,
+        guestPhone,
+        arrival,
+        departure,
+        totalPrice,
+      } = input;
 
       const bookingId = (await fetch(
-        // Get all availabilities - https://docs.lodgify.com/reference/getcalendarbyuserF
+        // Creates a booking - https://docs.lodgify.com/reference/post_v1-reservation-booking-1
         `https://api.lodgify.com/v1/reservation/booking`,
         {
           method: "POST",
           headers: { ...lodgifyHeaders, "content-type": "application/*+json" },
-          body: `{"rooms":[{"room_type_id":${roomId}}],"guest":{"name":"${guestName}"},"source":"Manual","source_text":"mastelavacations.com","arrival":"${arrival}","departure":"${departure}","property_id":${propertyId},"status":"Booked","total":${parseFloat(
+          body: `{"rooms":[{"room_type_id":${roomId}}],"guest":{"name":"${guestName}","email":"${guestEmail}","phone":"${guestPhone}"},"source":"Manual","source_text":"mastelavacations.com","arrival":"${arrival}","departure":"${departure}","property_id":${propertyId},"status":"Booked","total":${parseFloat(
             totalPrice
           )},"currency_code":"usd","origin":"Mastela Vacations Site"}`,
         }
@@ -506,6 +520,7 @@ function getDatesInRanges(dateRanges: DateRange[]) {
       dates.push(new Date(date));
     }
   }
+  console.log(dates[0]);
 
   return dates;
 }

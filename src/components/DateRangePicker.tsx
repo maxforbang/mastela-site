@@ -1,4 +1,5 @@
-import { addYears, parseISO } from "date-fns";
+import { addMinutes, addYears, parseISO, subMinutes } from "date-fns";
+import { formatInTimeZone, utcToZonedTime } from "date-fns-tz";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-date-range";
 import type { DateRange as DateRangeType } from "types";
@@ -19,19 +20,26 @@ export const DateRangePicker = ({
   property = "",
   ...props
 }: CalendarComponent) => {
+  const timeZone = "America/New_York"; // Datepicker should always reflect the timezone where the properties are located
+
   const { data: unavailableDates = [] } =
     api.properties.getBlockedDatesForProperty.useQuery(
       {
         slug: property,
-        startDate: formatDateUrl(new Date()),
-        endDate: formatDateUrl(addYears(new Date(), 1)),
+        // Start/End Dates should always correspond to the current day in Cape Coral
+        startDate: formatInTimeZone(new Date(), timeZone, "yyyy-MM-dd"),
+        endDate: formatInTimeZone(
+          addYears(new Date(), 1),
+          timeZone,
+          "yyyy-MM-dd"
+        ),
       },
       {
         enabled: !!property,
       }
     );
 
-  const currentDate = new Date();
+  const currentDate = utcToZonedTime(new Date(), timeZone);
 
   const initialDates = {
     startDate: dates?.startDate ? parseISO(dates.startDate) : currentDate,
@@ -90,8 +98,9 @@ export const DateRangePicker = ({
       direction="vertical"
       minDate={new Date()}
       maxDate={addYears(new Date(), 1)}
-      disabledDates={unavailableDates}
-      // disabledDay={(date) => dateIsBlocked(date, blockedDateRanges)}
+      disabledDates={unavailableDates.map(
+        (date) => addMinutes(new Date(date), new Date().getTimezoneOffset()) // All dates returned from server are 00:00 time UTC but this datepicker uses local time
+      )}
       preventSnapRefocus={true}
       fixedHeight
       rangeColors={["rgb(14 165 233"]}

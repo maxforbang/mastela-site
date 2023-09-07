@@ -215,7 +215,6 @@ export type BlogPost = {
   body?: RichText[];
   textPreview?: string;
   calendarEvent?: BlogPostCalendarEvent;
-  // Add other fields if needed
 };
 
 export type BlogPostCalendarEvent = {

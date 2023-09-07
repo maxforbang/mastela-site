@@ -55,8 +55,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   const currentCategory: BlogCategory = await sanityClient.fetch(
     allArticlesCategoryQuery
-
-    
   );
 
   return {

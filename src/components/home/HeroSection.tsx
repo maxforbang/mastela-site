@@ -24,7 +24,7 @@ function HeroSection() {
         />
         <div className="absolute bottom-80 flex h-auto w-full justify-center">
           <p className="text-center text-6xl capitalize italic text-white shadow-black [text-shadow:_2px_4px_20px_rgb(0_0_0_/_100%)] lg:text-7xl">
-            Start your vacation now
+            Start your vacation here
           </p>
         </div>
         <div className=" absolute bottom-20 left-1/2 flex w-2/3 -translate-x-1/2 flex-col items-center md:w-7/12 lg:w-1/2 xl:w-1/3">
@@ -37,7 +37,6 @@ function HeroSection() {
 
 export default HeroSection;
 
-//TODO: Clean up styling. Disable auto-search on Homepage unless Guests field is also filled in.
 export function SearchBar({
   displayTop = false,
   overLay = false,

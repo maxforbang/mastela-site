@@ -36,4 +36,4 @@ export const searchPostsQuery = groq`*[_type == 'post' && dateTime(publishedAt) 
   "textPreview": coalesce(body[style == 'normal' && children[].text match $searchString][0].children[0].text, body[style == 'normal'][0].children[0].text),
   publishedAt,
   slug,
-} | order(publishedAt desc) | score(title match $searchString + "*")`;
+} | order(priority desc, publishedAt desc) | score(title match $searchString + "*")`;

@@ -272,8 +272,6 @@ function BookNowDesktop({
   return (
     <div className="sticky top-32 mx-auto mt-12 hidden h-max w-1/3 rounded-xl border p-8 shadow-xl md:block">
       <div
-        /* Create better way to invalidate query besides clicking dates div */
-        // onClick={() => utils.properties.getQuote.invalidate()}
         className="flex items-center gap-1"
       >
         <p className="text-xl font-semibold">{pricePerNight}</p>/<p> night</p>
@@ -593,7 +591,6 @@ function PropertyImages({
         onClick={() => setGalleryIsShowing(true)}
         className="absolute bottom-6 right-6 z-10 flex h-9 w-40 cursor-pointer items-center justify-center gap-2 rounded-lg border-2 border-slate-600 bg-white active:bg-gray-200"
       >
-        {/* TODO: Make mobile a carousel instead - onClick it becomes react-lightbox */}
         <Squares2X2Icon className="h-6" />
         <p className="text-sm font-medium tracking-tight ">Show all photos</p>
       </div>
@@ -671,8 +668,7 @@ function PropertyHeader({
   if (!name || !occupancy) {
     return <SkeletonPropertyHeader />;
   }
-
-  //•
+  
   return (
     <div className="mt-4 py-8 text-center text-4xl">
       <p className="">{name}</p>
