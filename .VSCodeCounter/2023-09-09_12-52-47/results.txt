@@ -1,0 +1,157 @@
+Date : 2023-09-09 12:52:47
+Directory : /Users/max/Documents/Code/mastela-site
+Total : 87 files,  7085 codes, 534 comments, 689 blanks, all 8308 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| TypeScript JSX     |         42 |      5,114 |        193 |        432 |      5,739 |
+| TypeScript         |         32 |      1,432 |        293 |        183 |      1,908 |
+| HTML               |          1 |        169 |          4 |         30 |        203 |
+| JavaScript         |          6 |         97 |         33 |         17 |        147 |
+| CSV                |          1 |         93 |          0 |          0 |         93 |
+| JSON               |          1 |         72 |          0 |          1 |         73 |
+| Prisma             |          1 |         45 |          2 |          8 |         55 |
+| JSON with Comments |          1 |         25 |          9 |          0 |         34 |
+| CSS                |          1 |         21 |          0 |          6 |         27 |
+| Markdown           |          1 |         17 |          0 |         12 |         29 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                   | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                      |         87 |      7,085 |        534 |        689 |      8,308 |
+| . (Files)                                                                              |         12 |        516 |         34 |         61 |        611 |
+| .sanity                                                                                |          2 |        176 |          6 |         33 |        215 |
+| .sanity/runtime                                                                        |          2 |        176 |          6 |         33 |        215 |
+| prisma                                                                                 |          1 |         45 |          2 |          8 |         55 |
+| sanity                                                                                 |         10 |        474 |         29 |         29 |        532 |
+| sanity (Files)                                                                         |          2 |         26 |          0 |          9 |         35 |
+| sanity/lib                                                                             |          3 |         24 |          0 |          7 |         31 |
+| sanity/schemas                                                                         |          5 |        424 |         29 |         13 |        466 |
+| src                                                                                    |         62 |      5,874 |        463 |        558 |      6,895 |
+| src (Files)                                                                            |          1 |         31 |         17 |          5 |         53 |
+| src/components                                                                         |         23 |      2,078 |        109 |        137 |      2,324 |
+| src/components (Files)                                                                 |          4 |        556 |         64 |         24 |        644 |
+| src/components/blog                                                                    |          4 |        339 |          4 |         29 |        372 |
+| src/components/home                                                                    |          8 |        733 |         15 |         38 |        786 |
+| src/components/property                                                                |          2 |        221 |         17 |         17 |        255 |
+| src/components/search                                                                  |          3 |        190 |          9 |         26 |        225 |
+| src/components/shared                                                                  |          2 |         39 |          0 |          3 |         42 |
+| src/pages                                                                              |         20 |      3,147 |         93 |        306 |      3,546 |
+| src/pages (Files)                                                                      |         12 |      1,871 |         48 |        154 |      2,073 |
+| src/pages/api                                                                          |          2 |        131 |          9 |         19 |        159 |
+| src/pages/api/stripe                                                                   |          1 |        115 |          8 |         17 |        140 |
+| src/pages/api/trpc                                                                     |          1 |         16 |          1 |          2 |         19 |
+| src/pages/cape-coral-guide                                                             |          2 |        273 |          5 |         36 |        314 |
+| src/pages/cape-coral-guides                                                            |          2 |        135 |          8 |         32 |        175 |
+| src/pages/property                                                                     |          1 |        721 |         23 |         64 |        808 |
+| src/pages/studio                                                                       |          1 |         16 |          0 |          1 |         17 |
+| src/server                                                                             |          7 |        441 |        199 |         66 |        706 |
+| src/server (Files)                                                                     |          2 |         23 |          0 |          7 |         30 |
+| src/server/api                                                                         |          5 |        418 |        199 |         59 |        676 |
+| src/server/api (Files)                                                                 |          3 |         44 |         62 |         14 |        120 |
+| src/server/api/routers                                                                 |          2 |        374 |        137 |         45 |        556 |
+| src/styles                                                                             |          1 |         21 |          0 |          6 |         27 |
+| src/utils                                                                              |         10 |        156 |         45 |         38 |        239 |
+| src/utils (Files)                                                                      |          2 |         59 |         38 |         11 |        108 |
+| src/utils/functions                                                                    |          8 |         97 |          7 |         27 |        131 |
+| src/utils/functions (Files)                                                            |          4 |         58 |          1 |         16 |         75 |
+| src/utils/functions/dates                                                              |          4 |         39 |          6 |         11 |         56 |
++----------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                                               | language           | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| /Users/max/Documents/Code/mastela-site/.eslintrc.cjs                                   | JavaScript         |         31 |          2 |          3 |         36 |
+| /Users/max/Documents/Code/mastela-site/.sanity/runtime/app.js                          | JavaScript         |          7 |          2 |          3 |         12 |
+| /Users/max/Documents/Code/mastela-site/.sanity/runtime/index.html                      | HTML               |        169 |          4 |         30 |        203 |
+| /Users/max/Documents/Code/mastela-site/README.md                                       | Markdown           |         17 |          0 |         12 |         29 |
+| /Users/max/Documents/Code/mastela-site/next.config.mjs                                 | JavaScript         |         17 |         11 |          2 |         30 |
+| /Users/max/Documents/Code/mastela-site/package.json                                    | JSON               |         72 |          0 |          1 |         73 |
+| /Users/max/Documents/Code/mastela-site/postcss.config.cjs                              | JavaScript         |          7 |          0 |          2 |          9 |
+| /Users/max/Documents/Code/mastela-site/prettier.config.cjs                             | JavaScript         |          4 |          1 |          2 |          7 |
+| /Users/max/Documents/Code/mastela-site/prisma/schema.prisma                            | Prisma             |         45 |          2 |          8 |         55 |
+| /Users/max/Documents/Code/mastela-site/reservations.csv                                | CSV                |         93 |          0 |          0 |         93 |
+| /Users/max/Documents/Code/mastela-site/sanity.cli.ts                                   | TypeScript         |          4 |          4 |          3 |         11 |
+| /Users/max/Documents/Code/mastela-site/sanity.config.ts                                | TypeScript         |         15 |          7 |          4 |         26 |
+| /Users/max/Documents/Code/mastela-site/sanity/env.ts                                   | TypeScript         |         17 |          0 |          6 |         23 |
+| /Users/max/Documents/Code/mastela-site/sanity/lib/image.ts                             | TypeScript         |         10 |          0 |          4 |         14 |
+| /Users/max/Documents/Code/mastela-site/sanity/lib/sanityClient.ts                      | TypeScript         |          8 |          0 |          3 |         11 |
+| /Users/max/Documents/Code/mastela-site/sanity/lib/urlFor.ts                            | TypeScript         |          6 |          0 |          0 |          6 |
+| /Users/max/Documents/Code/mastela-site/sanity/schema.ts                                | TypeScript         |          9 |          0 |          3 |         12 |
+| /Users/max/Documents/Code/mastela-site/sanity/schemas/author.ts                        | TypeScript         |         61 |          0 |          2 |         63 |
+| /Users/max/Documents/Code/mastela-site/sanity/schemas/blockContent.ts                  | TypeScript         |         52 |         21 |          3 |         76 |
+| /Users/max/Documents/Code/mastela-site/sanity/schemas/category.ts                      | TypeScript         |         51 |          0 |          2 |         53 |
+| /Users/max/Documents/Code/mastela-site/sanity/schemas/post.ts                          | TypeScript         |        109 |          0 |          3 |        112 |
+| /Users/max/Documents/Code/mastela-site/sanity/schemas/property.ts                      | TypeScript         |        151 |          8 |          3 |        162 |
+| /Users/max/Documents/Code/mastela-site/src/components/DateRangePicker.tsx              | TypeScript JSX     |         98 |          3 |         10 |        111 |
+| /Users/max/Documents/Code/mastela-site/src/components/Layout.tsx                       | TypeScript JSX     |        314 |         60 |          9 |        383 |
+| /Users/max/Documents/Code/mastela-site/src/components/PageOverlay.tsx                  | TypeScript JSX     |         71 |          1 |          2 |         74 |
+| /Users/max/Documents/Code/mastela-site/src/components/SlideOver.tsx                    | TypeScript JSX     |         73 |          0 |          3 |         76 |
+| /Users/max/Documents/Code/mastela-site/src/components/blog/BlogPostPreview.tsx         | TypeScript JSX     |        127 |          4 |         13 |        144 |
+| /Users/max/Documents/Code/mastela-site/src/components/blog/BlogPostsContent.tsx        | TypeScript JSX     |         83 |          0 |          4 |         87 |
+| /Users/max/Documents/Code/mastela-site/src/components/blog/BlogSearchBar.tsx           | TypeScript JSX     |         96 |          0 |          7 |        103 |
+| /Users/max/Documents/Code/mastela-site/src/components/blog/SkeletonBlogPostPreview.tsx | TypeScript JSX     |         33 |          0 |          5 |         38 |
+| /Users/max/Documents/Code/mastela-site/src/components/home/AboutUsSection.tsx          | TypeScript JSX     |        132 |          0 |          3 |        135 |
+| /Users/max/Documents/Code/mastela-site/src/components/home/AmenitiesSections.tsx       | TypeScript JSX     |         90 |          0 |          5 |         95 |
+| /Users/max/Documents/Code/mastela-site/src/components/home/BlogSection.tsx             | TypeScript JSX     |         81 |          0 |          7 |         88 |
+| /Users/max/Documents/Code/mastela-site/src/components/home/FAQSection.tsx              | TypeScript JSX     |         61 |          7 |          3 |         71 |
+| /Users/max/Documents/Code/mastela-site/src/components/home/HeroSection.tsx             | TypeScript JSX     |        177 |          7 |          6 |        190 |
+| /Users/max/Documents/Code/mastela-site/src/components/home/PropertiesSection.tsx       | TypeScript JSX     |         71 |          1 |          5 |         77 |
+| /Users/max/Documents/Code/mastela-site/src/components/home/SupportSection.tsx          | TypeScript JSX     |         48 |          0 |          4 |         52 |
+| /Users/max/Documents/Code/mastela-site/src/components/home/TestimonialsSection.tsx     | TypeScript JSX     |         73 |          0 |          5 |         78 |
+| /Users/max/Documents/Code/mastela-site/src/components/property/ImageGallery.tsx        | TypeScript JSX     |         87 |          4 |          8 |         99 |
+| /Users/max/Documents/Code/mastela-site/src/components/property/LoadingPropertyPage.tsx | TypeScript JSX     |        134 |         13 |          9 |        156 |
+| /Users/max/Documents/Code/mastela-site/src/components/search/ListingCard.tsx           | TypeScript JSX     |        140 |          7 |         18 |        165 |
+| /Users/max/Documents/Code/mastela-site/src/components/search/Map.tsx                   | TypeScript JSX     |         29 |          2 |          6 |         37 |
+| /Users/max/Documents/Code/mastela-site/src/components/search/SkeletonInfoCard.tsx      | TypeScript JSX     |         21 |          0 |          2 |         23 |
+| /Users/max/Documents/Code/mastela-site/src/components/shared/ShareButton.tsx           | TypeScript JSX     |         21 |          0 |          2 |         23 |
+| /Users/max/Documents/Code/mastela-site/src/components/shared/Toast.tsx                 | TypeScript JSX     |         18 |          0 |          1 |         19 |
+| /Users/max/Documents/Code/mastela-site/src/env.mjs                                     | JavaScript         |         31 |         17 |          5 |         53 |
+| /Users/max/Documents/Code/mastela-site/src/pages/404.tsx                               | TypeScript JSX     |         29 |          0 |          5 |         34 |
+| /Users/max/Documents/Code/mastela-site/src/pages/_app.tsx                              | TypeScript JSX     |         25 |          0 |          5 |         30 |
+| /Users/max/Documents/Code/mastela-site/src/pages/about.tsx                             | TypeScript JSX     |        371 |          3 |         13 |        387 |
+| /Users/max/Documents/Code/mastela-site/src/pages/api/stripe/webhook.ts                 | TypeScript         |        115 |          8 |         17 |        140 |
+| /Users/max/Documents/Code/mastela-site/src/pages/api/trpc/[trpc].ts                    | TypeScript         |         16 |          1 |          2 |         19 |
+| /Users/max/Documents/Code/mastela-site/src/pages/cape-coral-guide/[slug].tsx           | TypeScript JSX     |        158 |          2 |         24 |        184 |
+| /Users/max/Documents/Code/mastela-site/src/pages/cape-coral-guide/index.tsx            | TypeScript JSX     |        115 |          3 |         12 |        130 |
+| /Users/max/Documents/Code/mastela-site/src/pages/cape-coral-guides/[category].tsx      | TypeScript JSX     |         79 |          5 |         18 |        102 |
+| /Users/max/Documents/Code/mastela-site/src/pages/cape-coral-guides/index.tsx           | TypeScript JSX     |         56 |          3 |         14 |         73 |
+| /Users/max/Documents/Code/mastela-site/src/pages/checkout.tsx                          | TypeScript JSX     |        632 |         31 |         58 |        721 |
+| /Users/max/Documents/Code/mastela-site/src/pages/confirmation.tsx                      | TypeScript JSX     |        217 |          2 |         22 |        241 |
+| /Users/max/Documents/Code/mastela-site/src/pages/contact.tsx                           | TypeScript JSX     |        195 |          0 |          4 |        199 |
+| /Users/max/Documents/Code/mastela-site/src/pages/index.tsx                             | TypeScript JSX     |         87 |          6 |         15 |        108 |
+| /Users/max/Documents/Code/mastela-site/src/pages/our-villas.tsx                        | TypeScript JSX     |         30 |          3 |          6 |         39 |
+| /Users/max/Documents/Code/mastela-site/src/pages/privacy.tsx                           | TypeScript JSX     |         59 |          0 |          4 |         63 |
+| /Users/max/Documents/Code/mastela-site/src/pages/property/[property].tsx               | TypeScript JSX     |        721 |         23 |         64 |        808 |
+| /Users/max/Documents/Code/mastela-site/src/pages/refund-policy.tsx                     | TypeScript JSX     |         52 |          0 |          4 |         56 |
+| /Users/max/Documents/Code/mastela-site/src/pages/search.tsx                            | TypeScript JSX     |        105 |          3 |         14 |        122 |
+| /Users/max/Documents/Code/mastela-site/src/pages/studio/[[...index]].tsx               | TypeScript JSX     |         16 |          0 |          1 |         17 |
+| /Users/max/Documents/Code/mastela-site/src/pages/terms.tsx                             | TypeScript JSX     |         69 |          0 |          4 |         73 |
+| /Users/max/Documents/Code/mastela-site/src/server/api/root.ts                          | TypeScript         |          8 |          6 |          3 |         17 |
+| /Users/max/Documents/Code/mastela-site/src/server/api/routers/blog.ts                  | TypeScript         |         20 |          0 |          3 |         23 |
+| /Users/max/Documents/Code/mastela-site/src/server/api/routers/properties.ts            | TypeScript         |        354 |        137 |         42 |        533 |
+| /Users/max/Documents/Code/mastela-site/src/server/api/stripe.ts                        | TypeScript         |          5 |          0 |          1 |          6 |
+| /Users/max/Documents/Code/mastela-site/src/server/api/trpc.ts                          | TypeScript         |         31 |         56 |         10 |         97 |
+| /Users/max/Documents/Code/mastela-site/src/server/db.ts                                | TypeScript         |         12 |          0 |          4 |         16 |
+| /Users/max/Documents/Code/mastela-site/src/server/sanityClient.ts                      | TypeScript         |         11 |          0 |          3 |         14 |
+| /Users/max/Documents/Code/mastela-site/src/styles/globals.css                          | CSS                |         21 |          0 |          6 |         27 |
+| /Users/max/Documents/Code/mastela-site/src/utils/api.ts                                | TypeScript         |         30 |         32 |          6 |         68 |
+| /Users/max/Documents/Code/mastela-site/src/utils/functions/dates/datesEqual.ts         | TypeScript         |          3 |          0 |          0 |          3 |
+| /Users/max/Documents/Code/mastela-site/src/utils/functions/dates/formatDateEnglish.ts  | TypeScript         |         21 |          0 |          6 |         27 |
+| /Users/max/Documents/Code/mastela-site/src/utils/functions/dates/formatPhoneNumber.ts  | TypeScript         |         11 |          6 |          3 |         20 |
+| /Users/max/Documents/Code/mastela-site/src/utils/functions/dates/utcDate.ts            | TypeScript         |          4 |          0 |          2 |          6 |
+| /Users/max/Documents/Code/mastela-site/src/utils/functions/formatCurrency.ts           | TypeScript         |         23 |          1 |          6 |         30 |
+| /Users/max/Documents/Code/mastela-site/src/utils/functions/functions.tsx               | TypeScript JSX     |         20 |          0 |          8 |         28 |
+| /Users/max/Documents/Code/mastela-site/src/utils/functions/getBaseUrl.ts               | TypeScript         |          4 |          0 |          0 |          4 |
+| /Users/max/Documents/Code/mastela-site/src/utils/functions/getUrlParams.ts             | TypeScript         |         11 |          0 |          2 |         13 |
+| /Users/max/Documents/Code/mastela-site/src/utils/sanityQueries.ts                      | TypeScript         |         29 |          6 |          5 |         40 |
+| /Users/max/Documents/Code/mastela-site/tailwind.config.ts                              | TypeScript         |         36 |          0 |          2 |         38 |
+| /Users/max/Documents/Code/mastela-site/tsconfig.json                                   | JSON with Comments |         25 |          9 |          0 |         34 |
+| /Users/max/Documents/Code/mastela-site/types.ts                                        | TypeScript         |        195 |          0 |         30 |        225 |
+| Total                                                                                  |                    |      7,085 |        534 |        689 |      8,308 |
++----------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+

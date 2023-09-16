@@ -54,6 +54,8 @@ import { createOccupancyString } from "~/components/search/ListingCard";
 import { formatDateEnglish } from "~/utils/functions/dates/formatDateEnglish";
 import ImageGallery from "~/components/property/ImageGallery";
 import PortableText from "react-portable-text";
+import DescriptionPopUp from "~/components/property/DescriptionPopUp";
+import DescriptionContent from "~/components/property/DescriptionContent";
 
 type PropertyPageProps = {
   trpcState: DehydratedState;
@@ -87,7 +89,7 @@ const PropertyPage: NextPageWithLayout<PropertyPageProps> = (
       occupancy,
       // coords,
       preview = [],
-      // description,
+      description = [],
       images = [],
     } = {},
   } = api.properties.getProperty.useQuery(
@@ -96,6 +98,8 @@ const PropertyPage: NextPageWithLayout<PropertyPageProps> = (
       enabled: !!slug,
     }
   );
+
+  console.log(description);
 
   const imageSources = images
     ? images.map((image: SanityImage) => urlFor(image).url())
@@ -125,7 +129,7 @@ const PropertyPage: NextPageWithLayout<PropertyPageProps> = (
               }
             />
             <PropertyFeatures dates={dates} />
-            <PropertyDescription preview={preview} />
+            <PropertyDescription name={name} preview={preview} description={description} />
             <PropertyMap />
             <AvailabilityCalendar
               dates={dates}
@@ -271,9 +275,7 @@ function BookNowDesktop({
 
   return (
     <div className="sticky top-32 mx-auto mt-12 hidden h-max w-1/3 rounded-xl border p-8 shadow-xl md:block">
-      <div
-        className="flex items-center gap-1"
-      >
+      <div className="flex items-center gap-1">
         <p className="text-xl font-semibold">{pricePerNight}</p>/<p> night</p>
       </div>
       <StackedSearchBar
@@ -668,7 +670,7 @@ function PropertyHeader({
   if (!name || !occupancy) {
     return <SkeletonPropertyHeader />;
   }
-  
+
   return (
     <div className="mt-4 py-8 text-center text-4xl">
       <p className="">{name}</p>
@@ -679,7 +681,17 @@ function PropertyHeader({
   );
 }
 
-function PropertyDescription({ preview }: { preview: RichText[] }) {
+function PropertyDescription({
+  name,
+  preview,
+  description,
+}: {
+  name: string;
+  preview: RichText[];
+  description: RichText[];
+}) {
+  const [open, setOpen] = useState(false);
+
   if (!preview) {
     return <SkeletonPropertyDescription />;
   }
@@ -687,13 +699,17 @@ function PropertyDescription({ preview }: { preview: RichText[] }) {
   return (
     <div className="border-b py-8">
       <PortableText content={preview} />
+      <DescriptionPopUp open={open} setOpen={setOpen}>
+        <DescriptionContent name={name} text={description}/>
+      </DescriptionPopUp>
+
       {/* &nbsp;&hellip; */}
       <div
         // TODO: Add modal/slide-over for description's Show More
-        onClick={() => console.log("Description Pop-Up")}
-        className="mt-4 flex cursor-pointer gap-2 text-base font-semibold"
+        onClick={() => setOpen(true)}
+        className="mt-4 flex cursor-pointer gap-2 text-base font-semibold text-sky-600 duration-200 hover:text-sky-300"
       >
-        <p className="underline">Show more</p>{" "}
+        <p className="underline">Read more</p>{" "}
         <span className="no-underline" aria-hidden="true">
           →
         </span>

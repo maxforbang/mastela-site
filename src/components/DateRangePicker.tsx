@@ -22,6 +22,14 @@ export const DateRangePicker = ({
 }: CalendarComponent) => {
   const timeZone = "America/New_York"; // Datepicker should always reflect the timezone where the properties are located
 
+  // console.log(new Date());
+  // console.log(new Date().getTimezoneOffset());
+  // console.log(formatInTimeZone(new Date(), timeZone, "yyyy-MM-dd"));
+  // console.log(
+  //   "add minutes",
+  //   addMinutes(new Date(), new Date().getTimezoneOffset())
+  // );
+
   const { data: unavailableDates = [] } =
     api.properties.getBlockedDatesForProperty.useQuery(
       {
@@ -99,7 +107,7 @@ export const DateRangePicker = ({
       minDate={new Date()}
       maxDate={addYears(new Date(), 1)}
       disabledDates={unavailableDates.map(
-        (date) => addMinutes(new Date(date), new Date().getTimezoneOffset()) // All dates returned from server are 00:00 time UTC but this datepicker uses local time
+        (date) => addMinutes(date, date.getTimezoneOffset()) // All dates returned from server are 00:00 time UTC but the browser converts it to local time. Adding the timezoneOffset undoes this.
       )}
       preventSnapRefocus={true}
       fixedHeight

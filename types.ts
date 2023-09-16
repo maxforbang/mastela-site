@@ -119,7 +119,7 @@ export interface PropertyListing {
 }
 
 export interface Property extends PropertyListing {
-  description: string;
+  description: RichText[];
   images: SanityImage[];
 }
 
