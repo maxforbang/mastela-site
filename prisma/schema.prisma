@@ -42,13 +42,23 @@ model Guest {
 }
 
 model EntryCode {
-  id    String  @id @default(cuid())
-  name  String
-  propertySlug String
-  code String
-  codeSlot Int
+  id            String    @id @default(cuid())
+  name          String
+  propertySlug  String
+  code          String
+  codeSlot      Int
   reservationId String?
-  createdAt DateTime @default(now())
-  expiryDate DateTime?
+  createdAt     DateTime  @default(now())
+  expiryDate    DateTime?
 }
 
+model Review {
+  id           String   @id @default(cuid())
+  name         String
+  rating       Int
+  comment      String   @db.Text
+  createdAt    DateTime
+  propertySlug String
+  propertyName String
+  pictureUrl   String
+}

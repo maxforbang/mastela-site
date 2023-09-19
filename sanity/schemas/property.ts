@@ -51,6 +51,15 @@ export default defineType({
       ],
     }),
     defineField({
+      name: "wifi",
+      title: "Wifi",
+      type: "object",
+      fields: [
+        { name: "network", title: "Network Name", type: "string" },
+        { name: "password", title: "Password", type: "string" },
+      ],
+    }),
+    defineField({
       name: "preview",
       title: "Description Preview",
       description: "Headline text that appears before clicking *Show More*",
@@ -138,7 +147,8 @@ export default defineType({
               name: "alt",
               type: "string",
               title: "Alternative text (optional)",
-              description: 'Description for the image that helps with SEO and sight-impaired users'
+              description:
+                "Description for the image that helps with SEO and sight-impaired users",
             },
           ],
         },

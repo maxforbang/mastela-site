@@ -520,7 +520,6 @@ function getDatesInRanges(dateRanges: DateRange[]) {
       dates.push(new Date(date));
     }
   }
-  console.log(dates[0]);
 
   return dates;
 }

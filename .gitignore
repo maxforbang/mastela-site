@@ -1,7 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dev
-prismaConsole.js
+/prismaConsole
+/db_backups
 
 # templates
 src/pages/TEMPLATE.tsx

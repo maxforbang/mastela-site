@@ -8,25 +8,27 @@ import type { ReactElement } from "react";
 import AboutUsSection from "~/components/home/AboutUsSection";
 import FAQSection from "~/components/home/FAQSection";
 import PropertiesSection from "~/components/home/PropertiesSection";
-import TestimonialsSection from "~/components/home/TestimonialsSection";
+
 import AmenitiesSection from "~/components/home/AmenitiesSections";
 import HeroSection from "~/components/home/HeroSection";
 import SupportSection from "~/components/home/SupportSection";
 import BlogSection from "~/components/home/BlogSection";
-import { groq } from "next-sanity";
-import sanityClient from "../../sanity/lib/sanityClient";
-import { BlogPost } from "types";
+import { BlogPost, Review } from "types";
 import { InferGetStaticPropsType } from "next";
-import { allPostsQuery } from "~/utils/sanityQueries";
+import TestimonialsSection from "~/components/home/TestimonialsSection/TestimonialsSection";
+import { fetchFeaturedPosts } from "~/utils/fetch/fetchFeaturedPosts";
+import { fetchReviews } from "~/utils/fetch/fetchReviews";
+import { prisma } from "~/server/db";
 
 type HomePageProps = {
   featuredPosts: BlogPost[];
+  reviews: Review[];
 };
 
 const HomePage: NextPageWithLayout<HomePageProps> = (
   props: InferGetStaticPropsType<typeof getStaticProps>
 ) => {
-  const { featuredPosts } = props;
+  const { featuredPosts, reviews = [] } = props;
 
   return (
     <>
@@ -34,7 +36,7 @@ const HomePage: NextPageWithLayout<HomePageProps> = (
         <HeroSection />
         <AmenitiesSection />
         <AboutUsSection />
-        <TestimonialsSection />
+        <TestimonialsSection reviews={reviews} />
         <PropertiesSection />
         <BlogSection blogPosts={featuredPosts} />
         <FAQSection />
@@ -51,56 +53,13 @@ HomePage.getLayout = function getLayout(page: ReactElement) {
 };
 
 export async function getStaticProps() {
-  const secondsInADay = 60 * 60 * 24;
-  // How far in advance you want to show a holiday post on the frontpage (in seconds)
-  const featureLength = 14 * secondsInADay;
-
-  const featuredPostsQueryCalendarEvents = groq`*[
-    _type == 'post' &&
-    (
-      dateTime(publishedAt) <= dateTime(now()) &&
-      calendarEvent.isCalendarEvent && 
-      dateTime(calendarEvent.eventDate) > dateTime(now()) &&
-      dateTime(calendarEvent.eventDate) <= dateTime(now()) + $featureLength
-    ) 
-  ] | order(priority desc, publishedAt desc)[0..2] {
-    mainImage,
-    publishedAt,
-    slug,
-    title,
-    author-> {
-      name, image
-    },
-    calendarEvent
-  }  `;
-
-  const featuredPosts: BlogPost[] = await sanityClient.fetch(
-    featuredPostsQueryCalendarEvents,
-    {
-      featureLength: featureLength,
-    }
-  );
-
-  // TODO: Replace morePosts below code once sanity.io land answers question on how to order posts based on boolean value.
-  // Combine allPostsQuery and featuredPostsQueryCalendarEvents on this page into one: featuredPostsQuery
-
-  const morePostsQuery = groq`*[_type == 'post' && !calendarEvent.isCalendarEvent && dateTime(publishedAt) <= dateTime(now())] | order(priority desc, publishedAt desc)[0..2] {
-    title,
-    author->{name, slug, image, role},
-    "categories": categories[]->{title, slug},
-    mainImage,
-    "textPreview": body[style == 'normal'][0].children[0].text, 
-    publishedAt,
-    slug,
-  }`;
-
-  const morePosts: BlogPost[] = await sanityClient.fetch(morePostsQuery);
-
-  const combinedPosts = featuredPosts.concat(morePosts).slice(0, 3)
+  const reviews = await fetchReviews();
+  const featuredPosts = await fetchFeaturedPosts();
 
   return {
     props: {
-      featuredPosts: combinedPosts,
+      reviews: JSON.parse(JSON.stringify(reviews)) as Review[],
+      featuredPosts,
     },
     revalidate: 60,
   };

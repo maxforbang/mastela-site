@@ -99,8 +99,6 @@ const PropertyPage: NextPageWithLayout<PropertyPageProps> = (
     }
   );
 
-  console.log(description);
-
   const imageSources = images
     ? images.map((image: SanityImage) => urlFor(image).url())
     : [];

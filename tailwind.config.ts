@@ -29,6 +29,25 @@ export default {
         "95vh": "95vh",
         "100vh": "100vh",
       },
+      animation: {
+        "fade-in": "fade-in 0.5s linear forwards",
+        marquee: "marquee var(--marquee-duration) linear infinite",
+      },
+      keyframes: {
+        "fade-in": {
+          from: {
+            opacity: '0',
+          },
+          to: {
+            opacity: '1',
+          },
+        },
+        marquee: {
+          "100%": {
+            transform: "translateY(-50%)",
+          },
+        },
+      }
     },
   },
   plugins: [

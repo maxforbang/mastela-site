@@ -1,4 +1,6 @@
 import { StarIcon } from "@heroicons/react/20/solid";
+import {Reviews} from './Reviews'
+import { Review } from "types";
 
 const reviews = [
   {
@@ -20,7 +22,11 @@ interface TestimonialProps {
   text: string;
 }
 
-export default function TestimonialsSection() {
+type TestimonialsSectionProps = {
+  reviews: Review[];
+};
+
+export default function TestimonialsSection({reviews}: TestimonialsSectionProps) {
   return (
     <div className="bg-white py-8 sm:py-32 sm:pb-16">
       <div className="mx-auto lg:px-4">
@@ -33,11 +39,12 @@ export default function TestimonialsSection() {
             we’ve received from sites like AirBnB, Vrbo, and Booking.com
           </p>
         </div>
-        <div className="grid grid-cols-1 pt-6 lg:grid-cols-2 2xl:grid-cols-3">
+        {/* <div className="grid grid-cols-1 pt-6 lg:grid-cols-2 2xl:grid-cols-3">
           {reviews.map((review, index) => (
             <TestimonialCard review={review} key={`amenities-${index}`} />
           ))}
-        </div>
+        </div> */}
+          <Reviews reviews={reviews}/>
       </div>
     </div>
   );

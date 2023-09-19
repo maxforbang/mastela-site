@@ -222,3 +222,13 @@ export type BlogPostCalendarEvent = {
   eventDate: Date;
   dateChangesAnnually: boolean;
 };
+
+export type Review = {
+  createdAt: Date;
+  comment: string;
+  propertySlug: string;
+  propertyName: string;
+  rating: 1 | 2 | 3 | 4 | 5;
+  name: string;
+  pictureUrl: string;
+};
