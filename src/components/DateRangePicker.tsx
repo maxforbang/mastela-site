@@ -22,14 +22,6 @@ export const DateRangePicker = ({
 }: CalendarComponent) => {
   const timeZone = "America/New_York"; // Datepicker should always reflect the timezone where the properties are located
 
-  // console.log(new Date());
-  // console.log(new Date().getTimezoneOffset());
-  // console.log(formatInTimeZone(new Date(), timeZone, "yyyy-MM-dd"));
-  // console.log(
-  //   "add minutes",
-  //   addMinutes(new Date(), new Date().getTimezoneOffset())
-  // );
-
   const { data: unavailableDates = [] } =
     api.properties.getBlockedDatesForProperty.useQuery(
       {

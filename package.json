@@ -40,6 +40,7 @@
     "react-map-gl": "^7.0.25",
     "react-photo-album": "^2.2.2",
     "react-portable-text": "^0.6.0",
+    "resend": "^2.0.0",
     "sanity": "^3.11.3",
     "stripe": "^12.9.0",
     "styled-components": "^5.3.11",

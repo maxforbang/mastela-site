@@ -24,6 +24,7 @@ import type { GetStaticPropsContext, InferGetStaticPropsType } from "next";
 import { createServerSideHelpers } from "@trpc/react-query/server";
 import { propertiesRouter } from "../../server/api/routers/properties";
 import { prisma } from "~/server/db";
+import { resend } from "~/server/resend";
 import { api } from "~/utils/api";
 import sanityClient from "../../../sanity/lib/sanityClient";
 import { groq } from "next-sanity";
@@ -732,7 +733,7 @@ export async function getStaticProps(
 ) {
   const helpers = createServerSideHelpers({
     router: propertiesRouter,
-    ctx: { prisma, sanityClient },
+    ctx: { prisma, sanityClient, resend},
   });
 
   const slug = context.params?.property || "";

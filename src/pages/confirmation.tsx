@@ -15,6 +15,7 @@ import { createServerSideHelpers } from "@trpc/react-query/server";
 import { propertiesRouter } from "../server/api/routers/properties";
 import sanityClient from "../server/sanityClient";
 import { prisma } from "../server/db";
+import { resend } from "../server/resend";
 import type { DehydratedState } from "@tanstack/react-query";
 import superjson from "superjson";
 
@@ -221,7 +222,7 @@ export async function getServerSideProps(
 ) {
   const helpers = createServerSideHelpers({
     router: propertiesRouter,
-    ctx: { prisma, sanityClient },
+    ctx: { prisma, sanityClient, resend },
     transformer: superjson,
   });
 

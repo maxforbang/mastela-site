@@ -9,6 +9,8 @@ import {
   propertiesRouter,
 } from "~/server/api/routers/properties";
 import type { StripePaymentIntent } from "types";
+import { resend } from "./../../../server/resend";
+import { emailRouter } from "~/server/api/routers/email";
 const STRIPE_SIGNATURE_HEADER = "stripe-signature";
 
 // NB: we disable body parser to receive the raw body string. The raw body
@@ -32,7 +34,16 @@ export default async function checkoutsWebhooksHandler(
     env.WEBHOOK_SECRET_KEY
   );
 
-  const caller = propertiesRouter.createCaller({ prisma, sanityClient });
+  const propertiesRouterCaller = propertiesRouter.createCaller({
+    prisma,
+    sanityClient,
+    resend,
+  });
+  const emailRouterCaller = emailRouter.createCaller({
+    prisma,
+    sanityClient,
+    resend,
+  });
 
   // NB: if stripe.webhooks.constructEvent fails, it would throw an error
 
@@ -69,7 +80,7 @@ export default async function checkoutsWebhooksHandler(
           amountDetails[key] = value;
         });
 
-        const bookingId = (await caller.createBooking({
+        const bookingId = await propertiesRouterCaller.createBooking({
           propertyId: lodgifyPropertyId,
           roomId: lodgifyRoomId,
           guestName: name,
@@ -78,10 +89,19 @@ export default async function checkoutsWebhooksHandler(
           arrival: arrival,
           departure: departure,
           totalPrice: totalPrice,
-        }));
+        });
 
         if (typeof bookingId !== "number") {
-          // TODO: Send some alert (email, text) to the team to resolve this. Customer has paid but Lodgify was unable to create the booking.
+          // Send some alert (email, text) to the team to resolve this. Customer has paid but Lodgify was unable to create the booking.
+          await emailRouterCaller.sendDatesNotBlockedAfterPaymentEmail({
+            name,
+            email,
+            phone,
+            arrival,
+            departure,
+            errorMsg: bookingId.message,
+          });
+
           return res.status(400).json({
             message:
               "Customer has paid but Lodgify was unable to create the booking.",
@@ -103,7 +123,16 @@ export default async function checkoutsWebhooksHandler(
         ).then((response) => response.json())) as { status: string };
 
         if (bookingResponse.status !== "Booked") {
-          // TODO: Send some alert (email, text) to the team to resolve this. Customer has paid but Lodgify was unable to create the booking.
+          // Send some alert (email, text) to the team to resolve this. Customer has paid but Lodgify was unable to create the booking.
+          await emailRouterCaller.sendDatesNotBlockedAfterPaymentEmail({
+            name,
+            email,
+            phone,
+            arrival,
+            departure,
+            errorMsg: "bookingResponse.status != 'Booked'",
+          });
+
           return res.status(403).json({
             message:
               "Customer has already paid but the booking dates conflict with another booking, therefore it was not created.",
@@ -116,7 +145,13 @@ export default async function checkoutsWebhooksHandler(
           });
         }
 
-        //TODO: Send guest a confirmation email
+        // Send guest a confirmation email
+        await emailRouterCaller.sendConfirmationEmail({
+          name,
+          propertyName,
+          email,
+        });
+
         return res.status(200).json({
           customer: { name, email, phone },
           propertyName,

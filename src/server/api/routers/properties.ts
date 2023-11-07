@@ -410,7 +410,7 @@ export const propertiesRouter = createTRPCRouter({
             totalPrice
           )},"currency_code":"usd","origin":"Mastela Vacations Site"}`,
         }
-      ).then((response) => response.json())) as number | object;
+      ).then((response) => response.json())) as number | LodgifyError;
 
       return bookingId;
     }),

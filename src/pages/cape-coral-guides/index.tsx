@@ -11,6 +11,7 @@ import {
 import { createServerSideHelpers } from "@trpc/react-query/server";
 import { blogRouter } from "~/server/api/routers/blog";
 import { prisma } from "~/server/db";
+import { resend } from "~/server/resend";
 import { DehydratedState } from "@tanstack/react-query";
 import { api } from "~/utils/api";
 
@@ -44,7 +45,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   const helpers = createServerSideHelpers({
     router: blogRouter,
-    ctx: { prisma, sanityClient },
+    ctx: { prisma, sanityClient, resend },
   });
 
   await helpers.getPosts.prefetch({ searchString: searchString as string });

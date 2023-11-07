@@ -232,3 +232,4 @@ export type Review = {
   name: string;
   pictureUrl: string;
 };
+
