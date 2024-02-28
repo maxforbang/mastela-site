@@ -1,4 +1,4 @@
-import { addMinutes, addYears, parseISO, subMinutes } from "date-fns";
+import { addMinutes, addMonths, parseISO } from "date-fns";
 import { formatInTimeZone, utcToZonedTime } from "date-fns-tz";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-date-range";
@@ -8,8 +8,7 @@ import { api } from "~/utils/api";
 import { datesEqual } from "~/utils/functions/dates/datesEqual";
 import {
   classNames,
-  formatDateRangeUrl,
-  formatDateUrl,
+  formatDateRangeUrl
 } from "~/utils/functions/functions";
 
 //TODO: Change styling to hide duplicate dates (or make the text & background white for the duplicates at the beginning and end of the month)
@@ -29,7 +28,7 @@ export const DateRangePicker = ({
         // Start/End Dates should always correspond to the current day in Cape Coral
         startDate: formatInTimeZone(new Date(), timeZone, "yyyy-MM-dd"),
         endDate: formatInTimeZone(
-          addYears(new Date(), 1),
+          addMonths(new Date(), 18),
           timeZone,
           "yyyy-MM-dd"
         ),
@@ -97,7 +96,7 @@ export const DateRangePicker = ({
       ranges={calendarDates}
       direction="vertical"
       minDate={new Date()}
-      maxDate={addYears(new Date(), 1)}
+      maxDate={addMonths(new Date(), 18)}
       disabledDates={unavailableDates.map(
         (date) => addMinutes(date, date.getTimezoneOffset()) // All dates returned from server are 00:00 time UTC but the browser converts it to local time. Adding the timezoneOffset undoes this.
       )}

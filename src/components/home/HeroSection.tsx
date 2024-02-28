@@ -71,7 +71,8 @@ export function SearchBar({
     >
       <div className="flex w-full rounded-full border-2 border-slate-300 bg-white py-2 shadow-sm">
         <div className="flex flex-grow w-full">
-          <div className="hidden sm:flex w-full">
+          {/* Below div was hidden on mobile before */}
+          <div className="flex w-full">
             <input
               className={classNames(
                 "mx-2 w-full cursor-pointer text-center bg-transparent text-gray-500 outline-none",
@@ -107,12 +108,12 @@ export function SearchBar({
               onClick={() => setCalendarShowing(false)}
             /> */}
           </div>
-          <div className="flex gap-4 items-center sm:hidden mr-3 pl-6">
+          {/* <div className="flex gap-4 items-center sm:hidden mr-3 pl-6">
             <CalendarDaysIcon className="h-7 w-7" />
             <p className="text-gray-500">
               View Availability
               </p>
-          </div>
+          </div> */}
         </div>
         <Link
           onClick={() => setCalendarShowing(false)}
