@@ -39,6 +39,7 @@ export default async function checkoutsWebhooksHandler(
     sanityClient,
     resend,
   });
+
   const emailRouterCaller = emailRouter.createCaller({
     prisma,
     sanityClient,
@@ -66,8 +67,16 @@ export default async function checkoutsWebhooksHandler(
             departure = "",
             lodgifyPropertyId = "",
             lodgifyRoomId = "",
+            source,
           },
         } = data.object as StripePaymentIntent;
+
+        if (source !== "PublicApi") {
+          return res.status(200).json({
+            message:
+              "Webhook ignored. Webhook will only trigger on bookings made through the website.",
+          });
+        }
 
         const priceDetails: Record<string, number>[] = JSON.parse(
           pricing
@@ -99,7 +108,7 @@ export default async function checkoutsWebhooksHandler(
             phone,
             arrival,
             departure,
-            errorMsg: bookingId.message,
+            errorMsg: `${bookingId.message} \n${data.object}`,
           });
 
           return res.status(400).json({
@@ -130,7 +139,7 @@ export default async function checkoutsWebhooksHandler(
             phone,
             arrival,
             departure,
-            errorMsg: "bookingResponse.status != 'Booked'",
+            errorMsg: `bookingResponse.status != 'Booked' \n${data.object}`,
           });
 
           return res.status(403).json({
