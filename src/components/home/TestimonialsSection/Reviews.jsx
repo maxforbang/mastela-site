@@ -99,7 +99,7 @@ function Review({
   );
 }
 
-function splitArray(array, numParts) {
+function splitArray(array= [], numParts) {
   let result = [];
   for (let i = 0; i < array.length; i++) {
     let index = i % numParts;
@@ -155,7 +155,7 @@ function ReviewGrid({ reviews }) {
   let containerRef = useRef();
   let isInView = useInView(containerRef, { once: true, amount: 0.4 });
   let columns = splitArray(reviews, 3);
-  columns = [columns[0], columns[1], splitArray(columns[2], 2)];
+  columns = [columns[0], columns[1], splitArray(columns[2], 2)] ?? [];
 
   return (
     <div
