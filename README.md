@@ -1,6 +1,6 @@
 # Mastela Vacations
 
-This is a marketing website for [Mastela Vacations](https://mastelavacations.com) built with 
+This is a marketing website for [Mastela Vacations](https://mastelavacations.com)
 
 ## Features
 - Instant Booking & Payment. Provides seamless date searches and immediate payment options connected to Stripe.
