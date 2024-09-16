@@ -261,7 +261,7 @@ const people = [
     imageUrl: "images/anna_photo.jpeg",
     twitterUrl: "#",
     linkedinUrl: "#",
-    bio: "Being the owner of a business, Anna's committed to making sure every guest is taken care of from the moment they inquire about a booking to the moment they leave.",
+    bio: "Anna is committed to making sure every guest is taken care of from the moment they inquire about a booking to the moment they leave.",
   },
   {
     name: "Max Forbang",
