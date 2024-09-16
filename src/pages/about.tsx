@@ -257,15 +257,15 @@ const people = [
   },
   {
     name: "Anna Chernyavskaya",
-    role: "Certified Public Accountant",
+    role: "Project Management Professional",
     imageUrl: "images/anna_photo.jpeg",
     twitterUrl: "#",
     linkedinUrl: "#",
-    bio: "Being the owner of a business and dedicated mom of 2 daughters, Anna's committed to making sure every guest is taken care of from the moment they inquire about a booking to the moment they leave.",
+    bio: "Being the owner of a business, Anna's committed to making sure every guest is taken care of from the moment they inquire about a booking to the moment they leave.",
   },
   {
     name: "Max Forbang",
-    role: "Software Developer",
+    role: "Software Engineer",
     imageUrl: "images/profile-picture copy.jpg",
     twitterUrl: "https://twitter.com/maxforbang",
     linkedinUrl: "https://www.linkedin.com/in/max-forbang/",
