@@ -67,11 +67,11 @@ export default async function checkoutsWebhooksHandler(
             departure = "",
             lodgifyPropertyId = "",
             lodgifyRoomId = "",
-            source,
+            source, // Update (12/16/2024): This source is not used anymore. Potential Lodgify documentation change.
           },
         } = data.object as StripePaymentIntent;
 
-        if (source !== "PublicApi") {
+        if (propertyName.length === 0) {
           return res.status(200).json({
             message:
               "Webhook ignored. Webhook will only trigger on bookings made through the website.",

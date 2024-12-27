@@ -1,0 +1,189 @@
+"filename", "language", "TypeScript JSX", "TypeScript", "JavaScript", "JavaScript JSX", "CSS", "JSON with Comments", "JSON", "HTML", "YAML", "Markdown", "Prisma", "CSV", "comment", "blank", "total"
+"/Users/max/Documents/Code/Websites/mastela-site/.eslintrc.cjs", "JavaScript", 0, 0, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 37
+"/Users/max/Documents/Code/Websites/mastela-site/.github/workflows/azure-static-web-apps-gentle-water-012f4a80f.yml", "YAML", 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 3, 4, 47
+"/Users/max/Documents/Code/Websites/mastela-site/.sanity/runtime/app.js", "JavaScript", 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 12
+"/Users/max/Documents/Code/Websites/mastela-site/.sanity/runtime/index.html", "HTML", 0, 0, 0, 0, 0, 0, 0, 169, 0, 0, 0, 0, 4, 30, 203
+"/Users/max/Documents/Code/Websites/mastela-site/README.md", "Markdown", 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 5, 20
+"/Users/max/Documents/Code/Websites/mastela-site/next.config.mjs", "JavaScript", 0, 0, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 2, 31
+"/Users/max/Documents/Code/Websites/mastela-site/package.json", "JSON", 0, 0, 0, 0, 0, 0, 75, 0, 0, 0, 0, 0, 0, 1, 76
+"/Users/max/Documents/Code/Websites/mastela-site/postcss.config.cjs", "JavaScript", 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 9
+"/Users/max/Documents/Code/Websites/mastela-site/prettier.config.cjs", "JavaScript", 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 7
+"/Users/max/Documents/Code/Websites/mastela-site/prisma/schema.prisma", "Prisma", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 55, 0, 2, 8, 65
+"/Users/max/Documents/Code/Websites/mastela-site/reservations.csv", "CSV", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 93, 0, 0, 93
+"/Users/max/Documents/Code/Websites/mastela-site/sanity.cli.ts", "TypeScript", 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 3, 11
+"/Users/max/Documents/Code/Websites/mastela-site/sanity.config.ts", "TypeScript", 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 4, 26
+"/Users/max/Documents/Code/Websites/mastela-site/sanity/env.ts", "TypeScript", 0, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 23
+"/Users/max/Documents/Code/Websites/mastela-site/sanity/lib/image.ts", "TypeScript", 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 14
+"/Users/max/Documents/Code/Websites/mastela-site/sanity/lib/sanityClient.ts", "TypeScript", 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 11
+"/Users/max/Documents/Code/Websites/mastela-site/sanity/lib/urlFor.ts", "TypeScript", 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6
+"/Users/max/Documents/Code/Websites/mastela-site/sanity/schema.ts", "TypeScript", 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 12
+"/Users/max/Documents/Code/Websites/mastela-site/sanity/schemas/author.ts", "TypeScript", 0, 61, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 63
+"/Users/max/Documents/Code/Websites/mastela-site/sanity/schemas/blockContent.ts", "TypeScript", 0, 52, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 3, 76
+"/Users/max/Documents/Code/Websites/mastela-site/sanity/schemas/category.ts", "TypeScript", 0, 51, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 53
+"/Users/max/Documents/Code/Websites/mastela-site/sanity/schemas/post.ts", "TypeScript", 0, 109, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 112
+"/Users/max/Documents/Code/Websites/mastela-site/sanity/schemas/property.ts", "TypeScript", 0, 161, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 3, 172
+"/Users/max/Documents/Code/Websites/mastela-site/sanity/schemas/review.ts", "TypeScript", 0, 61, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 63
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/DateRangePicker.tsx", "TypeScript JSX", 97, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 10, 110
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/Layout.tsx", "TypeScript JSX", 314, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 60, 9, 383
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/PageOverlay.tsx", "TypeScript JSX", 71, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 74
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/SlideOver.tsx", "TypeScript JSX", 73, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 76
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/blog/BlogPostPreview.tsx", "TypeScript JSX", 127, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 13, 144
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/blog/BlogPostsContent.tsx", "TypeScript JSX", 83, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 87
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/blog/BlogSearchBar.tsx", "TypeScript JSX", 96, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 103
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/blog/SkeletonBlogPostPreview.tsx", "TypeScript JSX", 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 38
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/email/ConfirmationEmailTemplate.tsx", "TypeScript JSX", 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 18
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/email/ContactFormEmailTemplate.tsx", "TypeScript JSX", 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 25
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/email/UnblockedDatesTemplate.tsx", "TypeScript JSX", 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 36
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/home/AboutUsSection.tsx", "TypeScript JSX", 120, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 124
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/home/AmenitiesSections.tsx", "TypeScript JSX", 90, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 95
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/home/BlogSection.tsx", "TypeScript JSX", 81, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 88
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/home/FAQSection.tsx", "TypeScript JSX", 61, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 3, 71
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/home/HeroSection.tsx", "TypeScript JSX", 171, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 6, 191
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/home/PropertiesSection.tsx", "TypeScript JSX", 71, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 5, 77
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/home/SupportSection.tsx", "TypeScript JSX", 48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 52
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/home/TestimonialsSection/Container.jsx", "JavaScript JSX", 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 12
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/home/TestimonialsSection/Reviews.jsx", "JavaScript JSX", 0, 0, 0, 185, 0, 0, 0, 0, 0, 0, 0, 0, 7, 16, 208
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/home/TestimonialsSection/TestimonialsSection.tsx", "TypeScript JSX", 74, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 85
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/property/DescriptionContent.tsx", "TypeScript JSX", 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 27
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/property/DescriptionPopUp.tsx", "TypeScript JSX", 59, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 61
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/property/ImageGallery.tsx", "TypeScript JSX", 87, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 8, 99
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/property/LoadingPropertyPage.tsx", "TypeScript JSX", 134, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 9, 156
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/search/ListingCard.tsx", "TypeScript JSX", 140, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 18, 165
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/search/Map.tsx", "TypeScript JSX", 29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 6, 37
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/search/SkeletonInfoCard.tsx", "TypeScript JSX", 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 23
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/shared/ShareButton.tsx", "TypeScript JSX", 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 23
+"/Users/max/Documents/Code/Websites/mastela-site/src/components/shared/Toast.tsx", "TypeScript JSX", 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 19
+"/Users/max/Documents/Code/Websites/mastela-site/src/env.mjs", "JavaScript", 0, 0, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 5, 55
+"/Users/max/Documents/Code/Websites/mastela-site/src/pages/404.tsx", "TypeScript JSX", 29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 34
+"/Users/max/Documents/Code/Websites/mastela-site/src/pages/_app.tsx", "TypeScript JSX", 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 30
+"/Users/max/Documents/Code/Websites/mastela-site/src/pages/about.tsx", "TypeScript JSX", 375, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 12, 390
+"/Users/max/Documents/Code/Websites/mastela-site/src/pages/api/stripe/webhook.ts", "TypeScript", 0, 154, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 22, 184
+"/Users/max/Documents/Code/Websites/mastela-site/src/pages/api/trpc/[trpc].ts", "TypeScript", 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 19
+"/Users/max/Documents/Code/Websites/mastela-site/src/pages/cape-coral-guide/[slug].tsx", "TypeScript JSX", 158, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 24, 184
+"/Users/max/Documents/Code/Websites/mastela-site/src/pages/cape-coral-guide/index.tsx", "TypeScript JSX", 115, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 12, 130
+"/Users/max/Documents/Code/Websites/mastela-site/src/pages/cape-coral-guides/[category].tsx", "TypeScript JSX", 79, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 18, 102
+"/Users/max/Documents/Code/Websites/mastela-site/src/pages/cape-coral-guides/index.tsx", "TypeScript JSX", 57, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 14, 74
+"/Users/max/Documents/Code/Websites/mastela-site/src/pages/checkout.tsx", "TypeScript JSX", 632, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 58, 721
+"/Users/max/Documents/Code/Websites/mastela-site/src/pages/confirmation.tsx", "TypeScript JSX", 218, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 22, 242
+"/Users/max/Documents/Code/Websites/mastela-site/src/pages/contact.tsx", "TypeScript JSX", 237, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 9, 252
+"/Users/max/Documents/Code/Websites/mastela-site/src/pages/index.tsx", "TypeScript JSX", 54, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 10, 67
+"/Users/max/Documents/Code/Websites/mastela-site/src/pages/our-villas.tsx", "TypeScript JSX", 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 6, 39
+"/Users/max/Documents/Code/Websites/mastela-site/src/pages/privacy.tsx", "TypeScript JSX", 59, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 63
+"/Users/max/Documents/Code/Websites/mastela-site/src/pages/property/[property].tsx", "TypeScript JSX", 735, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 66, 823
+"/Users/max/Documents/Code/Websites/mastela-site/src/pages/refund-policy.tsx", "TypeScript JSX", 52, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 56
+"/Users/max/Documents/Code/Websites/mastela-site/src/pages/search.tsx", "TypeScript JSX", 105, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 14, 122
+"/Users/max/Documents/Code/Websites/mastela-site/src/pages/studio/[[...index]].tsx", "TypeScript JSX", 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 17
+"/Users/max/Documents/Code/Websites/mastela-site/src/pages/terms.tsx", "TypeScript JSX", 69, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 73
+"/Users/max/Documents/Code/Websites/mastela-site/src/server/api/root.ts", "TypeScript", 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 3, 19
+"/Users/max/Documents/Code/Websites/mastela-site/src/server/api/routers/blog.ts", "TypeScript", 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 23
+"/Users/max/Documents/Code/Websites/mastela-site/src/server/api/routers/email.ts", "TypeScript", 0, 89, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 94
+"/Users/max/Documents/Code/Websites/mastela-site/src/server/api/routers/properties.ts", "TypeScript", 0, 457, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 62, 532
+"/Users/max/Documents/Code/Websites/mastela-site/src/server/api/stripe.ts", "TypeScript", 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 6
+"/Users/max/Documents/Code/Websites/mastela-site/src/server/api/trpc.ts", "TypeScript", 0, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 56, 11, 100
+"/Users/max/Documents/Code/Websites/mastela-site/src/server/db.ts", "TypeScript", 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 16
+"/Users/max/Documents/Code/Websites/mastela-site/src/server/resend.ts", "TypeScript", 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 4
+"/Users/max/Documents/Code/Websites/mastela-site/src/server/sanityClient.ts", "TypeScript", 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 14
+"/Users/max/Documents/Code/Websites/mastela-site/src/styles/globals.css", "CSS", 0, 0, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 6, 27
+"/Users/max/Documents/Code/Websites/mastela-site/src/utils/api.ts", "TypeScript", 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 6, 68
+"/Users/max/Documents/Code/Websites/mastela-site/src/utils/fetch/fetchFeaturedPosts.ts", "TypeScript", 0, 42, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 8, 53
+"/Users/max/Documents/Code/Websites/mastela-site/src/utils/fetch/fetchReviews.ts", "TypeScript", 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 9
+"/Users/max/Documents/Code/Websites/mastela-site/src/utils/functions/dates/datesEqual.ts", "TypeScript", 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3
+"/Users/max/Documents/Code/Websites/mastela-site/src/utils/functions/dates/formatDateEnglish.ts", "TypeScript", 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 27
+"/Users/max/Documents/Code/Websites/mastela-site/src/utils/functions/dates/formatPhoneNumber.ts", "TypeScript", 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 3, 20
+"/Users/max/Documents/Code/Websites/mastela-site/src/utils/functions/dates/utcDate.ts", "TypeScript", 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 6
+"/Users/max/Documents/Code/Websites/mastela-site/src/utils/functions/formatCurrency.ts", "TypeScript", 0, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 6, 30
+"/Users/max/Documents/Code/Websites/mastela-site/src/utils/functions/functions.tsx", "TypeScript JSX", 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 28
+"/Users/max/Documents/Code/Websites/mastela-site/src/utils/functions/getBaseUrl.ts", "TypeScript", 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4
+"/Users/max/Documents/Code/Websites/mastela-site/src/utils/functions/getUrlParams.ts", "TypeScript", 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 13
+"/Users/max/Documents/Code/Websites/mastela-site/src/utils/sanityQueries.ts", "TypeScript", 0, 29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 5, 40
+"/Users/max/Documents/Code/Websites/mastela-site/tailwind.config.ts", "TypeScript", 0, 55, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 57
+"/Users/max/Documents/Code/Websites/mastela-site/tsconfig.json", "JSON with Comments", 0, 0, 0, 0, 0, 33, 0, 0, 0, 0, 0, 0, 0, 1, 34
+"/Users/max/Documents/Code/Websites/mastela-site/types.ts", "TypeScript", 0, 204, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 236
+"/Users/max/Documents/Code/mastela-site/.eslintrc.cjs", "JavaScript", 0, 0, -31, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2, -3, -36
+"/Users/max/Documents/Code/mastela-site/.sanity/runtime/app.js", "JavaScript", 0, 0, -7, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2, -3, -12
+"/Users/max/Documents/Code/mastela-site/.sanity/runtime/index.html", "HTML", 0, 0, 0, 0, 0, 0, 0, -169, 0, 0, 0, 0, -4, -30, -203
+"/Users/max/Documents/Code/mastela-site/README.md", "Markdown", 0, 0, 0, 0, 0, 0, 0, 0, 0, -17, 0, 0, 0, -12, -29
+"/Users/max/Documents/Code/mastela-site/next.config.mjs", "JavaScript", 0, 0, -17, 0, 0, 0, 0, 0, 0, 0, 0, 0, -11, -2, -30
+"/Users/max/Documents/Code/mastela-site/package.json", "JSON", 0, 0, 0, 0, 0, 0, -72, 0, 0, 0, 0, 0, 0, -1, -73
+"/Users/max/Documents/Code/mastela-site/postcss.config.cjs", "JavaScript", 0, 0, -7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2, -9
+"/Users/max/Documents/Code/mastela-site/prettier.config.cjs", "JavaScript", 0, 0, -4, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -2, -7
+"/Users/max/Documents/Code/mastela-site/prisma/schema.prisma", "Prisma", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -45, 0, -2, -8, -55
+"/Users/max/Documents/Code/mastela-site/reservations.csv", "CSV", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -93, 0, 0, -93
+"/Users/max/Documents/Code/mastela-site/sanity.cli.ts", "TypeScript", 0, -4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -4, -3, -11
+"/Users/max/Documents/Code/mastela-site/sanity.config.ts", "TypeScript", 0, -15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -7, -4, -26
+"/Users/max/Documents/Code/mastela-site/sanity/env.ts", "TypeScript", 0, -17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -6, -23
+"/Users/max/Documents/Code/mastela-site/sanity/lib/image.ts", "TypeScript", 0, -10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -4, -14
+"/Users/max/Documents/Code/mastela-site/sanity/lib/sanityClient.ts", "TypeScript", 0, -8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -3, -11
+"/Users/max/Documents/Code/mastela-site/sanity/lib/urlFor.ts", "TypeScript", 0, -6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -6
+"/Users/max/Documents/Code/mastela-site/sanity/schema.ts", "TypeScript", 0, -9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -3, -12
+"/Users/max/Documents/Code/mastela-site/sanity/schemas/author.ts", "TypeScript", 0, -61, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2, -63
+"/Users/max/Documents/Code/mastela-site/sanity/schemas/blockContent.ts", "TypeScript", 0, -52, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -21, -3, -76
+"/Users/max/Documents/Code/mastela-site/sanity/schemas/category.ts", "TypeScript", 0, -51, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2, -53
+"/Users/max/Documents/Code/mastela-site/sanity/schemas/post.ts", "TypeScript", 0, -109, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -3, -112
+"/Users/max/Documents/Code/mastela-site/sanity/schemas/property.ts", "TypeScript", 0, -151, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -8, -3, -162
+"/Users/max/Documents/Code/mastela-site/src/components/DateRangePicker.tsx", "TypeScript JSX", -98, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -3, -10, -111
+"/Users/max/Documents/Code/mastela-site/src/components/Layout.tsx", "TypeScript JSX", -314, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -60, -9, -383
+"/Users/max/Documents/Code/mastela-site/src/components/PageOverlay.tsx", "TypeScript JSX", -71, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -2, -74
+"/Users/max/Documents/Code/mastela-site/src/components/SlideOver.tsx", "TypeScript JSX", -73, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -3, -76
+"/Users/max/Documents/Code/mastela-site/src/components/blog/BlogPostPreview.tsx", "TypeScript JSX", -127, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -4, -13, -144
+"/Users/max/Documents/Code/mastela-site/src/components/blog/BlogPostsContent.tsx", "TypeScript JSX", -83, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -4, -87
+"/Users/max/Documents/Code/mastela-site/src/components/blog/BlogSearchBar.tsx", "TypeScript JSX", -96, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -7, -103
+"/Users/max/Documents/Code/mastela-site/src/components/blog/SkeletonBlogPostPreview.tsx", "TypeScript JSX", -33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -5, -38
+"/Users/max/Documents/Code/mastela-site/src/components/home/AboutUsSection.tsx", "TypeScript JSX", -132, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -3, -135
+"/Users/max/Documents/Code/mastela-site/src/components/home/AmenitiesSections.tsx", "TypeScript JSX", -90, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -5, -95
+"/Users/max/Documents/Code/mastela-site/src/components/home/BlogSection.tsx", "TypeScript JSX", -81, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -7, -88
+"/Users/max/Documents/Code/mastela-site/src/components/home/FAQSection.tsx", "TypeScript JSX", -61, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -7, -3, -71
+"/Users/max/Documents/Code/mastela-site/src/components/home/HeroSection.tsx", "TypeScript JSX", -177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -7, -6, -190
+"/Users/max/Documents/Code/mastela-site/src/components/home/PropertiesSection.tsx", "TypeScript JSX", -71, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -5, -77
+"/Users/max/Documents/Code/mastela-site/src/components/home/SupportSection.tsx", "TypeScript JSX", -48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -4, -52
+"/Users/max/Documents/Code/mastela-site/src/components/home/TestimonialsSection.tsx", "TypeScript JSX", -73, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -5, -78
+"/Users/max/Documents/Code/mastela-site/src/components/property/ImageGallery.tsx", "TypeScript JSX", -87, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -4, -8, -99
+"/Users/max/Documents/Code/mastela-site/src/components/property/LoadingPropertyPage.tsx", "TypeScript JSX", -134, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -13, -9, -156
+"/Users/max/Documents/Code/mastela-site/src/components/search/ListingCard.tsx", "TypeScript JSX", -140, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -7, -18, -165
+"/Users/max/Documents/Code/mastela-site/src/components/search/Map.tsx", "TypeScript JSX", -29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2, -6, -37
+"/Users/max/Documents/Code/mastela-site/src/components/search/SkeletonInfoCard.tsx", "TypeScript JSX", -21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2, -23
+"/Users/max/Documents/Code/mastela-site/src/components/shared/ShareButton.tsx", "TypeScript JSX", -21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2, -23
+"/Users/max/Documents/Code/mastela-site/src/components/shared/Toast.tsx", "TypeScript JSX", -18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -19
+"/Users/max/Documents/Code/mastela-site/src/env.mjs", "JavaScript", 0, 0, -31, 0, 0, 0, 0, 0, 0, 0, 0, 0, -17, -5, -53
+"/Users/max/Documents/Code/mastela-site/src/pages/404.tsx", "TypeScript JSX", -29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -5, -34
+"/Users/max/Documents/Code/mastela-site/src/pages/_app.tsx", "TypeScript JSX", -25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -5, -30
+"/Users/max/Documents/Code/mastela-site/src/pages/about.tsx", "TypeScript JSX", -371, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -3, -13, -387
+"/Users/max/Documents/Code/mastela-site/src/pages/api/stripe/webhook.ts", "TypeScript", 0, -115, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -8, -17, -140
+"/Users/max/Documents/Code/mastela-site/src/pages/api/trpc/[trpc].ts", "TypeScript", 0, -16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -2, -19
+"/Users/max/Documents/Code/mastela-site/src/pages/cape-coral-guide/[slug].tsx", "TypeScript JSX", -158, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2, -24, -184
+"/Users/max/Documents/Code/mastela-site/src/pages/cape-coral-guide/index.tsx", "TypeScript JSX", -115, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -3, -12, -130
+"/Users/max/Documents/Code/mastela-site/src/pages/cape-coral-guides/[category].tsx", "TypeScript JSX", -79, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -5, -18, -102
+"/Users/max/Documents/Code/mastela-site/src/pages/cape-coral-guides/index.tsx", "TypeScript JSX", -56, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -3, -14, -73
+"/Users/max/Documents/Code/mastela-site/src/pages/checkout.tsx", "TypeScript JSX", -632, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -31, -58, -721
+"/Users/max/Documents/Code/mastela-site/src/pages/confirmation.tsx", "TypeScript JSX", -217, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2, -22, -241
+"/Users/max/Documents/Code/mastela-site/src/pages/contact.tsx", "TypeScript JSX", -195, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -4, -199
+"/Users/max/Documents/Code/mastela-site/src/pages/index.tsx", "TypeScript JSX", -87, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -6, -15, -108
+"/Users/max/Documents/Code/mastela-site/src/pages/our-villas.tsx", "TypeScript JSX", -30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -3, -6, -39
+"/Users/max/Documents/Code/mastela-site/src/pages/privacy.tsx", "TypeScript JSX", -59, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -4, -63
+"/Users/max/Documents/Code/mastela-site/src/pages/property/[property].tsx", "TypeScript JSX", -721, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -23, -64, -808
+"/Users/max/Documents/Code/mastela-site/src/pages/refund-policy.tsx", "TypeScript JSX", -52, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -4, -56
+"/Users/max/Documents/Code/mastela-site/src/pages/search.tsx", "TypeScript JSX", -105, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -3, -14, -122
+"/Users/max/Documents/Code/mastela-site/src/pages/studio/[[...index]].tsx", "TypeScript JSX", -16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -17
+"/Users/max/Documents/Code/mastela-site/src/pages/terms.tsx", "TypeScript JSX", -69, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -4, -73
+"/Users/max/Documents/Code/mastela-site/src/server/api/root.ts", "TypeScript", 0, -8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -6, -3, -17
+"/Users/max/Documents/Code/mastela-site/src/server/api/routers/blog.ts", "TypeScript", 0, -20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -3, -23
+"/Users/max/Documents/Code/mastela-site/src/server/api/routers/properties.ts", "TypeScript", 0, -354, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -137, -42, -533
+"/Users/max/Documents/Code/mastela-site/src/server/api/stripe.ts", "TypeScript", 0, -5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -6
+"/Users/max/Documents/Code/mastela-site/src/server/api/trpc.ts", "TypeScript", 0, -31, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -56, -10, -97
+"/Users/max/Documents/Code/mastela-site/src/server/db.ts", "TypeScript", 0, -12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -4, -16
+"/Users/max/Documents/Code/mastela-site/src/server/sanityClient.ts", "TypeScript", 0, -11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -3, -14
+"/Users/max/Documents/Code/mastela-site/src/styles/globals.css", "CSS", 0, 0, 0, 0, -21, 0, 0, 0, 0, 0, 0, 0, 0, -6, -27
+"/Users/max/Documents/Code/mastela-site/src/utils/api.ts", "TypeScript", 0, -30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -32, -6, -68
+"/Users/max/Documents/Code/mastela-site/src/utils/functions/dates/datesEqual.ts", "TypeScript", 0, -3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -3
+"/Users/max/Documents/Code/mastela-site/src/utils/functions/dates/formatDateEnglish.ts", "TypeScript", 0, -21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -6, -27
+"/Users/max/Documents/Code/mastela-site/src/utils/functions/dates/formatPhoneNumber.ts", "TypeScript", 0, -11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -6, -3, -20
+"/Users/max/Documents/Code/mastela-site/src/utils/functions/dates/utcDate.ts", "TypeScript", 0, -4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2, -6
+"/Users/max/Documents/Code/mastela-site/src/utils/functions/formatCurrency.ts", "TypeScript", 0, -23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -6, -30
+"/Users/max/Documents/Code/mastela-site/src/utils/functions/functions.tsx", "TypeScript JSX", -20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -8, -28
+"/Users/max/Documents/Code/mastela-site/src/utils/functions/getBaseUrl.ts", "TypeScript", 0, -4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -4
+"/Users/max/Documents/Code/mastela-site/src/utils/functions/getUrlParams.ts", "TypeScript", 0, -11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2, -13
+"/Users/max/Documents/Code/mastela-site/src/utils/sanityQueries.ts", "TypeScript", 0, -29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -6, -5, -40
+"/Users/max/Documents/Code/mastela-site/tailwind.config.ts", "TypeScript", 0, -36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2, -38
+"/Users/max/Documents/Code/mastela-site/tsconfig.json", "JSON with Comments", 0, 0, 0, 0, 0, -25, 0, 0, 0, 0, 0, 0, -9, 0, -34
+"/Users/max/Documents/Code/mastela-site/types.ts", "TypeScript", 0, -195, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -30, -225
+"Total", "-", 164, 385, 4, 194, 0, 8, 3, 0, 40, -2, 10, 0, -105, 80, 781
