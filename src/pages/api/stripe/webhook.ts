@@ -108,7 +108,7 @@ export default async function checkoutsWebhooksHandler(
             phone,
             arrival,
             departure,
-            errorMsg: `Error:${bookingId.message} \nGuest:${name} \nArrival:${arrival} \nDeparture:${departure} \nTotal Price:${totalPrice}`,
+            errorMsg: `Customer has paid but Lodgify was unable to create the booking. \nError:${bookingId.message} \nGuest:${name} \nArrival:${arrival} \nDeparture:${departure} \nTotal Price:${totalPrice}`,
           });
 
           return res.status(400).json({
@@ -139,7 +139,7 @@ export default async function checkoutsWebhooksHandler(
             phone,
             arrival,
             departure,
-            errorMsg: `bookingResponse.status != 'Booked'  \nGuest:${name} \nArrival:${arrival} \nDeparture:${departure} \nTotal Price:${totalPrice}`,
+            errorMsg: `Customer has paid but Lodgify was unable to create the booking.  \nGuest:${name} \nArrival:${arrival} \nDeparture:${departure} \nTotal Price:${totalPrice}`,
           });
 
           return res.status(403).json({
